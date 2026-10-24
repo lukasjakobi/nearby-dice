@@ -138,8 +138,9 @@ protocol and the permissions, and [PRODUCT.md](PRODUCT.md) explains what we are 
 
 Contributions are very welcome! Right now, the most valuable help is **testing on real phones**: so
 far, the Nearby connection has only been exercised over a simulated network. If you have two or more
-phones at hand, start with the test plan in
-[#25](https://github.com/lukasjakobi/nearby-dice/issues/25).
+phones at hand, try hosting, joining and playing a round, then
+[open an issue](https://github.com/lukasjakobi/nearby-dice/issues/new) with your device models, OS
+versions and results.
 
 [CONTRIBUTING.md](CONTRIBUTING.md) explains how the project is organised, which conventions it
 follows and how to open a pull request. Please report security issues privately, as described in
