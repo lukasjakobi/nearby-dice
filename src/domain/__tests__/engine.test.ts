@@ -19,7 +19,7 @@ import { Category, StartingPlayer } from '../enums';
 import { seededRng } from '../random';
 import { DEFAULT_RULES, PRESET_ORDER, PRESETS, PresetId } from '../rules';
 import type { Rules } from '../rules';
-import type { Dice } from '../scoring';
+import type { Dice } from '../roll';
 import { emptySheet, turnsPerPlayer } from '../sheet';
 
 const ctx = (seed = 1) => ({ now: 0, rng: seededRng(seed) });

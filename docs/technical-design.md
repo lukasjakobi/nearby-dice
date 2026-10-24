@@ -10,7 +10,7 @@ Nearby native bridge has not been confirmed on real devices yet.
 ## Principles
 
 1. **English, typed code; translated text only at the edge.** Every state value is a TypeScript string
-   `enum` (`Joker.Official`, `SessionPhase.Lobby`, `CellState.Preview`). All text lives in
+   `enum` (`FieldOrder.TopToBottom`, `SessionPhase.Lobby`, `CellState.Preview`). All text lives in
    `src/i18n/locales/{de,en}.json`, read through i18next with keys typed from `de.json`; enum labels
    are keyed by the enum value, and a test checks both files for the same keys and a label per enum
    value. The shell picks the language (`useAppLanguage`: the Settings choice, else the first device
@@ -79,7 +79,9 @@ src/
     (session)/_layout.tsx     → features/session/SessionLayout (phase → route, back, keep-awake)
     (session)/host-lobby, guest-lobby, game, results
 
-  domain/                     enums, rules (presets), sheet, scoring, engine, autopick, random, player,
+  domain/                     enums, rules (presets), fields (every field and its points per ruleset),
+                              sheet (layout), roll (dice analysis), joker, totals, scoring (score,
+                              writeScore, allowedCategories), engine, autopick, random, player,
                               stats (saved games, lifetime totals), validation (shape checks for
                               received and stored games)
   net/                        transport.ts (interface), advertisement, roundCode, createTransport,
@@ -113,14 +115,12 @@ These are the types everything else is built on, shortened to their essentials:
 enum Ruleset { Classic, ClassicXl, Yatzy }
 enum Category { Ones … Sixes, OnePair, TwoPairs, ThreeOfAKind, FourOfAKind,
                 FullHouse, SmallStraight, LargeStraight, Yatzy, Chance, Even, Odd, Mini, LuckyNumber }
-enum Joker { Off, Official, Free }        enum GameLength { Full, Short }
-enum FieldOrder { Free, TopToBottom }     enum StartingPlayer { Random, Host }
-enum Link { Connected, Lost, Removed, Left }
-// Allowed values: ROLLS_PER_TURN, SECONDS_PER_TURN, YATZY_BONUSES, SHEET_COUNTS (domain/rules.ts)
+enum GameLength { Full, Short }            enum FieldOrder { Free, TopToBottom }
+enum StartingPlayer { Random, Host }      enum Link { Connected, Lost, Removed, Left }
+// Allowed values: ROLLS_PER_TURN, SECONDS_PER_TURN, SHEET_COUNTS (domain/rules.ts)
 // Rules only ever come from PRESETS[PresetId]; matchPreset(rules) maps them back.
 type Rules = { ruleset; rollsPerTurn: 2|3|4; secondsPerTurn: 0|30|60; sameDice; luckyNumber; upperBonus;
-               yatzyBonus: 0|50|100; joker; fullHouseFromFiveOfAKind; length; sheets: 1|3;
-               fieldOrder; startingPlayer };
+               length; sheets: 1|3; fieldOrder; startingPlayer };
 type GameState = { rules; seed; players: GamePlayer[]; turnOrder; turn: Turn; finished;
                    history: HistoryEntry[]; rev };
 function reduce(state, action: GameAction, ctx: { now; rng }): { state; rejected?: RejectReason };
@@ -147,30 +147,25 @@ broadcasts it after every change, so any phone can show "Spielstand" and "Verlau
 
 **Confirmed:** games are played only in the predefined presets ("Spielstil"); there are no
 individual rule settings. The session shares its `preset`, and each game is created from
-`PRESETS[preset]`. The host picks a preset when hosting and can switch it in the lobby and on the
-results screen (in Training, on its results screen). Switching on the results screen resets every
+`PRESETS[preset]` (what each preset changes is in [scoring.md](scoring.md#presets)). The host picks a
+preset when hosting and can switch it in the lobby and on the results screen (in Training, on its
+results screen). Switching on the results screen resets every
 guest's "yes" rematch vote to pending, so nobody ends up playing a mode they didn't agree to; the
 host's own vote stays. Guests see the mode read-only and get the toast „Spielstil geändert: …“.
 
-**Confirmed:** `ClassicXl` keeps Classic's upper bonus (+35), its joker rules and the extra-Yatzy
-bonus, and has 17 fields per sheet. Its lower block starts with `TwoPairs`, `Even`, `Odd` and `Mini`,
-continues with the usual Classic fields and ends with `Chance`:
+**Confirmed:** `ClassicXl` is the Classic XL ruleset with 17 fields per sheet. Its fields and points
+are written in [scoring.md](scoring.md#classic-xl). `TwoPairs` is scored by one helper in `fields.ts`
+that Yatzy shares.
 
-| Field      | Points                                                                   |
-| ---------- | ------------------------------------------------------------------------ |
-| `TwoPairs` | Sum of all dice if two different faces each occur at least twice; else 0 |
-| `Even`     | Sum of only the dice showing 2, 4 or 6; other dice contribute 0          |
-| `Odd`      | Sum of only the dice showing 1, 3 or 5; other dice contribute 0          |
-| `Mini`     | 30 if the sum is at most 10; else 0                                      |
+**Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block; its points are
+in [scoring.md](scoring.md#lucky-number). While the field is open it shows the current target; once it
+is filled or struck, the hint disappears. The Lucky Number preset turns this rule on for Classic, and
+the XL preset selects `ClassicXl`.
 
-A full house counts for XL's `TwoPairs`, but five equal dice do not. In the Yatzy ruleset,
-`TwoPairs` still counts only the four matching dice. For example, `[5, 1, 6, 6, 2]` scores 14 in
-`Even`, 6 in `Odd` and 0 in `Mini`.
+### Further Yatzys
 
-**Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block. Hitting the
-round's target sum exactly scores 40; anything else scores 0. While the field is open it shows the
-current target; once it is filled or struck, the hint disappears. The Lucky Number preset turns this
-rule on for Classic, and the XL preset selects `ClassicXl`.
+The further-Yatzy (joker) rule and its maximum points are written down in
+[scoring.md](scoring.md#further-yatzys); `joker.ts` implements them.
 
 ## A move, end to end
 
@@ -196,18 +191,21 @@ sequenceDiagram
 The host's own moves skip the network and call `reduce` directly. Only the host rolls dice (with a
 seed per round for "Gleiche Würfel"), and every phone shakes its dice when `turn.rollSeq` goes up.
 
-With `luckyNumber`, `luckyNumberFor(seed, round)` derives an evenly distributed target between 8 and
-26 from the game seed. `luckyNumberOf(state)` uses `currentRound(state)`, so every player on their
-nth turn shares the same target, whether or not "Gleiche Würfel" is on. No extra message is needed.
+With `luckyNumber`, `luckyNumberFor(seed, round)` derives the round's target from the game seed (the
+rule is in [scoring.md](scoring.md#lucky-number)). `luckyNumberOf(state)` uses `currentRound(state)`,
+so every player on their nth turn shares the same target, whether or not "Gleiche Würfel" is on. No
+extra message is needed.
 
 ## Protocol (`session/protocol.ts`)
 
-Messages are JSON with `v: 3` and are validated on arrival: unknown types, other versions and
+Messages are JSON with `v: 6` and are validated on arrival: unknown types, other versions and
 messages with missing fields are dropped.
 
 **Confirmed compatibility:** version 2 replaced free-form `rules` with the session's `preset`, and
-version 3 renamed the ruleset and category values, so phones on different versions simply ignore
-each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
+version 3 renamed the ruleset and category values, version 4 removed the rule options no preset
+used, version 5 changed Classic XL's `TwoPairs` points, and version 6 gave every mode the same
+[further-Yatzy rule](#further-yatzys) and removed the `joker` and `yatzyBonus` options, so phones on
+different versions simply ignore each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
 session's preset; afterwards the host may already have picked the next one. Sheets and history must
 match the game's rules.
 
@@ -386,13 +384,13 @@ app returns to the foreground it checks again and carries on once everything is 
 The tests run real host and guest sessions over an in-memory network, so they cover the game and
 its synchronisation, but not the radio itself.
 
-| Layer      | What is covered                                                                                                                                                                    |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `domain`   | Unit tests for every field in all rulesets, jokers, bonuses, lucky-number targets, three sheets, the timeout pick, full games per preset, saved games: limit of 10, duplicates     |
-| `net`      | Round codes, advertisements, chunking, the in-memory network, the Bonjour/service-id guard                                                                                         |
-| `session`  | Real `HostSession` + `GuestSession`s over `FakeNetwork` with fake timers: join, rejects, kick, close, a full game with identical state on every phone, rematch, reconnect, give up |
-| `features` | Pure view builders (`buildGameView`), routing, and screens rendered with RNTL against a fake controller                                                                            |
-| `store`    | Validated hydration: one copy per cleaned state, writes blocked after a failed read or copy, migration, dropped rows; no write for unchanged data                                  |
+| Layer      | What is covered                                                                                                                                                                                                                                    |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domain`   | Unit tests for every field in all rulesets, jokers, bonuses, lucky-number targets, three sheets, the timeout pick, full games per preset, saved games: limit of 10, duplicates; `scoringExamples` checks every example in [scoring.md](scoring.md) |
+| `net`      | Round codes, advertisements, chunking, the in-memory network, the Bonjour/service-id guard                                                                                                                                                         |
+| `session`  | Real `HostSession` + `GuestSession`s over `FakeNetwork` with fake timers: join, rejects, kick, close, a full game with identical state on every phone, rematch, reconnect, give up                                                                 |
+| `features` | Pure view builders (`buildGameView`), routing, and screens rendered with RNTL against a fake controller                                                                                                                                            |
+| `store`    | Validated hydration: one copy per cleaned state, writes blocked after a failed read or copy, migration, dropped rows; no write for unchanged data                                                                                                  |
 
 ## Open questions
 

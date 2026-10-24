@@ -1,4 +1,4 @@
-import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
+import { PRESET_ORDER, PRESETS, PresetId } from '@/domain/rules';
 import { t } from '@/test/i18n';
 
 import { rulesSummary } from '../view/rulesSummary';
@@ -24,8 +24,14 @@ test.each([
     expect.arrayContaining([
       { label: t('lobby.rules.style'), value: t(`labels.preset.${preset}.title`) },
       { label: t('lobby.rules.rounds'), value: String(turns) },
-      { label: t('lobby.rules.extraYatzy'), value: t(`labels.yatzyBonus.${50}`) },
-      { label: t('lobby.rules.joker'), value: t(`labels.joker.${DEFAULT_RULES.joker}`) },
     ]),
   );
+});
+
+test.each(PRESET_ORDER)('%s summary has no joker or extra-Yatzy line', (preset) => {
+  const labels = rulesSummary(t, preset).map((line) => line.label);
+
+  // The further-Yatzy rule is the same in every mode, so the summary does not list it.
+  expect(labels).not.toContain('Joker');
+  expect(labels).not.toContain('Weitere Yatzy');
 });

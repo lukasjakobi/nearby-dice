@@ -4,9 +4,9 @@
  */
 import { Category } from '@/domain/enums';
 import { PRESETS, PresetId } from '@/domain/rules';
-import { playerTotal } from '@/domain/scoring';
+import { playerTotal } from '@/domain/totals';
 import type { GameState } from '@/domain/engine';
-import type { Dice } from '@/domain/scoring';
+import type { Dice } from '@/domain/roll';
 import { LUKAS, ANTONIA, game, snapshot, withDice } from '@/test/fixtures';
 import { t } from '@/test/i18n';
 

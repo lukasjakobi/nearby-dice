@@ -2,15 +2,13 @@
  * Shape checks for untrusted game data: network messages and what was stored on the phone.
  * Each check only answers whether a value has the expected shape and allowed values.
  */
-import { Category, FieldOrder, GameLength, Joker, Ruleset, StartingPlayer } from './enums';
+import { Category, FieldOrder, GameLength, Ruleset, StartingPlayer } from './enums';
 import { gamePlayer, HistoryKind } from './engine';
 import type { GameState } from './engine';
 import { isPlayerColor, NAME_MAX_LENGTH } from './player';
 import type { NamedPlayer } from './player';
 import {
-  isClassicFamily,
   matchPreset,
-  YATZY_BONUSES,
   MAX_PLAYERS,
   MIN_PLAYERS,
   ROLLS_PER_TURN,
@@ -27,7 +25,6 @@ const rulesets = values(Ruleset);
 const historyKinds = values(HistoryKind);
 const fieldOrders = values(FieldOrder);
 const gameLengths = values(GameLength);
-const jokers = values(Joker);
 const startingPlayers = values(StartingPlayer);
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -79,9 +76,6 @@ export function isRules(value: unknown): value is Rules {
     (SECONDS_PER_TURN as readonly number[]).includes(value.secondsPerTurn as number) &&
     isBoolean(value.sameDice) &&
     isBoolean(value.upperBonus) &&
-    (YATZY_BONUSES as readonly number[]).includes(value.yatzyBonus as number) &&
-    isOneOf(value.joker, jokers) &&
-    isBoolean(value.fullHouseFromFiveOfAKind) &&
     // Optional: hosts from before the lucky-number rule do not send it.
     (value.luckyNumber === undefined || isBoolean(value.luckyNumber)) &&
     isOneOf(value.length, gameLengths) &&
@@ -102,8 +96,7 @@ function isSheet(value: unknown, rules: Rules): boolean {
     allowed.every((category) => Object.prototype.hasOwnProperty.call(fields, category)) &&
     Object.entries(fields).every(
       ([key, score]) => allowed.includes(key) && (score === null || isInteger(score, 0, 1000)),
-    ) &&
-    (isClassicFamily(rules.ruleset) || value.extraYatzys === 0)
+    )
   );
 }
 

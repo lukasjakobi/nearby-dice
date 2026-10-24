@@ -10,8 +10,13 @@ import { RematchVote } from './types';
 import type { SharedSession } from './types';
 import { isProfile, isSharedSession } from './protocolValidation';
 
-/** 2: the session shares its preset instead of free-form rules. 3: renamed ruleset and category values. */
-export const PROTOCOL_VERSION = 3;
+/**
+ * 2: the session shares its preset instead of free-form rules. 3: renamed ruleset and category values.
+ * 4: removed the rule options no preset used (`Joker.Free`, the 100 Yatzy bonus,
+ *    `fullHouseFromFiveOfAKind`). 5: Classic XL's `TwoPairs` counts only the two pairs.
+ * 6: one further-Yatzy rule in every mode; the `joker` and `yatzyBonus` rule options are gone.
+ */
+export const PROTOCOL_VERSION = 6;
 
 export enum MessageType {
   /** guest → host: join or rejoin. */

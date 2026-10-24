@@ -1,4 +1,4 @@
-import { sheetFactor } from '../scoring';
+import { sheetFactor } from '../totals';
 
 test('sheet factors ×1, ×2, ×3; 1 outside the known sheets', () => {
   expect([0, 1, 2].map(sheetFactor)).toEqual([1, 2, 3]);

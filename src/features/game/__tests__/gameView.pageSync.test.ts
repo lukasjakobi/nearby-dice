@@ -2,7 +2,7 @@ import { ActionType } from '@/domain/engine';
 import type { GameState } from '@/domain/engine';
 import { Category } from '@/domain/enums';
 import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
-import type { Dice } from '@/domain/scoring';
+import type { Dice } from '@/domain/roll';
 import { LUKAS, ANTONIA, game, play, snapshot, withDice } from '@/test/fixtures';
 import { t } from '@/test/i18n';
 

@@ -7,7 +7,7 @@ import type { GameState, PlayerId } from './engine';
 import type { NamedPlayer } from './player';
 import { matchPreset } from './rules';
 import type { PresetId } from './rules';
-import { yatzyCount } from './scoring';
+import { yatzyCount } from './totals';
 
 /** A finished multiplayer game, kept whole so it can be opened again from the start screen. */
 export type SavedGame = {

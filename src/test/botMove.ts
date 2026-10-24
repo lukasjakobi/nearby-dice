@@ -1,7 +1,7 @@
 import { autoPick } from '@/domain/autopick';
 import { ActionType, gamePlayer, luckyNumberOf, rollsLeft } from '@/domain/engine';
 import type { GameState, Held, PlayerAction, PlayerId } from '@/domain/engine';
-import { faceCounts, isYatzy } from '@/domain/scoring';
+import { faceCounts, isYatzy } from '@/domain/roll';
 
 /** Points at which a bot stops rolling and takes the field. */
 const GOOD_ENOUGH = 25;

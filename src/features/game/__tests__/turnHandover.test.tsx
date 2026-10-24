@@ -9,7 +9,7 @@ import { t } from '@/test/i18n';
 import { ActionType, HistoryKind, NO_DICE, lastEntry } from '@/domain/engine';
 import type { GameState, Turn } from '@/domain/engine';
 import { Category } from '@/domain/enums';
-import type { Dice } from '@/domain/scoring';
+import type { Dice } from '@/domain/roll';
 import { Role } from '@/session/types';
 import type { SessionSnapshot } from '@/session/types';
 import { LUKAS, ANTONIA, game, play, snapshot, withDice } from '@/test/fixtures';

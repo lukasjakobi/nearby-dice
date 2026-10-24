@@ -52,35 +52,35 @@
     "preset": {
       "classic": {
         "title": "Classic",
-        "description": "Free field choice, 13 rounds, Yatzy bonus."
+        "description": "The game-night classic: you decide where every roll lands, for 13 rounds."
       },
       "top-to-bottom": {
         "title": "Top to bottom",
-        "description": "Fields in order from top to bottom, 60 seconds per turn."
+        "description": "No choosing, no going back: field by field from top to bottom, with the clock ticking."
       },
       "blitz": {
         "title": "Blitz",
-        "description": "6 rounds, 30 seconds per turn."
+        "description": "Six rounds, 30 seconds a turn. Hesitate and you've already lost."
       },
       "same-dice": {
         "title": "Same dice",
-        "description": "Every player gets the same rolls."
+        "description": "Everyone gets the same dice. All that counts is who makes more of them."
       },
       "triple": {
         "title": "Triple",
-        "description": "Three sheets with factors 1, 2 and 3."
+        "description": "Three sheets, triple the thrill: the second counts double, the third triple."
       },
       "yatzy": {
         "title": "Yatzy",
-        "description": "With One pair and Two pairs, straights only 1–5 and 2–6, bonus 50."
+        "description": "The Scandinavian take: pairs count, straights are strict, the bonus pays 50."
       },
       "classic-xl": {
         "title": "Classic XL",
-        "description": "17 fields: adds Two pairs, Even, Odd and Mini."
+        "description": "More sheet, more chances: Two pairs, Even, Odd and Mini join in."
       },
       "lucky-number": {
         "title": "Lucky number",
-        "description": "A new lucky number every round. Hit it exactly: 40 points."
+        "description": "Each round, luck draws a new number. Hit it exactly for 40 points."
       }
     },
     "secondsPerTurn": {
@@ -88,20 +88,10 @@
       "30": "30\u00a0s",
       "60": "60\u00a0s"
     },
-    "yatzyBonus": {
-      "0": "Off",
-      "50": "+50",
-      "100": "+100"
-    },
     "ruleset": {
       "classic": "Classic",
       "classic-xl": "Classic XL",
       "yatzy": "Yatzy"
-    },
-    "joker": {
-      "off": "Off",
-      "official": "Official",
-      "free": "Free"
     },
     "sheetCount": {
       "1": "1",
@@ -393,8 +383,6 @@
       "time": "Time per turn",
       "order": "Field choice",
       "upperBonus": "Bonus from {{threshold}} points",
-      "extraYatzy": "Extra Yatzys",
-      "joker": "Joker",
       "sameDice": "Same dice for everyone",
       "luckyNumber": "Lucky number",
       "on": "On",

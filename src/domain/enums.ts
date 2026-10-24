@@ -33,15 +33,6 @@ export enum Category {
   LuckyNumber = 'lucky-number',
 }
 
-/** How a further Yatzy may be used once the Yatzy field is taken. */
-export enum Joker {
-  Off = 'off',
-  /** Matching upper field first, else Full House / straights at full value. */
-  Official = 'official',
-  /** Any open field; joker values apply once the matching upper field is taken. */
-  Free = 'free',
-}
-
 export enum GameLength {
   Full = 'full',
   /** Six rounds; a sheet counts only the entries made. */
