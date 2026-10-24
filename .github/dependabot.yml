@@ -20,7 +20,7 @@ updates:
       prefix: chore
       include: scope
     groups:
-      # Expo pins these per SDK, so they update together in one pull request.
+      # Expo pins these per SDK, so SDK alignment updates them together.
       expo-sdk:
         patterns:
           - expo
@@ -51,9 +51,10 @@ updates:
       - dependency-name: eslint-config-expo
         update-types: [version-update:semver-major, version-update:semver-minor]
       - dependency-name: react
-        update-types: [version-update:semver-major, version-update:semver-minor]
+        # The native renderer is compiled against the exact React version Expo selects.
+        # Update React only when Expo SDK alignment changes the supported version.
       - dependency-name: react-dom
-        update-types: [version-update:semver-major, version-update:semver-minor]
+        # Keep the web renderer paired with React and aligned to Expo's selected version.
       - dependency-name: react-native
         update-types: [version-update:semver-major, version-update:semver-minor]
       - dependency-name: react-native-*
