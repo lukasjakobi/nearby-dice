@@ -1,5 +1,4 @@
-import { Ruleset } from '@/domain/enums';
-import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
+import { DEFAULT_RULES, PRESET_ORDER, PRESETS, PresetId } from '@/domain/rules';
 import type { GameState } from '@/domain/engine';
 import { LUKAS, ANTONIA, game, snapshot } from '@/test/fixtures';
 import { t } from '@/test/i18n';
@@ -44,14 +43,8 @@ describe('extra Yatzy bonus row', () => {
     });
   });
 
-  test('left out without a bonus per Yatzy', () => {
-    const rules = { ...DEFAULT_RULES, yatzyBonus: 0 as const };
-    expect(keys(board(rules))).not.toContain('yatzy-bonus');
-  });
-
-  test('left out for Yatzy', () => {
-    const rules = { ...DEFAULT_RULES, ruleset: Ruleset.Yatzy, yatzyBonus: 50 as const };
-    expect(keys(board(rules))).not.toContain('yatzy-bonus');
+  test.each(PRESET_ORDER)('shown in every mode (%s)', (preset) => {
+    expect(keys(board(PRESETS[preset]))).toContain('yatzy-bonus');
   });
 });
 

@@ -1,4 +1,7 @@
 import { Category, Ruleset } from '../enums';
+import { sheetFields } from '../fields';
+import { analyseRoll } from '../roll';
+import type { Dice } from '../roll';
 import { DEFAULT_RULES, PRESETS, PresetId } from '../rules';
 import {
   categoriesFor,
@@ -40,5 +43,31 @@ describe.each(Object.values(Ruleset))('%s lucky-number field layout', (ruleset) 
     expect(emptySheet(rules).fields[Category.LuckyNumber]).toBeNull();
     expect(emptySheet(off).fields).not.toHaveProperty(Category.LuckyNumber);
     expect(turnsPerPlayer(rules)).toBe(turnsPerPlayer(off) + 1);
+  });
+});
+
+/** Every roll of five dice: 6⁵ = 7776. */
+const ALL_ROLLS = Array.from({ length: 6 ** 5 }, (_, n) =>
+  Array.from({ length: 5 }, (_, die) => 1 + (Math.floor(n / 6 ** die) % 6)),
+) as unknown as Dice[];
+
+describe.each(Object.values(Ruleset))('%s field maximums', (ruleset) => {
+  const rules = { ...DEFAULT_RULES, ruleset, luckyNumber: true };
+  const LUCKY = 12;
+
+  test('each field max is the highest score any roll gets there', () => {
+    const fields = sheetFields(rules);
+    const highest = new Map<Category, number>(fields.map(({ category }) => [category, 0]));
+    for (const dice of ALL_ROLLS) {
+      const roll = analyseRoll(dice);
+      for (const field of fields) {
+        const points = field.points(roll, { luckyNumber: LUCKY });
+        highest.set(field.category, Math.max(highest.get(field.category)!, points));
+      }
+    }
+
+    expect(Object.fromEntries(highest)).toEqual(
+      Object.fromEntries(fields.map(({ category, max }) => [category, max])),
+    );
   });
 });

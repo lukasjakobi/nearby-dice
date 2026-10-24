@@ -1,14 +1,12 @@
-import { FieldOrder, GameLength, Joker, Ruleset, StartingPlayer } from './enums';
+import { FieldOrder, GameLength, Ruleset, StartingPlayer } from './enums';
 
 /** Every value a preset may use; the types and message validation use them. */
 export const ROLLS_PER_TURN = [2, 3, 4] as const;
 export const SECONDS_PER_TURN = [0, 30, 60] as const;
-export const YATZY_BONUSES = [0, 50] as const;
 export const SHEET_COUNTS = [1, 3] as const;
 
 export type RollsPerTurn = (typeof ROLLS_PER_TURN)[number];
 export type SecondsPerTurn = (typeof SECONDS_PER_TURN)[number];
-export type YatzyBonus = (typeof YATZY_BONUSES)[number];
 export type SheetCount = (typeof SHEET_COUNTS)[number];
 
 export type Rules = {
@@ -20,9 +18,6 @@ export type Rules = {
   sameDice: boolean;
   /** +35 (classic family) or +50 (Yatzy) once the upper block reaches 63. */
   upperBonus: boolean;
-  /** Bonus per further Yatzy once the Yatzy field holds 50. Classic rulesets only. */
-  yatzyBonus: YatzyBonus;
-  joker: Joker;
   /** Adds the "Glückszahl" field: a new target sum every round. */
   luckyNumber: boolean;
   length: GameLength;
@@ -38,8 +33,6 @@ export const DEFAULT_RULES: Rules = {
   secondsPerTurn: 0,
   sameDice: false,
   upperBonus: true,
-  yatzyBonus: 50,
-  joker: Joker.Official,
   luckyNumber: false,
   length: GameLength.Full,
   sheets: 1,
@@ -64,23 +57,15 @@ export const PRESETS: Record<PresetId, Rules> = {
     ...DEFAULT_RULES,
     fieldOrder: FieldOrder.TopToBottom,
     secondsPerTurn: 60,
-    yatzyBonus: 0,
-    joker: Joker.Off,
   },
   [PresetId.Blitz]: {
     ...DEFAULT_RULES,
     length: GameLength.Short,
     secondsPerTurn: 30,
-    yatzyBonus: 0,
   },
   [PresetId.SameDice]: { ...DEFAULT_RULES, sameDice: true },
   [PresetId.Triple]: { ...DEFAULT_RULES, sheets: 3 },
-  [PresetId.Yatzy]: {
-    ...DEFAULT_RULES,
-    ruleset: Ruleset.Yatzy,
-    yatzyBonus: 0,
-    joker: Joker.Off,
-  },
+  [PresetId.Yatzy]: { ...DEFAULT_RULES, ruleset: Ruleset.Yatzy },
   [PresetId.ClassicXl]: { ...DEFAULT_RULES, ruleset: Ruleset.ClassicXl },
   [PresetId.LuckyNumber]: { ...DEFAULT_RULES, luckyNumber: true },
 };
@@ -124,10 +109,8 @@ export function upperBonusPoints(ruleset: Ruleset): number {
   return ruleset === Ruleset.Yatzy ? 50 : 35;
 }
 
-/** Classic and Classic XL share the joker, the extra Yatzy bonus and fixed-value fields. */
-export function isClassicFamily(ruleset: Ruleset): boolean {
-  return ruleset !== Ruleset.Yatzy;
-}
+/** Every further Yatzy adds this bonus, in every ruleset and preset. */
+export const YATZY_BONUS = 50;
 
 /** Each round's lucky number lies in this range (inclusive); hitting it exactly scores the points. */
 export const LUCKY_NUMBER_MIN = 8;

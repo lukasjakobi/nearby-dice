@@ -5,8 +5,6 @@ import type { Rules } from './rules';
 
 /** Round facts a field's points may depend on, besides the dice. */
 export type FieldContext = {
-  /** A further Yatzy counts as a joker: Full House and the straights score at full value. */
-  joker: boolean;
   /** This round's lucky number, or `null` without the lucky-number rule. */
   luckyNumber: number | null;
 };
@@ -14,13 +12,20 @@ export type FieldContext = {
 /** The points rolled dice score in a field. */
 export type FieldPoints = (roll: Roll, context: FieldContext) => number;
 
-/** One field of the score sheet: its category and how its points are worked out. */
-export type Field = { category: Category; points: FieldPoints };
+/**
+ * One field of the score sheet: its category, how its points are worked out and the most it can
+ * score with any dice (a further Yatzy scores that maximum in a lower field, see `joker.ts`).
+ */
+export type Field = { category: Category; points: FieldPoints; max: number };
 
 /** The rules that decide which fields a sheet has. */
 export type SheetRules = Pick<Rules, 'ruleset' | 'luckyNumber'>;
 
-const field = (category: Category, points: FieldPoints): Field => ({ category, points });
+const field = (category: Category, points: FieldPoints, max: number): Field => ({
+  category,
+  points,
+  max,
+});
 
 /** The highest face shown by at least `n` dice; 0 when no face is shown that often. */
 const highestOfAKind = (counts: readonly number[], n: number): number => {
@@ -49,7 +54,7 @@ const twoPairsPoints = (pairs: readonly number[]): number =>
 
 /** The upper block is the same in every ruleset: each field sums the dice showing its face. */
 const upper = (category: Category, face: number): Field =>
-  field(category, ({ counts }) => counts[face] * face);
+  field(category, ({ counts }) => counts[face] * face, face * 5);
 
 export const UPPER_FIELDS: readonly Field[] = [
   upper(Category.Ones, 1),
@@ -61,45 +66,51 @@ export const UPPER_FIELDS: readonly Field[] = [
 ];
 
 /** The lucky-number field, appended to the lower block while its rule is on. */
-const LUCKY_NUMBER_FIELD = field(Category.LuckyNumber, (roll, { luckyNumber }) =>
-  roll.sum === luckyNumber ? LUCKY_NUMBER_POINTS : 0,
+const LUCKY_NUMBER_FIELD = field(
+  Category.LuckyNumber,
+  (roll, { luckyNumber }) => (roll.sum === luckyNumber ? LUCKY_NUMBER_POINTS : 0),
+  LUCKY_NUMBER_POINTS,
 );
 
 /** Classic: the lower block, top to bottom. */
 const CLASSIC_LOWER: readonly Field[] = [
-  field(Category.ThreeOfAKind, ({ most, sum }) => (most >= 3 ? sum : 0)),
-  field(Category.FourOfAKind, ({ most, sum }) => (most >= 4 ? sum : 0)),
-  field(Category.FullHouse, ({ counts }, { joker }) => (isFullHouse(counts) || joker ? 25 : 0)),
-  field(Category.SmallStraight, ({ counts }, { joker }) =>
-    joker || hasRun(counts, 1, 4) || hasRun(counts, 2, 4) || hasRun(counts, 3, 4) ? 30 : 0,
+  field(Category.ThreeOfAKind, ({ most, sum }) => (most >= 3 ? sum : 0), 30),
+  field(Category.FourOfAKind, ({ most, sum }) => (most >= 4 ? sum : 0), 30),
+  field(Category.FullHouse, ({ counts }) => (isFullHouse(counts) ? 25 : 0), 25),
+  field(
+    Category.SmallStraight,
+    ({ counts }) => (hasRun(counts, 1, 4) || hasRun(counts, 2, 4) || hasRun(counts, 3, 4) ? 30 : 0),
+    30,
   ),
-  field(Category.LargeStraight, ({ counts }, { joker }) =>
-    joker || hasRun(counts, 1, 5) || hasRun(counts, 2, 5) ? 40 : 0,
+  field(
+    Category.LargeStraight,
+    ({ counts }) => (hasRun(counts, 1, 5) || hasRun(counts, 2, 5) ? 40 : 0),
+    40,
   ),
-  field(Category.Yatzy, ({ most }) => (most === 5 ? 50 : 0)),
-  field(Category.Chance, ({ sum }) => sum),
+  field(Category.Yatzy, ({ most }) => (most === 5 ? 50 : 0), 50),
+  field(Category.Chance, ({ sum }) => sum, 30),
 ];
 
 /** Classic XL: the four extra fields come first, then the Classic lower block. */
 const CLASSIC_XL_LOWER: readonly Field[] = [
-  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs)),
-  field(Category.Even, ({ counts }) => sumOfFaces(counts, [2, 4, 6])),
-  field(Category.Odd, ({ counts }) => sumOfFaces(counts, [1, 3, 5])),
-  field(Category.Mini, ({ sum }) => (sum <= 10 ? 30 : 0)),
+  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs), 22),
+  field(Category.Even, ({ counts }) => sumOfFaces(counts, [2, 4, 6]), 30),
+  field(Category.Odd, ({ counts }) => sumOfFaces(counts, [1, 3, 5]), 25),
+  field(Category.Mini, ({ sum }) => (sum <= 10 ? 30 : 0), 30),
   ...CLASSIC_LOWER,
 ];
 
 /** Scandinavian Yatzy: the lower block, top to bottom. */
 const YATZY_LOWER: readonly Field[] = [
-  field(Category.OnePair, ({ counts }) => highestOfAKind(counts, 2) * 2),
-  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs)),
-  field(Category.ThreeOfAKind, ({ counts }) => highestOfAKind(counts, 3) * 3),
-  field(Category.FourOfAKind, ({ counts }) => highestOfAKind(counts, 4) * 4),
-  field(Category.SmallStraight, ({ counts }) => (hasRun(counts, 1, 5) ? 15 : 0)),
-  field(Category.LargeStraight, ({ counts }) => (hasRun(counts, 2, 5) ? 20 : 0)),
-  field(Category.FullHouse, ({ counts, sum }) => (isFullHouse(counts) ? sum : 0)),
-  field(Category.Chance, ({ sum }) => sum),
-  field(Category.Yatzy, ({ most }) => (most === 5 ? 50 : 0)),
+  field(Category.OnePair, ({ counts }) => highestOfAKind(counts, 2) * 2, 12),
+  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs), 22),
+  field(Category.ThreeOfAKind, ({ counts }) => highestOfAKind(counts, 3) * 3, 18),
+  field(Category.FourOfAKind, ({ counts }) => highestOfAKind(counts, 4) * 4, 24),
+  field(Category.SmallStraight, ({ counts }) => (hasRun(counts, 1, 5) ? 15 : 0), 15),
+  field(Category.LargeStraight, ({ counts }) => (hasRun(counts, 2, 5) ? 20 : 0), 20),
+  field(Category.FullHouse, ({ counts, sum }) => (isFullHouse(counts) ? sum : 0), 28),
+  field(Category.Chance, ({ sum }) => sum, 30),
+  field(Category.Yatzy, ({ most }) => (most === 5 ? 50 : 0), 50),
 ];
 
 /** The lower block of each ruleset, top to bottom, without the lucky-number field. */

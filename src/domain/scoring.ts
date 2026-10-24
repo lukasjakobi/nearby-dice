@@ -1,6 +1,6 @@
 import { Category, FieldOrder } from './enums';
 import { sheetFields } from './fields';
-import { earnsYatzyBonus, isJoker, jokerFields } from './joker';
+import { isJoker, jokerFields, jokerPoints } from './joker';
 import { analyseRoll, isRolled } from './roll';
 import type { Dice } from './roll';
 import type { Rules } from './rules';
@@ -20,8 +20,9 @@ export function score(
 ): number {
   const field = sheetFields(rules).find((candidate) => candidate.category === category);
   if (!field || !isRolled(dice)) return 0;
+  const jokerScore = isJoker(dice, sheet) ? jokerPoints(dice, category, rules) : null;
 
-  return field.points(analyseRoll(dice), { joker: isJoker(dice, sheet, rules), luckyNumber });
+  return jokerScore ?? field.points(analyseRoll(dice), { luckyNumber });
 }
 
 /** Returns a new sheet with the score written. Throws when the field is not open. */
@@ -36,11 +37,11 @@ export function writeScore(
 
   return {
     fields: { ...sheet.fields, [category]: score(dice, category, sheet, rules, luckyNumber) },
-    extraYatzys: sheet.extraYatzys + (earnsYatzyBonus(dice, sheet, rules) ? 1 : 0),
+    extraYatzys: sheet.extraYatzys + (isJoker(dice, sheet) ? 1 : 0),
   };
 }
 
-/** Fields the player may write into with these dice: field order and the official joker rule. */
+/** Fields the player may write into with these dice: field order first, then the joker rule. */
 export function allowedCategories(dice: Dice, sheet: Sheet, rules: Rules): Category[] {
   const open = openCategories(sheet, rules);
   if (open.length === 0) return [];

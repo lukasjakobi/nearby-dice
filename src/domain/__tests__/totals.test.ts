@@ -1,6 +1,6 @@
 import { Category } from '../enums';
 import type { Dice } from '../roll';
-import { DEFAULT_RULES, PRESETS, PresetId } from '../rules';
+import { DEFAULT_RULES, PRESETS, PresetId, YATZY_BONUS } from '../rules';
 import type { Rules } from '../rules';
 import { writeScore } from '../scoring';
 import { emptySheet } from '../sheet';
@@ -51,7 +51,7 @@ test('Classic XL keeps the 35-point upper bonus and the extra Yatzy bonus', () =
   const after = writeScore(sheet, Category.Even, d(6, 6, 6, 6, 6), rules, null);
   expect(upperBonus(after, rules)).toBe(35);
   expect(after.extraYatzys).toBe(1);
-  expect(sheetTotal(after, rules)).toBe(63 + 35 + 50 + 30 + rules.yatzyBonus);
+  expect(sheetTotal(after, rules)).toBe(63 + 35 + 50 + 30 + YATZY_BONUS);
 });
 
 test('three sheets count ×1, ×2, ×3', () => {

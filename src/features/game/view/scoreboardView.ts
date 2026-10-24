@@ -6,7 +6,6 @@ import type { TFunction } from '@/i18n';
 import {
   categoriesFor,
   gamePlayer,
-  isClassicFamily,
   Link,
   SHEET_FACTORS,
   totalOf,
@@ -14,6 +13,7 @@ import {
   upperBonus,
   upperBonusPoints,
   upperSum,
+  YATZY_BONUS,
 } from '@/domain';
 import type { Sheet } from '@/domain';
 import { playerById } from '@/session';
@@ -78,16 +78,14 @@ export function buildScoreboard(t: TFunction, snapshot: SessionSnapshot): Scoreb
     });
   }
 
-  if (isClassicFamily(rules.ruleset) && rules.yatzyBonus > 0) {
-    rows.push({
-      key: 'yatzy-bonus',
-      kind: BoardRowKind.Bonus,
-      label: t('game.yatzyBonusRow'),
-      cells: players.map(({ sheets }) =>
-        sheets.map((s) => String(s.extraYatzys * rules.yatzyBonus)).join(' · '),
-      ),
-    });
-  }
+  rows.push({
+    key: 'yatzy-bonus',
+    kind: BoardRowKind.Bonus,
+    label: t('game.yatzyBonusRow'),
+    cells: players.map(({ sheets }) =>
+      sheets.map((s) => String(s.extraYatzys * YATZY_BONUS)).join(' · '),
+    ),
+  });
 
   rows.push({
     key: 'total',
