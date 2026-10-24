@@ -179,8 +179,9 @@ change alters documented behaviour, update the document that owns it (see
 - Fill in the pull request template: what and why, the issue it closes, how you tested, device
   verification status and any new strings.
 - `main` only changes through pull requests. Before merging, the `check` job must pass on a branch
-  that is up to date with `main` ("Update branch" brings it up to date), every review thread must be
-  resolved, and the maintainer must approve. Pull requests are squash-merged, so the title becomes
+  that is up to date with `main` ("Update branch" brings it up to date), CodeQL must report no new
+  errors or high-severity alerts, every review thread must be resolved, and the maintainer must
+  approve. Pull requests are squash-merged, so the title becomes
   the commit message; the branch is deleted afterwards.
 
 ## Code of conduct
