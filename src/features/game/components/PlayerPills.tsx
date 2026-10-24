@@ -1,30 +1,36 @@
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import type { ViewStyle } from 'react-native';
 
-import { Avatar, Font, Text, fontFamily, useTheme } from '@/ui';
+import { Avatar, Font, Text, alpha, fontFamily, useTheme } from '@/ui';
+import type { Palette } from '@/ui';
 
 import type { PillView } from '../view';
 
-/** One pill per player: initial, name, running total. Active has a primary border. */
-export function PlayerPills({ pills }: { pills: PillView[] }) {
+type PlayerPillsProps = {
+  pills: PillView[];
+  onSelect: (playerId: string) => void;
+};
+
+/**
+ * One pill per player: initial, name, running total. The player whose turn it is has a
+ * primary border. Tapping a pill opens that player's sheet; while it is open, their pill
+ * is tinted and outlined in their colour.
+ */
+export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   return (
     <View style={styles.row} accessibilityRole="list" accessibilityLabel={t('game.players')}>
       {pills.map((pill) => (
-        <View
+        <Pressable
           key={pill.id}
-          accessible
+          onPress={() => onSelect(pill.id)}
+          accessibilityRole="button"
           accessibilityLabel={`${pill.name}: ${pill.total}`}
-          style={[
-            styles.pill,
-            {
-              backgroundColor: pill.active ? colors.surface : 'transparent',
-              borderColor: pill.active ? colors.primary : colors.line,
-              opacity: pill.dimmed ? 0.5 : 1,
-            },
-          ]}
+          accessibilityState={{ selected: pill.shown }}
+          style={[styles.pill, pillColors(pill, colors), { opacity: pill.dimmed ? 0.5 : 1 }]}
         >
           <Avatar initial={pill.avatar.initial} color={pill.avatar.color} size={30} />
           <View style={styles.text}>
@@ -35,10 +41,27 @@ export function PlayerPills({ pills }: { pills: PillView[] }) {
               {String(pill.total)}
             </Text>
           </View>
-        </View>
+        </Pressable>
       ))}
     </View>
   );
+}
+
+/**
+ * A pill whose sheet is on the card is filled; opened from the pills, it is tinted in the
+ * player's colour.
+ */
+function pillColors(pill: PillView, colors: Palette): ViewStyle {
+  if (pill.active) {
+    return {
+      backgroundColor: pill.shown ? colors.surface : 'transparent',
+      borderColor: colors.primary,
+    };
+  }
+
+  return pill.shown
+    ? { backgroundColor: alpha(pill.avatar.color, 0.2), borderColor: pill.avatar.color }
+    : { backgroundColor: 'transparent', borderColor: colors.line };
 }
 
 const styles = StyleSheet.create({

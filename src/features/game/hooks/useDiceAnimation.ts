@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { NO_DICE } from '@/domain';
+import { NO_DICE, sameTurn } from '@/domain';
 import type { Turn } from '@/domain';
 import { useTheme } from '@/ui';
 
@@ -13,18 +13,6 @@ const ROLL_PENDING_MS = 2000;
 /** Shakes every die that the next roll will throw: all of them, except held ones on a re-roll. */
 function bump(keys: number[], turn: Turn | undefined): number[] {
   return keys.map((key, i) => (turn && turn.rollsUsed > 0 && turn.held[i] ? key : key + 1));
-}
-
-/**
- * `to` is `from` later in the same turn. Every roll moves `rollSeq` and `rollsUsed`
- * together, so any other difference means an entry or skip passed the turn on.
- */
-function sameTurn(from: Turn, to: Turn): boolean {
-  return (
-    from.playerId === to.playerId &&
-    to.rollsUsed >= from.rollsUsed &&
-    to.rollSeq - from.rollSeq === to.rollsUsed - from.rollsUsed
-  );
 }
 
 /**

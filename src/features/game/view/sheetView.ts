@@ -1,4 +1,4 @@
-/** The scorecard: always the sheet of the player whose turn it is. */
+/** The scorecard: the sheet of the player whose turn it is, or one opened from the pills. */
 import type { TFunction } from '@/i18n';
 import {
   allowedCategories,
@@ -76,30 +76,75 @@ export type SheetView = {
   bonus: BonusView | null;
 };
 
+/** The sheet of the player whose turn it is, with previews of the dice on screen. */
 export function buildSheet(t: TFunction, ctx: TurnContext): SheetView {
   const { myTurn, turnPlayer } = ctx;
   const sheets = gamePlayer(ctx.game, ctx.turn.playerId)!.sheets;
   const selectedTab = sheetIndexOf(ctx, sheets.length);
-  const sheet = sheets[selectedTab];
-  const upper = UPPER_CATEGORIES.map((category) => cellView(t, ctx, sheet, category));
-  const lower = lowerCategories(ctx.rules).map((category) => cellView(t, ctx, sheet, category));
-  const multiSheet = sheets.length > 1;
+  const blocks = blocksOf(t, ctx, sheets[selectedTab], showsPreviews(ctx));
 
   return {
     title: myTurn ? t('game.mySheet') : t('game.sheetOf', { name: turnPlayer.name }),
     owner: avatarOf(turnPlayer),
-    tabs: multiSheet
-      ? SHEET_FACTORS.slice(0, sheets.length).map((factor) => t('game.sheetFactor', { factor }))
-      : null,
+    tabs: tabsOf(t, sheets.length),
     selectedTab,
     turnTab:
-      !myTurn && multiSheet
+      !myTurn && sheets.length > 1
         ? { index: selectedTab, label: t('game.onSheet', { name: turnPlayer.name }) }
         : null,
     tabsEnabled: myTurn,
-    focused: focusedCategory(ctx, [...upper, ...lower]),
-    upper,
-    lower,
+    focused: focusedCategory(ctx, [...blocks.upper, ...blocks.lower]),
+    ...blocks,
+  };
+}
+
+/**
+ * Another player's sheet, opened from the pills: only their entries, no previews, and
+ * its tabs turn on this phone alone.
+ */
+export function buildViewedSheet(
+  t: TFunction,
+  ctx: TurnContext,
+  viewed: NonNullable<TurnContext['viewed']>,
+): SheetView {
+  const { player } = viewed;
+  const sheets = gamePlayer(ctx.game, player.id)!.sheets;
+  const selectedTab = Math.min(viewed.sheetIndex, sheets.length - 1);
+
+  return {
+    title:
+      player.id === ctx.snapshot.myId
+        ? t('game.mySheet')
+        : t('game.sheetOf', { name: player.name }),
+    owner: avatarOf(player),
+    tabs: tabsOf(t, sheets.length),
+    selectedTab,
+    turnTab: null,
+    tabsEnabled: true,
+    focused: null,
+    ...blocksOf(t, ctx, sheets[selectedTab], false),
+  };
+}
+
+/** "×1 ×2 ×3" with three sheets, otherwise `null`. */
+function tabsOf(t: TFunction, sheetCount: number): string[] | null {
+  return sheetCount > 1
+    ? SHEET_FACTORS.slice(0, sheetCount).map((factor) => t('game.sheetFactor', { factor }))
+    : null;
+}
+
+/** Both blocks of one sheet and its bonus; `previews` shows what the dice on screen score. */
+function blocksOf(
+  t: TFunction,
+  ctx: TurnContext,
+  sheet: Sheet,
+  previews: boolean,
+): Pick<SheetView, 'upper' | 'lower' | 'bonus'> {
+  const cell = (category: Category) => cellView(t, ctx, sheet, category, previews);
+
+  return {
+    upper: UPPER_CATEGORIES.map(cell),
+    lower: lowerCategories(ctx.rules).map(cell),
     bonus: bonusOf(t, ctx, sheet),
   };
 }
@@ -173,7 +218,13 @@ function cellHint(
   return open && lucky !== null ? t('game.luckyNumberHint', { n: lucky }) : null;
 }
 
-function cellView(t: TFunction, ctx: TurnContext, sheet: Sheet, category: Category): CellView {
+function cellView(
+  t: TFunction,
+  ctx: TurnContext,
+  sheet: Sheet,
+  category: Category,
+  previews: boolean,
+): CellView {
   const { rules } = ctx;
   const dice = ctx.local.shownDice;
   const filled = sheet.fields[category];
@@ -198,7 +249,7 @@ function cellView(t: TFunction, ctx: TurnContext, sheet: Sheet, category: Catego
     };
   }
 
-  const allowed = showsPreviews(ctx) && allowedCategories(dice, sheet, rules).includes(category);
+  const allowed = previews && allowedCategories(dice, sheet, rules).includes(category);
   if (!allowed) {
     return {
       ...base,

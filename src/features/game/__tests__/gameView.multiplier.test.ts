@@ -19,6 +19,7 @@ const DICE = [2, 2, 5, 5, 5];
 const local = (sheetIndex: number, dice: number[] = DICE) =>
   ({
     sheetIndex,
+    viewed: null,
     shownDice: dice as unknown as Dice,
     shownRolled: dice.some((d) => d > 0),
     rolling: false,

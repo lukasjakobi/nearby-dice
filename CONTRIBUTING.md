@@ -121,6 +121,10 @@ behaviour is tested with real host and guest sessions over an in-memory network 
 Reuse the fixtures, render helpers and bot player in `src/test/`. What each layer covers is listed
 under [technical design → Testing](docs/technical-design.md#testing).
 
+Each test may take up to 20 s (`testTimeout` in `package.json`). With a cold transform cache, as
+on CI, the first test in a file to show a `Spinner` loads React Native's animation modules and can
+take several seconds; Jest's default of 5 s made that test fail at random.
+
 ## Native and radio changes
 
 Changes to `modules/nearby-connections/`, `src/net/nearby/`, permissions or native config cannot be
