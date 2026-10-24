@@ -117,7 +117,8 @@ Every round has one host, and the host's phone acts as the referee.
 - **Connections recover.** A guest that loses the connection retries three times and reclaims its
   seat with a secret rejoin token. After an app restart, the start screen offers to resume.
 
-Want the details? The [technical design](docs/technical-design.md) covers the architecture, the
+Want the details? The [scoring rules](docs/scoring.md) list every field with its points, and the
+[technical design](docs/technical-design.md) covers the architecture, the
 protocol and the permissions, and [PRODUCT.md](PRODUCT.md) explains what we are building and why.
 
 ## 🩺 Troubleshooting

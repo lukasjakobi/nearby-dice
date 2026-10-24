@@ -147,58 +147,25 @@ broadcasts it after every change, so any phone can show "Spielstand" and "Verlau
 
 **Confirmed:** games are played only in the predefined presets ("Spielstil"); there are no
 individual rule settings. The session shares its `preset`, and each game is created from
-`PRESETS[preset]`. The host picks a preset when hosting and can switch it in the lobby and on the
-results screen (in Training, on its results screen). Switching on the results screen resets every
+`PRESETS[preset]` (what each preset changes is in [scoring.md](scoring.md#presets)). The host picks a
+preset when hosting and can switch it in the lobby and on the results screen (in Training, on its
+results screen). Switching on the results screen resets every
 guest's "yes" rematch vote to pending, so nobody ends up playing a mode they didn't agree to; the
 host's own vote stays. Guests see the mode read-only and get the toast „Spielstil geändert: …“.
 
-**Confirmed:** `ClassicXl` keeps Classic's upper bonus (+35) and the [further-Yatzy rule](#further-yatzys),
-and has 17 fields per sheet. Its lower block starts with `TwoPairs`, `Even`, `Odd` and `Mini`,
-continues with the usual Classic fields and ends with `Chance`:
+**Confirmed:** `ClassicXl` is the Classic XL ruleset with 17 fields per sheet. Its fields and points
+are written in [scoring.md](scoring.md#classic-xl). `TwoPairs` is scored by one helper in `fields.ts`
+that Yatzy shares.
 
-| Field      | Points                                                                                               |
-| ---------- | ---------------------------------------------------------------------------------------------------- |
-| `TwoPairs` | Sum of the two pairs (each pair's face × 2) if two different faces each occur at least twice; else 0 |
-| `Even`     | Sum of only the dice showing 2, 4 or 6; other dice contribute 0                                      |
-| `Odd`      | Sum of only the dice showing 1, 3 or 5; other dice contribute 0                                      |
-| `Mini`     | 30 if the sum is at most 10; else 0                                                                  |
-
-A full house counts for XL's `TwoPairs`, but five equal dice do not. XL and Yatzy count `TwoPairs`
-the same way. For example, `[5, 1, 6, 6, 2]` scores 14 in `Even`, 6 in `Odd` and 0 in `Mini`.
-
-**Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block. Hitting the
-round's target sum exactly scores 40; anything else scores 0. While the field is open it shows the
-current target; once it is filled or struck, the hint disappears. The Lucky Number preset turns this
-rule on for Classic, and the XL preset selects `ClassicXl`.
+**Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block; its points are
+in [scoring.md](scoring.md#lucky-number). While the field is open it shows the current target; once it
+is filled or struck, the hint disappears. The Lucky Number preset turns this rule on for Classic, and
+the XL preset selects `ClassicXl`.
 
 ### Further Yatzys
 
-**Confirmed:** every mode uses the same rule for further Yatzys (also called the joker). Once a
-sheet's Yatzy field holds 50, five equal dice are a further Yatzy:
-
-- Each one adds 50 to the sheet's extra-Yatzy bonus, whichever field it goes into.
-- It goes into the matching upper field (50 points) or any open lower field (that field's maximum
-  from the table below). Those are the allowed fields, in any order.
-- Only when neither is open may it go into another open field. That field scores its normal points,
-  which is 0 for an upper field other than the matching one.
-- With the Yatzy field crossed out (0) or still open, there is no joker and no bonus. Five of a kind
-  scores normally and may go into any allowed field.
-- In "Der Reihe nach" the next open field is the only allowed one, and it scores by the same rule.
-- With three sheets, each sheet decides for itself, and the sheet's factor applies in the totals.
-
-Maximum points of each lower field with a further Yatzy (`max` in `src/domain/fields.ts`, checked
-against every roll in the tests):
-
-| Field                  | Classic and Classic XL | Yatzy   |
-| ---------------------- | ---------------------- | ------- |
-| Matching upper field   | 50                     | 50      |
-| Three / Four of a kind | 30 / 30                | 18 / 24 |
-| One pair / Two pairs   | – / 22 (XL)            | 12 / 22 |
-| Full House             | 25                     | 28      |
-| Small / Large straight | 30 / 40                | 15 / 20 |
-| Chance                 | 30                     | 30      |
-| Even / Odd / Mini (XL) | 30 / 25 / 30           | –       |
-| Lucky number (if on)   | 40                     | 40      |
+The further-Yatzy (joker) rule and its maximum points are written down in
+[scoring.md](scoring.md#further-yatzys); `joker.ts` implements them.
 
 ## A move, end to end
 
@@ -224,9 +191,10 @@ sequenceDiagram
 The host's own moves skip the network and call `reduce` directly. Only the host rolls dice (with a
 seed per round for "Gleiche Würfel"), and every phone shakes its dice when `turn.rollSeq` goes up.
 
-With `luckyNumber`, `luckyNumberFor(seed, round)` derives an evenly distributed target between 8 and
-26 from the game seed. `luckyNumberOf(state)` uses `currentRound(state)`, so every player on their
-nth turn shares the same target, whether or not "Gleiche Würfel" is on. No extra message is needed.
+With `luckyNumber`, `luckyNumberFor(seed, round)` derives the round's target from the game seed (the
+rule is in [scoring.md](scoring.md#lucky-number)). `luckyNumberOf(state)` uses `currentRound(state)`,
+so every player on their nth turn shares the same target, whether or not "Gleiche Würfel" is on. No
+extra message is needed.
 
 ## Protocol (`session/protocol.ts`)
 
@@ -416,13 +384,13 @@ app returns to the foreground it checks again and carries on once everything is 
 The tests run real host and guest sessions over an in-memory network, so they cover the game and
 its synchronisation, but not the radio itself.
 
-| Layer      | What is covered                                                                                                                                                                    |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `domain`   | Unit tests for every field in all rulesets, jokers, bonuses, lucky-number targets, three sheets, the timeout pick, full games per preset, saved games: limit of 10, duplicates     |
-| `net`      | Round codes, advertisements, chunking, the in-memory network, the Bonjour/service-id guard                                                                                         |
-| `session`  | Real `HostSession` + `GuestSession`s over `FakeNetwork` with fake timers: join, rejects, kick, close, a full game with identical state on every phone, rematch, reconnect, give up |
-| `features` | Pure view builders (`buildGameView`), routing, and screens rendered with RNTL against a fake controller                                                                            |
-| `store`    | Validated hydration: one copy per cleaned state, writes blocked after a failed read or copy, migration, dropped rows; no write for unchanged data                                  |
+| Layer      | What is covered                                                                                                                                                                                                                                    |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `domain`   | Unit tests for every field in all rulesets, jokers, bonuses, lucky-number targets, three sheets, the timeout pick, full games per preset, saved games: limit of 10, duplicates; `scoringExamples` checks every example in [scoring.md](scoring.md) |
+| `net`      | Round codes, advertisements, chunking, the in-memory network, the Bonjour/service-id guard                                                                                                                                                         |
+| `session`  | Real `HostSession` + `GuestSession`s over `FakeNetwork` with fake timers: join, rejects, kick, close, a full game with identical state on every phone, rematch, reconnect, give up                                                                 |
+| `features` | Pure view builders (`buildGameView`), routing, and screens rendered with RNTL against a fake controller                                                                                                                                            |
+| `store`    | Validated hydration: one copy per cleaned state, writes blocked after a failed read or copy, migration, dropped rows; no write for unchanged data                                                                                                  |
 
 ## Open questions
 

@@ -5,6 +5,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 ## Read first
 
 - Scope, product principles or open decisions → `PRODUCT.md`
+- Scoring: fields, points, bonus, joker, presets or totals → `docs/scoring.md`
 - Session, protocol, navigation or saved games → `docs/technical-design.md`
 - A new screen or component → `CONTRIBUTING.md`, Project structure and Conventions (the full list
   behind "Every edit")
