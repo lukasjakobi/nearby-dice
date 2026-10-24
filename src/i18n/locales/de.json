@@ -339,7 +339,6 @@
     "roundNameDefault": "{{name, possessive}} Runde",
     "roundNameEmpty": "Bitte einen Namen eingeben.",
     "styleLabel": "Spielstil",
-    "maxPlayersLabel": "Spieler (max.)",
     "open": "Lobby öffnen",
     "opening": "Wird sichtbar gemacht …",
     "retry": "Erneut versuchen"

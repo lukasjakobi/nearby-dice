@@ -47,7 +47,6 @@ async function tripleGame() {
       profile: { name: 'Lukas', color: PlayerColor.Amber },
       roundName: 'Lukas Runde',
       preset: PresetId.Triple,
-      maxPlayers: 4,
       rng: seededRng(7),
     }),
   );

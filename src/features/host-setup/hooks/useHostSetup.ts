@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
 
-import { DEFAULT_MAX_PLAYERS, PresetId } from '@/domain';
+import { PresetId } from '@/domain';
 import { getTransport } from '@/net';
 import {
   getRoundScanner,
@@ -30,7 +30,6 @@ export function useHostSetup() {
   );
   const [nameTouched, setNameTouched] = useState(false);
   const [preset, setPreset] = useState(PresetId.Classic);
-  const [maxPlayers, setMaxPlayers] = useState(DEFAULT_MAX_PLAYERS);
   const [openState, setOpenState] = useState(OpenState.Idle);
   const [error, setError] = useState<HostError | null>(null);
 
@@ -64,7 +63,6 @@ export function useHostSetup() {
         profile,
         roundName: roundName.trim(),
         preset,
-        maxPlayers,
       });
       // Left the setup while the lobby was opening: nobody will use this session.
       if (controller.signal.aborted) {
@@ -98,8 +96,6 @@ export function useHostSetup() {
       setOpenState(OpenState.Idle);
       setError(null);
     },
-    maxPlayers,
-    setMaxPlayers,
     openState,
     error,
     open: () => void open(),

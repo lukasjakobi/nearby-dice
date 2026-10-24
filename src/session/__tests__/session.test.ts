@@ -52,7 +52,7 @@ class Phone {
     this.scanner = new RoundScanner(this.transport);
   }
 
-  host(preset = PresetId.Classic, maxPlayers = 4) {
+  host(preset = PresetId.Classic) {
     return settle(
       HostSession.open({
         transport: this.transport,
@@ -60,7 +60,6 @@ class Phone {
         profile: { name: this.name, color: PlayerColor.Amber },
         roundName: `${this.name}s Runde`,
         preset,
-        maxPlayers,
         rng: seededRng(7),
       }),
     );
@@ -85,8 +84,8 @@ beforeEach(() => {
   network = new FakeNetwork(10);
 });
 
-async function lobbyWith(guestNames: string[], preset?: PresetId, maxPlayers?: number) {
-  const host = await new Phone(network, 'Lukas').host(preset, maxPlayers);
+async function lobbyWith(guestNames: string[], preset?: PresetId) {
+  const host = await new Phone(network, 'Lukas').host(preset);
   const code = host.getSnapshot().shared.code;
   const guests: GuestSession[] = [];
   for (const name of guestNames) guests.push(await new Phone(network, name).join(code));
@@ -133,8 +132,8 @@ describe('lobby', () => {
   });
 
   test('a full round rejects', async () => {
-    const { code } = await lobbyWith(['Antonia'], PresetId.Classic, 2);
-    await expect(new Phone(network, 'Jonas').join(code)).rejects.toMatchObject({
+    const { code } = await lobbyWith(['Antonia', 'Jonas', 'Mia', 'Ben', 'Lea']);
+    await expect(new Phone(network, 'Emil').join(code)).rejects.toMatchObject({
       reason: JoinError.Full,
     });
   });
