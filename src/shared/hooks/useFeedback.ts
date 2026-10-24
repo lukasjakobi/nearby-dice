@@ -20,10 +20,13 @@ export type Feedback = {
   turn: () => void;
 };
 
-/** Sounds and vibration, each respecting its switch in Settings. */
-export function useFeedback(): Feedback {
+/**
+ * Sounds and vibration, each respecting its switch in Settings. `vibrate: false` is for
+ * other players' moves: the phone on the table only buzzes for my own.
+ */
+export function useFeedback({ vibrate = true }: { vibrate?: boolean } = {}): Feedback {
   const sound = useSettingsStore((s) => s.sound);
-  const haptics = useSettingsStore((s) => s.haptics);
+  const haptics = useSettingsStore((s) => s.haptics) && vibrate;
 
   return useMemo(
     () => ({
