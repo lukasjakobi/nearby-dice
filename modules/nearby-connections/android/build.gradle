@@ -1,0 +1,24 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'io.jakobi.nearbydice.nearby'
+version = '1.0.0'
+
+android {
+  namespace "io.jakobi.nearbydice.nearby"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  testImplementation 'junit:junit:4.13.2'
+  // Google Nearby Connections (Play services). Check for a newer version when upgrading.
+  implementation 'com.google.android.gms:play-services-nearby:19.3.0'
+}

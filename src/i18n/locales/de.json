@@ -1,0 +1,596 @@
+{
+  "format": {
+    "and": "und",
+    "points_one": "{{count}}\u00a0Punkt",
+    "points_other": "{{count}}\u00a0Punkte",
+    "ago": {
+      "justNow": "gerade eben",
+      "minutes_one": "vor {{count}}\u00a0Minute",
+      "minutes_other": "vor {{count}}\u00a0Minuten",
+      "hours_one": "vor {{count}}\u00a0Stunde",
+      "hours_other": "vor {{count}}\u00a0Stunden",
+      "days_one": "vor {{count}}\u00a0Tag",
+      "days_other": "vor {{count}}\u00a0Tagen"
+    },
+    "playedOn": {
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "daysAgo_one": "Vor {{count}}\u00a0Tag",
+      "daysAgo_other": "Vor {{count}}\u00a0Tagen"
+    }
+  },
+  "labels": {
+    "category": {
+      "ones": "Einser",
+      "twos": "Zweier",
+      "threes": "Dreier",
+      "fours": "Vierer",
+      "fives": "Fünfer",
+      "sixes": "Sechser",
+      "one-pair": "Ein Paar",
+      "two-pairs": "Zwei Paare",
+      "three-of-a-kind": "Dreierpasch",
+      "four-of-a-kind": "Viererpasch",
+      "full-house": "Full House",
+      "small-straight": "Kleine Straße",
+      "large-straight": "Große Straße",
+      "yatzy": "Yatzy",
+      "chance": "Chance",
+      "even": "Gerade",
+      "odd": "Ungerade",
+      "mini": "Mini",
+      "lucky-number": "Glückszahl"
+    },
+    "playerColor": {
+      "amber": "Bernstein",
+      "mint": "Minze",
+      "sky": "Himmelblau",
+      "coral": "Koralle",
+      "lilac": "Flieder",
+      "yellow": "Gelb"
+    },
+    "preset": {
+      "classic": {
+        "title": "Klassisch",
+        "description": "Freie Feldwahl, 13 Runden, Yatzy-Bonus."
+      },
+      "top-to-bottom": {
+        "title": "Der Reihe nach",
+        "description": "Felder von oben nach unten, 60 Sekunden pro Zug."
+      },
+      "blitz": {
+        "title": "Blitz",
+        "description": "6 Runden, 30 Sekunden pro Zug."
+      },
+      "same-dice": {
+        "title": "Gleiche Würfel",
+        "description": "Alle Spieler bekommen dieselben Würfe."
+      },
+      "triple": {
+        "title": "Dreifach",
+        "description": "Drei Blätter mit Faktor 1, 2 und 3."
+      },
+      "yatzy": {
+        "title": "Yatzy",
+        "description": "Mit Ein Paar und Zwei Paaren, Straßen nur 1–5 und 2–6, Bonus 50."
+      },
+      "classic-xl": {
+        "title": "Klassisch XL",
+        "description": "17 Felder: dazu Zwei Paare, Gerade, Ungerade und Mini."
+      },
+      "lucky-number": {
+        "title": "Glückszahl",
+        "description": "Jede Runde eine neue Glückszahl. Genau getroffen: 40 Punkte."
+      }
+    },
+    "secondsPerTurn": {
+      "0": "Kein Limit",
+      "30": "30\u00a0s",
+      "60": "60\u00a0s"
+    },
+    "yatzyBonus": {
+      "0": "Aus",
+      "50": "+50",
+      "100": "+100"
+    },
+    "ruleset": {
+      "classic": "Klassisch",
+      "classic-xl": "Klassisch XL",
+      "yatzy": "Yatzy"
+    },
+    "joker": {
+      "off": "Aus",
+      "official": "Offiziell",
+      "free": "Frei"
+    },
+    "sheetCount": {
+      "1": "1",
+      "3": "3 (×1, ×2, ×3)"
+    },
+    "fieldOrder": {
+      "free": "Frei wählbar",
+      "top-to-bottom": "Der Reihe nach"
+    },
+    "themeMode": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "system": "System"
+    },
+    "languageMode": {
+      "system": "System",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "nameProblem": {
+      "empty": "Bitte gib einen Namen ein.",
+      "too-short": "Der Name braucht mindestens 2 Zeichen."
+    },
+    "joinStep": {
+      "search": "Runde suchen",
+      "secure": "Sichere Verbindung aufbauen",
+      "join": "Beitreten"
+    }
+  },
+  "errors": {
+    "join": {
+      "not-found": {
+        "title": "Keine Runde mit diesem Code",
+        "body": "Prüfe den Code und halte dich in der Nähe des Gastgebers. Beide Geräte brauchen Bluetooth und WLAN."
+      },
+      "full": {
+        "title": "Diese Runde ist voll",
+        "body": "Alle Plätze sind besetzt. Bitte den Gastgeber, die maximale Spielerzahl zu erhöhen oder einen Platz freizugeben."
+      },
+      "removed": {
+        "title": "Du wurdest entfernt",
+        "body": "Der Gastgeber hat dich aus dieser Runde genommen. Du kannst ihr nicht erneut beitreten."
+      },
+      "started": {
+        "title": "Das Spiel läuft schon",
+        "body": "Neue Mitspieler können nach dem Start nicht mehr beitreten. Frag den Gastgeber nach der nächsten Runde."
+      },
+      "bluetooth-off": {
+        "title": "Bluetooth ist aus",
+        "body": "Schalte Bluetooth in den Geräteeinstellungen ein und versuche es erneut."
+      },
+      "location-off": {
+        "title": "Standort ist ausgeschaltet",
+        "body": "Aktiviere die Standortdienste in den Geräteeinstellungen, damit Nearby Dice Geräte in der Nähe finden kann."
+      },
+      "denied": {
+        "title": "Zugriff verweigert",
+        "body": "Ohne diese Berechtigung kann Nearby Dice keine Runde finden. Du kannst sie in den Geräteeinstellungen jederzeit erteilen."
+      }
+    },
+    "host": {
+      "bluetooth-off": {
+        "title": "Bluetooth ist ausgeschaltet",
+        "body": "Schalte Bluetooth in den Geräteeinstellungen ein und versuche es erneut."
+      },
+      "permission-missing": {
+        "title": "Berechtigung fehlt",
+        "body": "Nearby Dice braucht Zugriff auf Geräte in der Nähe, um die Runde sichtbar zu machen."
+      },
+      "location-off": {
+        "title": "Standort ist ausgeschaltet",
+        "body": "Aktiviere die Standortdienste in den Geräteeinstellungen, damit Mitspieler deine Runde finden können."
+      }
+    },
+    "sessionEnd": {
+      "kicked": {
+        "title": "$t(errors.join.removed.title)",
+        "body": "$t(errors.join.removed.body)"
+      },
+      "lobby-closed": {
+        "title": "Die Runde wurde beendet",
+        "body": "Der Gastgeber hat die Lobby geschlossen."
+      },
+      "game-ended": {
+        "title": "Die Runde wurde beendet",
+        "body": "Der Gastgeber hat das Spiel beendet."
+      }
+    }
+  },
+  "common": {
+    "back": "Zurück",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "loading": "Lädt",
+    "hostTag": "Gastgeber",
+    "youTag": "Du",
+    "connected": "Verbunden",
+    "reconnectingPeer": "Verbindung unterbrochen – verbinde erneut …",
+    "homeButton": "Zur Startseite",
+    "retryConnection": "Erneut verbinden",
+    "appName": "Nearby Dice",
+    "joined": "{{name}} ist beigetreten.",
+    "reconnected": "{{name}} ist wieder verbunden.",
+    "removed": "{{name}} wurde entfernt.",
+    "connectionBack": "Wieder verbunden.",
+    "changeStyle": "Spielstil ändern",
+    "styleChanged": "Spielstil geändert: {{style}}"
+  },
+  "permission": {
+    "primer": {
+      "title": "Gemeinsam in der Nähe spielen",
+      "body": "Nearby Dice braucht Bluetooth und Zugriff auf Geräte im lokalen Netzwerk, um eure Handys direkt miteinander zu verbinden."
+    },
+    "androidLocation": "Android benötigt außerdem die Standortberechtigung, um Geräte in der Nähe zu finden. Nearby Dice ermittelt und speichert deinen Standort nicht.",
+    "blocked": {
+      "title": "Berechtigung fehlt",
+      "body": "Erlaube Nearby Dice in den Geräteeinstellungen den Zugriff auf Geräte in der Nähe und das lokale Netzwerk. Danach geht es hier automatisch weiter."
+    },
+    "bluetoothOff": {
+      "title": "Bluetooth ist ausgeschaltet",
+      "body": "Schalte Bluetooth in den Geräteeinstellungen ein. Wenn du zurückkommst, geht es automatisch weiter."
+    },
+    "locationOff": {
+      "title": "Standort ist ausgeschaltet",
+      "body": "Aktiviere die Standortdienste, damit Android Geräte in der Nähe finden kann. Wenn du zurückkommst, geht es automatisch weiter."
+    },
+    "unavailable": {
+      "title": "Verbindung nicht verfügbar",
+      "body": "Dieses Gerät oder diese App-Version unterstützt die Verbindung in der Nähe nicht. Verwende die installierte Nearby-Dice-App auf einem unterstützten Handy."
+    },
+    "checkFailed": {
+      "title": "Berechtigungen nicht geprüft",
+      "body": "Die Geräteeinstellungen konnten nicht gelesen werden. Versuche es erneut."
+    },
+    "fallbackTitle": "Bereit für deine Freunde?",
+    "fallbackBody": "Prüfe die Berechtigungen und Geräteeinstellungen, um Runden in der Nähe zu finden.",
+    "check": "Berechtigungen prüfen",
+    "allow": "Erlauben",
+    "later": "Später",
+    "retry": "Erneut prüfen",
+    "openSettings": "Einstellungen öffnen",
+    "settingsFailed": "Die Einstellungen konnten nicht geöffnet werden. Öffne sie direkt auf deinem Handy oder versuche es erneut."
+  },
+  "onboarding": {
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "finish": "Los geht’s",
+    "step": "Schritt {{n}} von 3",
+    "slides": {
+      "dice": {
+        "title": "Nearby Dice mit Freunden",
+        "body": "Ihr sitzt zusammen, jeder spielt auf dem eigenen Handy."
+      },
+      "code": {
+        "title": "Ein Code reicht",
+        "body": "Einer erstellt die Runde und zeigt den Code. Alle anderen geben ihn ein."
+      },
+      "profile": {
+        "title": "Wer bist du?"
+      }
+    },
+    "roundCode": "Rundencode",
+    "nameLabel": "Dein Name",
+    "colorLabel": "Deine Farbe",
+    "namePlaceholder": "z. B. Lukas"
+  },
+  "home": {
+    "greeting": "Hallo, {{name}}!",
+    "welcome": "Willkommen!",
+    "settings": "Einstellungen",
+    "editProfile": "Profil bearbeiten: {{name}}",
+    "host": "Hosten",
+    "join": "Beitreten",
+    "training": "Training",
+    "trainingHint": "Allein üben",
+    "trainingHintBest": "Allein üben · Bestwert {{best}}",
+    "diceTray": "Aufwärm-Würfel",
+    "dieLabel": "Würfel {{n}}: {{value}}. Antippen zum Würfeln",
+    "stats": {
+      "wins": "Siege",
+      "best": "Bestwert",
+      "yatzys": "Yatzy"
+    },
+    "statsTitle": "Deine Statistik",
+    "statsAll": "Gesamt",
+    "recentTitle": "Zuletzt gespielt",
+    "recentEmpty": "Noch keine Runde gespielt. Deine ersten Ergebnisse erscheinen hier.",
+    "newPlayer": {
+      "title": "Wer spielt hier?",
+      "body": "Lege einen Namen und eine Farbe fest, damit dich deine Mitspieler in der Lobby erkennen.",
+      "action": "Profil anlegen"
+    },
+    "resume": {
+      "title": "Unterbrochene Sitzung",
+      "body": "Runde {{round}} von {{total}} mit {{others, names}}. Die Verbindung zu Gastgeber {{host}} ist {{since}} abgebrochen.",
+      "resume": "Fortsetzen",
+      "discard": "Verwerfen",
+      "searching": "Suche Gastgeber {{host}} …",
+      "attempt": "Bleibe in der Nähe von {{host, possessive}} Gerät. Versuch {{n}} von 3.",
+      "successTitle": "Wieder verbunden",
+      "successBody": "{{host}} hat deinen Spielstand bestätigt. Es geht in Runde {{round}} weiter.",
+      "successAction": "Zurück ins Spiel",
+      "failTitle": "Gastgeber nicht gefunden",
+      "failBody": "{{host}} ist nicht in Reichweite oder hat die Sitzung beendet. Dein Spielstand bleibt gespeichert.",
+      "retry": "Erneut versuchen",
+      "later": "Später"
+    },
+    "discardDialog": {
+      "title": "Sitzung verwerfen?",
+      "body": "Der gespeicherte Spielstand von Runde {{round}} geht verloren. Das kannst du nicht rückgängig machen.",
+      "confirm": "Endgültig verwerfen",
+      "cancel": "Behalten"
+    }
+  },
+  "profile": {
+    "titleCreate": "Profil anlegen",
+    "titleEdit": "Dein Profil",
+    "nameLabel": "Anzeigename",
+    "namePlaceholder": "z. B. Lukas",
+    "help": "So sehen dich deine Mitspieler.",
+    "colorLabel": "Deine Farbe",
+    "saveCreate": "Profil speichern",
+    "saveEdit": "Änderungen speichern",
+    "saved": "Profil gespeichert.",
+    "reset": "Profil zurücksetzen",
+    "resetDialog": {
+      "title": "Profil zurücksetzen?",
+      "body": "Name und Farbe werden gelöscht. Bereits gespielte Runden bleiben in der Statistik erhalten.",
+      "confirm": "Zurücksetzen"
+    }
+  },
+  "hostSetup": {
+    "title": "Spiel hosten",
+    "roundNameLabel": "Name der Runde",
+    "roundNameDefault": "{{name, possessive}} Runde",
+    "roundNameEmpty": "Bitte einen Namen eingeben.",
+    "styleLabel": "Spielstil",
+    "maxPlayersLabel": "Spieler (max.)",
+    "open": "Lobby öffnen",
+    "opening": "Wird sichtbar gemacht …",
+    "retry": "Erneut versuchen"
+  },
+  "training": {
+    "title": "Training",
+    "intro": "Spiel allein und probiere Taktiken in Ruhe aus.",
+    "note": "Trainingsrunden zählen nicht zu Siegen und Statistik. Sie haben einen eigenen Bestwert.",
+    "start": "Training starten"
+  },
+  "lobby": {
+    "roundCode": "Rundencode",
+    "codeSpoken": "Rundencode {{code}}",
+    "codeHint": "Mitspieler geben diesen Code unter „Spiel beitreten“ ein.",
+    "playersTitle": "Spieler",
+    "playerCount": "{{n}} von {{max}}",
+    "waitingTitle": "Warte auf Mitspieler …",
+    "freeSeat": "Platz frei",
+    "freeSeatHint": "Bis zu {{max}}\u00a0Spieler",
+    "playerActions": "Aktionen für {{name}}",
+    "kickAction": "Aus der Lobby entfernen",
+    "startHintTooFew": "Mindestens 2 Spieler nötig.",
+    "startHintWaiting": "Warte auf Wiederverbindung von {{name}} …",
+    "startHintReady": "Es kann losgehen.",
+    "start": "Spiel starten",
+    "closeLabel": "Lobby schließen",
+    "startDialog": {
+      "title": "Spiel mit {{n}}\u00a0Spielern starten?",
+      "body": "Danach werden die Regeln festgelegt und neue Mitspieler können nur noch wieder verbinden, nicht neu beitreten.",
+      "confirm": "Jetzt starten",
+      "cancel": "Noch warten"
+    },
+    "closeDialog": {
+      "title": "Lobby schließen?",
+      "body": "Alle verbundenen Mitspieler werden getrennt und sehen, dass die Runde beendet wurde.",
+      "confirm": "Lobby schließen",
+      "cancel": "Weiter warten"
+    },
+    "kickDialog": {
+      "title": "{{name}} entfernen?",
+      "body": "{{name}} wird getrennt und kann dieser Runde nicht erneut beitreten.",
+      "confirm": "Entfernen"
+    },
+    "rulesButton": "Regeln",
+    "rulesTitle": "Regeln der Runde",
+    "rules": {
+      "style": "Spielstil",
+      "ruleset": "Spielblock",
+      "rounds": "Runden",
+      "sheets": "Blätter",
+      "rolls": "Würfe pro Zug",
+      "time": "Zeit pro Zug",
+      "order": "Feldwahl",
+      "upperBonus": "Bonus ab {{threshold}} Punkten",
+      "extraYatzy": "Weitere Yatzy",
+      "joker": "Joker",
+      "sameDice": "Gleiche Würfel für alle",
+      "luckyNumber": "Glückszahl",
+      "on": "An",
+      "off": "Aus"
+    },
+    "waitingForHost": "Warten auf den Gastgeber",
+    "connectionLost": "Verbindung unterbrochen",
+    "attempt": "Versuch {{n}} von 3",
+    "reconnectFailedTitle": "Verbindung verloren",
+    "reconnectFailedBody": "Die Verbindung zum Gastgeber ließ sich nicht wiederherstellen. Bleibe in seiner Nähe und versuche es erneut.",
+    "countdownTitle": "Das Spiel beginnt",
+    "go": "Los!",
+    "leaveLabel": "Runde verlassen",
+    "leaveDialog": {
+      "title": "Runde verlassen?",
+      "body": "Du kannst mit dem Code jederzeit wieder beitreten, solange die Runde noch nicht gestartet ist.",
+      "confirm": "Verlassen",
+      "cancel": "Bleiben"
+    }
+  },
+  "join": {
+    "title": "Spiel beitreten",
+    "codeTitle": "Rundencode eingeben",
+    "codeLabel": "Rundencode, vier Zeichen",
+    "nearbyTitle": "In deiner Nähe",
+    "refresh": "Runden aktualisieren",
+    "scanning": "Suche läuft",
+    "nearbyEmpty": "Keine Runden in der Nähe",
+    "scanFailed": "Die Suche konnte nicht gestartet werden. Prüfe die Berechtigungen und versuche es erneut.",
+    "seats": "{{n}} von {{max}}\u00a0Spielern",
+    "full": "Voll",
+    "join": "Beitreten",
+    "roundA11y": "{{name}}, {{n}} von {{max}} Spielern, beitreten",
+    "roundA11yFull": "{{name}}, {{n}} von {{max}} Spielern, voll",
+    "successTitle": "Du bist dabei!",
+    "successBody": "Die Lobby wartet auf dich.",
+    "retry": "Erneut versuchen",
+    "otherCode": "Anderen Code eingeben"
+  },
+  "game": {
+    "menu": "Menü",
+    "scoreboard": "Spielstand",
+    "round": "Runde {{n}} von {{total}}",
+    "players": "Spieler",
+    "upperBlock": "Oberer Block",
+    "lowerBlock": "Unterer Block",
+    "moreFields": "Weitere Felder",
+    "bonus": "Bonus (+{{points}})",
+    "yatzyBonusRow": "Yatzy-Bonus",
+    "bonusProgress": "{{sum}} / {{threshold}}",
+    "luckyNumberHint": "Summe {{n}}",
+    "mySheet": "Dein Blatt",
+    "sheetOf": "{{name, possessive}} Blatt",
+    "sheetFactor": "×{{factor}}",
+    "onSheet": "{{name}} ist auf diesem Blatt",
+    "dice": "Würfel",
+    "diceLocked": "Würfel festgelegt: Diese Werte werden eingetragen",
+    "dieLabel": {
+      "rolled": "Würfel {{n}}: {{value}}",
+      "held": "Würfel {{n}}: {{value}}, gehalten",
+      "unrolled": "Würfel {{n}}, noch nicht gewürfelt"
+    },
+    "rollsLeft_zero": "Kein Wurf übrig",
+    "rollsLeft_one": "{{count}}\u00a0Wurf übrig",
+    "rollsLeft_other": "{{count}}\u00a0Würfe übrig",
+    "rollsLeftOf_zero": "{{name}}: kein Wurf übrig",
+    "rollsLeftOf_one": "{{name}}: {{count}}\u00a0Wurf übrig",
+    "rollsLeftOf_other": "{{name}}: {{count}}\u00a0Würfe übrig",
+    "roll": "Würfeln",
+    "rollAgain": "Nochmal würfeln",
+    "pickField": "Feld wählen",
+    "timeLeft": "Verbleibende Zeit",
+    "isUp": "{{name}} ist dran",
+    "isRolling": "{{name}} würfelt …",
+    "isPicking": "{{name}} wählt {{field}} …",
+    "unreachable": "{{name}} ist nicht erreichbar",
+    "cell": {
+      "filled": "{{label}}: $t(format.points), eingetragen",
+      "pickable": "{{label}}: $t(format.points) eintragen",
+      "preview": "{{label}}: $t(format.points) möglich",
+      "open": "{{label}}, noch offen"
+    },
+    "confirm": {
+      "enter": "Eintragen",
+      "strike": "Streichen",
+      "back": "Zurück"
+    },
+    "total": "Gesamt",
+    "history": "Verlauf",
+    "historyRound": "Runde {{n}}",
+    "historyEmpty": "Noch keine Einträge.",
+    "historyEntry": {
+      "skipped": "Zug übersprungen",
+      "removed": "Aus dem Spiel entfernt",
+      "automatic": "Zeit abgelaufen"
+    },
+    "scored": "{{name}}: {{label}} {{value}}",
+    "timeout": "Zeit abgelaufen: {{label}} {{value}}",
+    "continue": "Weiterspielen",
+    "leaveHost": "Spiel für alle beenden",
+    "leaveHostBody": "Das Spiel endet für alle Mitspieler. Der Spielstand wird gespeichert.",
+    "leaveGuest": "Spiel verlassen",
+    "leaveGuestBody": "Dein Spielstand bleibt gespeichert. Der Gastgeber kann dich später wieder einladen.",
+    "leaveTraining": "Training beenden",
+    "leaveTrainingBody": "Dieses Training wird nicht gespeichert.",
+    "lostHost": "{{name}} hat die Verbindung verloren",
+    "lostGuest": "Warten auf {{name}} …",
+    "options": "Optionen",
+    "lostSheetTitle": "{{name}} ist nicht erreichbar",
+    "keepWaiting": "Weiter warten",
+    "skipTurn": "Zug überspringen",
+    "removePlayer": "Aus dem Spiel entfernen",
+    "removeDialog": {
+      "title": "{{name}} entfernen?",
+      "body": "Der Spielstand von {{name}} wird aus der Wertung genommen. Das kannst du nicht rückgängig machen.",
+      "confirm": "Entfernen"
+    },
+    "playerBack": "{{name}} ist wieder da.",
+    "ownConnectionLost": "Verbindung unterbrochen · Versuch {{attempt}} von 3",
+    "connectionLostTitle": "Verbindung verloren",
+    "connectionLostBody": "Dein Spielstand bleibt gespeichert. Du kannst später weiterspielen."
+  },
+  "results": {
+    "winner": "{{name}} gewinnt!",
+    "youWin": "Du gewinnst!",
+    "tie": "Unentschieden!",
+    "you": "(Du)",
+    "summary_one": "{{points}} · {{count}}\u00a0Runde",
+    "summary_other": "{{points}} · {{count}}\u00a0Runden",
+    "behind": "−{{n}}",
+    "upper": "Oben",
+    "bonus": "Bonus",
+    "lower": "Unten",
+    "awards": {
+      "bestMove": "Höchster Zug",
+      "bonus": "Bonus +{{n}} erreicht",
+      "zeros": "Meiste Nullen",
+      "nobody": "Niemand",
+      "none": "Keine"
+    },
+    "compare": "Alle Felder im Vergleich",
+    "field": "Feld",
+    "rematch": "Revanche",
+    "rematchStarting": "Revanche startet …",
+    "waitingForOthers": "Warten auf andere Spieler …",
+    "voteA11y": "{{name}}: {{state}}",
+    "voteState": {
+      "pending": "wartet",
+      "yes": "dabei",
+      "no": "nicht dabei"
+    },
+    "endHost": "Runde beenden",
+    "endGuest": "Zur Startseite",
+    "endHostDialog": {
+      "title": "Runde für alle beenden?",
+      "body": "Die Lobby wird geschlossen. Alle Mitspieler kehren zur Startseite zurück.",
+      "confirm": "Runde beenden"
+    },
+    "endGuestDialog": {
+      "title": "Runde verlassen?",
+      "body": "Du verpasst die Revanche. Der Gastgeber kann ohne dich weiterspielen.",
+      "confirm": "Zur Startseite"
+    },
+    "training": {
+      "done": "Training beendet",
+      "newBest": "Neuer Bestwert!",
+      "best": "Bestwert im Training",
+      "yatzys": "Yatzy in diesem Spiel",
+      "again": "Nochmal spielen",
+      "home": "Zur Startseite"
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "edit": "Bearbeiten",
+    "appearance": "Darstellung",
+    "language": "Sprache",
+    "game": "Spiel",
+    "sound": "Töne",
+    "music": "Hintergrundmusik",
+    "haptics": "Vibration",
+    "keepAwake": "Bildschirm anlassen",
+    "connection": "Verbindung",
+    "nearby": "Geräte in der Nähe",
+    "allowed": "Erlaubt",
+    "notAllowed": "Nicht erlaubt",
+    "openSettings": "Einstellungen öffnen",
+    "data": "Daten",
+    "resetStats": "Statistik zurücksetzen",
+    "resetDone": "Statistik wurde zurückgesetzt.",
+    "resetDialog": {
+      "title": "Statistik zurücksetzen?",
+      "body": "Siege, Bestwert und letzte Runden werden gelöscht. Das kannst du nicht rückgängig machen.",
+      "confirm": "Zurücksetzen"
+    },
+    "version": "Version"
+  }
+}

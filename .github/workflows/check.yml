@@ -1,0 +1,33 @@
+name: Check
+
+# Typecheck, lint, format check and tests for every pull request and every push to main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push to a pull request cancels its running check. Runs on main get their own group, so
+# every commit there keeps its result (a shared group would also drop queued runs).
+concurrency:
+  group: check-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Takes about a minute; a test that keeps Jest alive should fail here, not use up the job timeout.
+      - run: npm run check
+        timeout-minutes: 10

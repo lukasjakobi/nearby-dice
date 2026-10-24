@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a new feature or an improvement.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check PRODUCT.md first: it lists the scope and the open decisions.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What do you want to do that the app makes hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: How should it work? App text is German and final, so new wording needs agreement.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other solutions or workarounds you considered.

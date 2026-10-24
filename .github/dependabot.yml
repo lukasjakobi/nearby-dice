@@ -1,0 +1,59 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # Expo pins these per SDK, so they update together in one pull request.
+      expo-sdk:
+        patterns:
+          - expo
+          - expo-*
+          - jest-expo
+          - eslint-config-expo
+          - react
+          - react-dom
+          - react-native
+          - react-native-*
+          - '@react-native-async-storage/*'
+      # Minor and patch updates of everything else share one pull request; majors get their own.
+      other-dependencies:
+        patterns: ['*']
+        update-types: [minor, patch]
+    # A newer minor or major version of an Expo-pinned package belongs to a later SDK, so only
+    # patches are proposed. SDK upgrades go through `npx expo install --fix` (CONTRIBUTING, Updating dependencies).
+    ignore:
+      - dependency-name: expo
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: expo-*
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: jest-expo
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: eslint-config-expo
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: react
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: react-native
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: react-native-*
+        update-types: [version-update:semver-major, version-update:semver-minor]
+      - dependency-name: '@react-native-async-storage/*'
+        update-types: [version-update:semver-major, version-update:semver-minor]

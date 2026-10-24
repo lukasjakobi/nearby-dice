@@ -1,0 +1,7 @@
+{
+  "name": "nearby-connections",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Google Nearby Connections bridge for Nearby Dice",
+  "main": "index.ts"
+}

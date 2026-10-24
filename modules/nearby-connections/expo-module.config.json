@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["NearbyConnectionsModule"]
+  },
+  "android": {
+    "modules": ["io.jakobi.nearbydice.nearby.NearbyConnectionsModule"]
+  }
+}

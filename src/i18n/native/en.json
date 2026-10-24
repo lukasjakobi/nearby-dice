@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSBluetoothAlwaysUsageDescription": "Nearby Dice uses Bluetooth to find rounds from friends nearby.",
+    "NSLocalNetworkUsageDescription": "Nearby Dice uses the local network (Wi-Fi) to play with other players nearby.",
+    "NSLocationWhenInUseUsageDescription": "Nearby Dice needs this access to connect to devices nearby."
+  }
+}

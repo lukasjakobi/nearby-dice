@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in the app does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please report security problems privately instead, as described in SECURITY.md.
+  - type: textarea
+    id: devices
+    attributes:
+      label: Devices and OS versions
+      description: Every phone in the round, with model and OS version. Mark which one hosted.
+      placeholder: |
+        Host: Pixel 8, Android 16
+        Guest: iPhone 15, iOS 26
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version or commit
+      description: The release you installed, or the commit you built from.
+      placeholder: v1.0.0 or a1b2c3d
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Host a round
+        2. Join from a second phone
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happened instead. Screenshots, screen recordings and logs help.
+    validations:
+      required: true

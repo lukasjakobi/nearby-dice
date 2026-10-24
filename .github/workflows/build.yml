@@ -1,0 +1,150 @@
+name: Build
+
+# Push a v* tag to publish a GitHub Release with the APK; run manually to get it as an artifact.
+#
+# A run for a tag cannot read caches saved by other tags, so a tag push only hands the build
+# to a run on main (with the tag as input). That run builds the tag's commit and reuses the
+# caches of earlier releases.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to build and release (empty to build the selected branch without a release)
+        required: false
+
+concurrency:
+  group: build-${{ inputs.tag || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run build.yml --repo "$GITHUB_REPOSITORY" --ref main -f tag="$GITHUB_REF_NAME"
+
+  android:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+      # app.config.js reads the version from here; prebuild and the Gradle build (which embeds the
+      # config for expo-constants) both need it. Empty for a branch build, which uses package.json.
+      NEARBY_DICE_VERSION: ${{ inputs.tag }}
+      # Caches compiled C++ (React Native libraries, Expo modules) between runs.
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_NOHASHDIR: true
+      CCACHE_MAXSIZE: 1G
+      CCACHE_SLOPPINESS: include_file_mtime,include_file_ctime,time_macros,pch_defines
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - run: npm ci
+
+      # Takes about a minute; a test that keeps Jest alive should fail here, not use up the job timeout.
+      - run: npm run check
+        timeout-minutes: 10
+
+      # android/ is generated and ignored; prebuild applies the config plugins (release signing, dev variant).
+      - run: npx expo prebuild --platform android --clean --no-install
+
+      # Saves from every run: they run on branches (usually main), whose caches later runs can read.
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: false
+
+      # clang stamps precompiled headers (expo-modules-core) with input file times, so every file
+      # that includes one would miss the cache. Gradle does not pass CXXFLAGS to CMake, so the
+      # C++ launcher adds the flag.
+      - name: Install ccache
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ccache
+          printf '#!/bin/sh\nexec ccache "$@" -Xclang -fno-pch-timestamp\n' > "$RUNNER_TEMP/ccache-cxx"
+          chmod +x "$RUNNER_TEMP/ccache-cxx"
+
+      - uses: actions/cache/restore@v6
+        with:
+          path: .ccache
+          key: ccache-android-${{ github.run_id }}
+          restore-keys: ccache-android-
+
+      # GitHub passes a missing secret as an empty string; without this check only Gradle's signing
+      # validation would catch it, after the whole native build.
+      - name: Decode release keystore
+        env:
+          NEARBY_DICE_RELEASE_KEYSTORE_BASE64: ${{ secrets.NEARBY_DICE_RELEASE_KEYSTORE_BASE64 }}
+          NEARBY_DICE_RELEASE_STORE_PASSWORD: ${{ secrets.NEARBY_DICE_RELEASE_STORE_PASSWORD }}
+          NEARBY_DICE_RELEASE_KEY_ALIAS: ${{ secrets.NEARBY_DICE_RELEASE_KEY_ALIAS }}
+          NEARBY_DICE_RELEASE_KEY_PASSWORD: ${{ secrets.NEARBY_DICE_RELEASE_KEY_PASSWORD }}
+        run: |
+          missing=0
+          for name in NEARBY_DICE_RELEASE_KEYSTORE_BASE64 NEARBY_DICE_RELEASE_STORE_PASSWORD \
+            NEARBY_DICE_RELEASE_KEY_ALIAS NEARBY_DICE_RELEASE_KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is missing or empty (see CONTRIBUTING, Releases)."
+              missing=1
+            fi
+          done
+          [ "$missing" = 0 ] || exit 1
+          echo "$NEARBY_DICE_RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
+
+      - name: Build release APK
+        working-directory: android
+        env:
+          NEARBY_DICE_RELEASE_STORE_FILE: ${{ runner.temp }}/release.jks
+          NEARBY_DICE_RELEASE_STORE_PASSWORD: ${{ secrets.NEARBY_DICE_RELEASE_STORE_PASSWORD }}
+          NEARBY_DICE_RELEASE_KEY_ALIAS: ${{ secrets.NEARBY_DICE_RELEASE_KEY_ALIAS }}
+          NEARBY_DICE_RELEASE_KEY_PASSWORD: ${{ secrets.NEARBY_DICE_RELEASE_KEY_PASSWORD }}
+          # Only React Native's app CMake looks for ccache itself; this reaches every library's CMake.
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ${{ runner.temp }}/ccache-cxx
+        # Phone ABIs only: the emulator ABIs (x86, x86_64) would double the C++ build time and APK size.
+        # --build-cache reuses Kotlin/Java task outputs; setup-gradle keeps them between runs.
+        run: |
+          ccache --zero-stats
+          ./gradlew assembleRelease --no-daemon --build-cache -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+          ccache --show-stats
+
+      - uses: actions/cache/save@v6
+        with:
+          path: .ccache
+          key: ccache-android-${{ github.run_id }}
+
+      - name: Name APK
+        run: |
+          NAME="${RELEASE_TAG:-$GITHUB_REF_NAME}"
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/nearby-dice-${NAME//\//-}.apk"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nearby-dice-android
+          path: dist/*.apk
+
+      - name: Publish GitHub Release
+        if: env.RELEASE_TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$RELEASE_TAG" dist/*.apk --verify-tag --title "Nearby Dice $RELEASE_TAG" --generate-notes

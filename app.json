@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "Nearby Dice",
+    "slug": "nearby-dice",
+    "scheme": "nearbydice",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "backgroundColor": "#F3F5F6",
+    "ios": {
+      "bundleIdentifier": "io.jakobi.nearbydice",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Nearby Dice nutzt Bluetooth, um Runden von Freunden in der Nähe zu finden.",
+        "NSLocalNetworkUsageDescription": "Nearby Dice nutzt das lokale Netzwerk (WLAN), um mit Mitspielern in der Nähe zu spielen.",
+        "NSLocationWhenInUseUsageDescription": "Nearby Dice braucht diesen Zugriff, um sich mit Geräten in der Nähe zu verbinden.",
+        "NSBonjourServices": ["_2915FFD77C93._tcp"]
+      }
+    },
+    "android": {
+      "package": "io.jakobi.nearbydice",
+      "adaptiveIcon": {
+        "backgroundColor": "#101214",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": ["android.permission.VIBRATE"],
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      "expo-audio",
+      "./plugins/withReleaseSigning",
+      "./plugins/withDevVariant",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
+          "backgroundColor": "#101214"
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": ["de", "en"]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "locales": {
+      "de": "./src/i18n/native/de.json",
+      "en": "./src/i18n/native/en.json"
+    }
+  }
+}

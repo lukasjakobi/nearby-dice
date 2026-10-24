@@ -1,0 +1,596 @@
+{
+  "format": {
+    "and": "and",
+    "points_one": "{{count}}\u00a0point",
+    "points_other": "{{count}}\u00a0points",
+    "ago": {
+      "justNow": "just now",
+      "minutes_one": "{{count}}\u00a0minute ago",
+      "minutes_other": "{{count}}\u00a0minutes ago",
+      "hours_one": "{{count}}\u00a0hour ago",
+      "hours_other": "{{count}}\u00a0hours ago",
+      "days_one": "{{count}}\u00a0day ago",
+      "days_other": "{{count}}\u00a0days ago"
+    },
+    "playedOn": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo_one": "{{count}}\u00a0day ago",
+      "daysAgo_other": "{{count}}\u00a0days ago"
+    }
+  },
+  "labels": {
+    "category": {
+      "ones": "Ones",
+      "twos": "Twos",
+      "threes": "Threes",
+      "fours": "Fours",
+      "fives": "Fives",
+      "sixes": "Sixes",
+      "one-pair": "One pair",
+      "two-pairs": "Two pairs",
+      "three-of-a-kind": "Three of a kind",
+      "four-of-a-kind": "Four of a kind",
+      "full-house": "Full house",
+      "small-straight": "Small straight",
+      "large-straight": "Large straight",
+      "yatzy": "Yatzy",
+      "chance": "Chance",
+      "even": "Even",
+      "odd": "Odd",
+      "mini": "Mini",
+      "lucky-number": "Lucky number"
+    },
+    "playerColor": {
+      "amber": "Amber",
+      "mint": "Mint",
+      "sky": "Sky blue",
+      "coral": "Coral",
+      "lilac": "Lilac",
+      "yellow": "Yellow"
+    },
+    "preset": {
+      "classic": {
+        "title": "Classic",
+        "description": "Free field choice, 13 rounds, Yatzy bonus."
+      },
+      "top-to-bottom": {
+        "title": "Top to bottom",
+        "description": "Fields in order from top to bottom, 60 seconds per turn."
+      },
+      "blitz": {
+        "title": "Blitz",
+        "description": "6 rounds, 30 seconds per turn."
+      },
+      "same-dice": {
+        "title": "Same dice",
+        "description": "Every player gets the same rolls."
+      },
+      "triple": {
+        "title": "Triple",
+        "description": "Three sheets with factors 1, 2 and 3."
+      },
+      "yatzy": {
+        "title": "Yatzy",
+        "description": "With One pair and Two pairs, straights only 1–5 and 2–6, bonus 50."
+      },
+      "classic-xl": {
+        "title": "Classic XL",
+        "description": "17 fields: adds Two pairs, Even, Odd and Mini."
+      },
+      "lucky-number": {
+        "title": "Lucky number",
+        "description": "A new lucky number every round. Hit it exactly: 40 points."
+      }
+    },
+    "secondsPerTurn": {
+      "0": "No limit",
+      "30": "30\u00a0s",
+      "60": "60\u00a0s"
+    },
+    "yatzyBonus": {
+      "0": "Off",
+      "50": "+50",
+      "100": "+100"
+    },
+    "ruleset": {
+      "classic": "Classic",
+      "classic-xl": "Classic XL",
+      "yatzy": "Yatzy"
+    },
+    "joker": {
+      "off": "Off",
+      "official": "Official",
+      "free": "Free"
+    },
+    "sheetCount": {
+      "1": "1",
+      "3": "3 (×1, ×2, ×3)"
+    },
+    "fieldOrder": {
+      "free": "Free choice",
+      "top-to-bottom": "Top to bottom"
+    },
+    "themeMode": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languageMode": {
+      "system": "System",
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "nameProblem": {
+      "empty": "Please enter a name.",
+      "too-short": "The name needs at least 2 characters."
+    },
+    "joinStep": {
+      "search": "Find the round",
+      "secure": "Set up a secure connection",
+      "join": "Join"
+    }
+  },
+  "errors": {
+    "join": {
+      "not-found": {
+        "title": "No round with this code",
+        "body": "Check the code and stay close to the host. Both devices need Bluetooth and Wi-Fi."
+      },
+      "full": {
+        "title": "This round is full",
+        "body": "All seats are taken. Ask the host to raise the player limit or free up a seat."
+      },
+      "removed": {
+        "title": "You were removed",
+        "body": "The host took you out of this round. You can’t join it again."
+      },
+      "started": {
+        "title": "The game has already started",
+        "body": "New players can’t join once the game has started. Ask the host about the next round."
+      },
+      "bluetooth-off": {
+        "title": "Bluetooth is off",
+        "body": "Turn on Bluetooth in your device settings and try again."
+      },
+      "location-off": {
+        "title": "Location is off",
+        "body": "Turn on location services in your device settings so Nearby Dice can find devices nearby."
+      },
+      "denied": {
+        "title": "Access denied",
+        "body": "Without this permission, Nearby Dice can’t find any rounds. You can grant it in your device settings at any time."
+      }
+    },
+    "host": {
+      "bluetooth-off": {
+        "title": "Bluetooth is off",
+        "body": "Turn on Bluetooth in your device settings and try again."
+      },
+      "permission-missing": {
+        "title": "Permission missing",
+        "body": "Nearby Dice needs access to nearby devices to make the round visible."
+      },
+      "location-off": {
+        "title": "Location is off",
+        "body": "Turn on location services in your device settings so other players can find your round."
+      }
+    },
+    "sessionEnd": {
+      "kicked": {
+        "title": "$t(errors.join.removed.title)",
+        "body": "$t(errors.join.removed.body)"
+      },
+      "lobby-closed": {
+        "title": "The round has ended",
+        "body": "The host closed the lobby."
+      },
+      "game-ended": {
+        "title": "The round has ended",
+        "body": "The host ended the game."
+      }
+    }
+  },
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "cancel": "Cancel",
+    "loading": "Loading",
+    "hostTag": "Host",
+    "youTag": "You",
+    "connected": "Connected",
+    "reconnectingPeer": "Connection lost – reconnecting …",
+    "homeButton": "Back to home",
+    "retryConnection": "Reconnect",
+    "appName": "Nearby Dice",
+    "joined": "{{name}} joined.",
+    "reconnected": "{{name}} is back online.",
+    "removed": "{{name}} was removed.",
+    "connectionBack": "Reconnected.",
+    "changeStyle": "Change game style",
+    "styleChanged": "Game style changed: {{style}}"
+  },
+  "permission": {
+    "primer": {
+      "title": "Play together nearby",
+      "body": "Nearby Dice needs Bluetooth and access to devices on your local network to connect your phones directly."
+    },
+    "androidLocation": "Android also needs the location permission to find devices nearby. Nearby Dice never determines or stores your location.",
+    "blocked": {
+      "title": "Permission missing",
+      "body": "In your device settings, allow Nearby Dice to access nearby devices and the local network. You’ll then continue here automatically."
+    },
+    "bluetoothOff": {
+      "title": "Bluetooth is off",
+      "body": "Turn on Bluetooth in your device settings. You’ll continue automatically when you come back."
+    },
+    "locationOff": {
+      "title": "Location is off",
+      "body": "Turn on location services so Android can find devices nearby. You’ll continue automatically when you come back."
+    },
+    "unavailable": {
+      "title": "Connection not available",
+      "body": "This device or app version doesn’t support nearby connections. Use the installed Nearby Dice app on a supported phone."
+    },
+    "checkFailed": {
+      "title": "Permissions not checked",
+      "body": "The device settings couldn’t be read. Please try again."
+    },
+    "fallbackTitle": "Ready for your friends?",
+    "fallbackBody": "Check the permissions and device settings to find rounds nearby.",
+    "check": "Check permissions",
+    "allow": "Allow",
+    "later": "Later",
+    "retry": "Check again",
+    "openSettings": "Open settings",
+    "settingsFailed": "The settings couldn’t be opened. Open them directly on your phone or try again."
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "finish": "Let’s go",
+    "step": "Step {{n}} of 3",
+    "slides": {
+      "dice": {
+        "title": "Nearby Dice with friends",
+        "body": "You sit together, and everyone plays on their own phone."
+      },
+      "code": {
+        "title": "One code is all it takes",
+        "body": "One player creates the round and shows the code. Everyone else enters it."
+      },
+      "profile": {
+        "title": "Who are you?"
+      }
+    },
+    "roundCode": "Round code",
+    "nameLabel": "Your name",
+    "colorLabel": "Your colour",
+    "namePlaceholder": "e.g. Lukas"
+  },
+  "home": {
+    "greeting": "Hi, {{name}}!",
+    "welcome": "Welcome!",
+    "settings": "Settings",
+    "editProfile": "Edit profile: {{name}}",
+    "host": "Host",
+    "join": "Join",
+    "training": "Training",
+    "trainingHint": "Practise solo",
+    "trainingHintBest": "Practise solo · Best {{best}}",
+    "diceTray": "Warm-up dice",
+    "dieLabel": "Die {{n}}: {{value}}. Tap to roll",
+    "stats": {
+      "wins": "Wins",
+      "best": "Best",
+      "yatzys": "Yatzys"
+    },
+    "statsTitle": "Your stats",
+    "statsAll": "Overall",
+    "recentTitle": "Recently played",
+    "recentEmpty": "No rounds played yet. Your first results will show up here.",
+    "newPlayer": {
+      "title": "Who’s playing?",
+      "body": "Choose a name and a colour so the other players recognise you in the lobby.",
+      "action": "Create profile"
+    },
+    "resume": {
+      "title": "Interrupted session",
+      "body": "Round {{round}} of {{total}} with {{others, names}}. The connection to host {{host}} dropped {{since}}.",
+      "resume": "Resume",
+      "discard": "Discard",
+      "searching": "Looking for host {{host}} …",
+      "attempt": "Stay close to {{host, possessive}} device. Attempt {{n}} of 3.",
+      "successTitle": "Reconnected",
+      "successBody": "{{host}} confirmed your scores. Play continues in round {{round}}.",
+      "successAction": "Back to the game",
+      "failTitle": "Host not found",
+      "failBody": "{{host}} is out of range or has ended the session. Your scores stay saved.",
+      "retry": "Try again",
+      "later": "Later"
+    },
+    "discardDialog": {
+      "title": "Discard session?",
+      "body": "The saved scores from round {{round}} will be lost. You can’t undo this.",
+      "confirm": "Discard for good",
+      "cancel": "Keep"
+    }
+  },
+  "profile": {
+    "titleCreate": "Create profile",
+    "titleEdit": "Your profile",
+    "nameLabel": "Display name",
+    "namePlaceholder": "e.g. Lukas",
+    "help": "This is how the other players see you.",
+    "colorLabel": "Your colour",
+    "saveCreate": "Save profile",
+    "saveEdit": "Save changes",
+    "saved": "Profile saved.",
+    "reset": "Reset profile",
+    "resetDialog": {
+      "title": "Reset profile?",
+      "body": "Your name and colour are deleted. Rounds you’ve already played stay in your stats.",
+      "confirm": "Reset"
+    }
+  },
+  "hostSetup": {
+    "title": "Host a game",
+    "roundNameLabel": "Round name",
+    "roundNameDefault": "{{name, possessive}} round",
+    "roundNameEmpty": "Please enter a name.",
+    "styleLabel": "Game style",
+    "maxPlayersLabel": "Players (max.)",
+    "open": "Open lobby",
+    "opening": "Making the round visible …",
+    "retry": "Try again"
+  },
+  "training": {
+    "title": "Training",
+    "intro": "Play solo and try out tactics at your own pace.",
+    "note": "Training rounds don’t count towards wins and stats. They have their own best score.",
+    "start": "Start training"
+  },
+  "lobby": {
+    "roundCode": "Round code",
+    "codeSpoken": "Round code {{code}}",
+    "codeHint": "Other players enter this code under “Join a game”.",
+    "playersTitle": "Players",
+    "playerCount": "{{n}} of {{max}}",
+    "waitingTitle": "Waiting for players …",
+    "freeSeat": "Free seat",
+    "freeSeatHint": "Up to {{max}}\u00a0players",
+    "playerActions": "Actions for {{name}}",
+    "kickAction": "Remove from the lobby",
+    "startHintTooFew": "At least 2 players needed.",
+    "startHintWaiting": "Waiting for {{name}} to reconnect …",
+    "startHintReady": "Ready to go.",
+    "start": "Start game",
+    "closeLabel": "Close lobby",
+    "startDialog": {
+      "title": "Start the game with {{n}}\u00a0players?",
+      "body": "After that, the rules are fixed and players can only reconnect, not join as new players.",
+      "confirm": "Start now",
+      "cancel": "Keep waiting"
+    },
+    "closeDialog": {
+      "title": "Close lobby?",
+      "body": "All connected players are disconnected and see that the round has ended.",
+      "confirm": "Close lobby",
+      "cancel": "Keep waiting"
+    },
+    "kickDialog": {
+      "title": "Remove {{name}}?",
+      "body": "{{name}} is disconnected and can’t join this round again.",
+      "confirm": "Remove"
+    },
+    "rulesButton": "Rules",
+    "rulesTitle": "Round rules",
+    "rules": {
+      "style": "Game style",
+      "ruleset": "Score sheet",
+      "rounds": "Rounds",
+      "sheets": "Sheets",
+      "rolls": "Rolls per turn",
+      "time": "Time per turn",
+      "order": "Field choice",
+      "upperBonus": "Bonus from {{threshold}} points",
+      "extraYatzy": "Extra Yatzys",
+      "joker": "Joker",
+      "sameDice": "Same dice for everyone",
+      "luckyNumber": "Lucky number",
+      "on": "On",
+      "off": "Off"
+    },
+    "waitingForHost": "Waiting for the host",
+    "connectionLost": "Connection lost",
+    "attempt": "Attempt {{n}} of 3",
+    "reconnectFailedTitle": "Connection lost",
+    "reconnectFailedBody": "The connection to the host couldn’t be restored. Stay close to the host and try again.",
+    "countdownTitle": "The game is starting",
+    "go": "Go!",
+    "leaveLabel": "Leave round",
+    "leaveDialog": {
+      "title": "Leave round?",
+      "body": "You can rejoin with the code at any time until the round starts.",
+      "confirm": "Leave",
+      "cancel": "Stay"
+    }
+  },
+  "join": {
+    "title": "Join a game",
+    "codeTitle": "Enter the round code",
+    "codeLabel": "Round code, four characters",
+    "nearbyTitle": "Nearby",
+    "refresh": "Refresh rounds",
+    "scanning": "Searching",
+    "nearbyEmpty": "No rounds nearby",
+    "scanFailed": "The search couldn’t start. Check the permissions and try again.",
+    "seats": "{{n}} of {{max}}\u00a0players",
+    "full": "Full",
+    "join": "Join",
+    "roundA11y": "{{name}}, {{n}} of {{max}} players, join",
+    "roundA11yFull": "{{name}}, {{n}} of {{max}} players, full",
+    "successTitle": "You’re in!",
+    "successBody": "The lobby is waiting for you.",
+    "retry": "Try again",
+    "otherCode": "Enter a different code"
+  },
+  "game": {
+    "menu": "Menu",
+    "scoreboard": "Scores",
+    "round": "Round {{n}} of {{total}}",
+    "players": "Players",
+    "upperBlock": "Upper section",
+    "lowerBlock": "Lower section",
+    "moreFields": "More fields",
+    "bonus": "Bonus (+{{points}})",
+    "yatzyBonusRow": "Yatzy bonus",
+    "bonusProgress": "{{sum}} / {{threshold}}",
+    "luckyNumberHint": "Sum {{n}}",
+    "mySheet": "Your sheet",
+    "sheetOf": "{{name, possessive}} sheet",
+    "sheetFactor": "×{{factor}}",
+    "onSheet": "{{name}} is on this sheet",
+    "dice": "Dice",
+    "diceLocked": "Dice locked: these values will be scored",
+    "dieLabel": {
+      "rolled": "Die {{n}}: {{value}}",
+      "held": "Die {{n}}: {{value}}, held",
+      "unrolled": "Die {{n}}, not rolled yet"
+    },
+    "rollsLeft_zero": "No rolls left",
+    "rollsLeft_one": "{{count}}\u00a0roll left",
+    "rollsLeft_other": "{{count}}\u00a0rolls left",
+    "rollsLeftOf_zero": "{{name}}: no rolls left",
+    "rollsLeftOf_one": "{{name}}: {{count}}\u00a0roll left",
+    "rollsLeftOf_other": "{{name}}: {{count}}\u00a0rolls left",
+    "roll": "Roll",
+    "rollAgain": "Roll again",
+    "pickField": "Pick a field",
+    "timeLeft": "Time left",
+    "isUp": "{{name, possessive}} turn",
+    "isRolling": "{{name}} is rolling …",
+    "isPicking": "{{name}} is picking {{field}} …",
+    "unreachable": "{{name}} can’t be reached",
+    "cell": {
+      "filled": "{{label}}: $t(format.points), scored",
+      "pickable": "{{label}}: score $t(format.points)",
+      "preview": "{{label}}: $t(format.points) possible",
+      "open": "{{label}}, still open"
+    },
+    "confirm": {
+      "enter": "Score",
+      "strike": "Scratch",
+      "back": "Back"
+    },
+    "total": "Total",
+    "history": "History",
+    "historyRound": "Round {{n}}",
+    "historyEmpty": "No entries yet.",
+    "historyEntry": {
+      "skipped": "Turn skipped",
+      "removed": "Removed from the game",
+      "automatic": "Time’s up"
+    },
+    "scored": "{{name}}: {{label}} {{value}}",
+    "timeout": "Time’s up: {{label}} {{value}}",
+    "continue": "Keep playing",
+    "leaveHost": "End game for everyone",
+    "leaveHostBody": "The game ends for all players. The scores are saved.",
+    "leaveGuest": "Leave game",
+    "leaveGuestBody": "Your scores stay saved. The host can invite you back later.",
+    "leaveTraining": "End training",
+    "leaveTrainingBody": "This training game won’t be saved.",
+    "lostHost": "{{name}} lost the connection",
+    "lostGuest": "Waiting for {{name}} …",
+    "options": "Options",
+    "lostSheetTitle": "{{name}} can’t be reached",
+    "keepWaiting": "Keep waiting",
+    "skipTurn": "Skip turn",
+    "removePlayer": "Remove from the game",
+    "removeDialog": {
+      "title": "Remove {{name}}?",
+      "body": "{{name, possessive}} scores are taken out of the standings. You can’t undo this.",
+      "confirm": "Remove"
+    },
+    "playerBack": "{{name}} is back.",
+    "ownConnectionLost": "Connection lost · Attempt {{attempt}} of 3",
+    "connectionLostTitle": "Connection lost",
+    "connectionLostBody": "Your scores stay saved. You can keep playing later."
+  },
+  "results": {
+    "winner": "{{name}} wins!",
+    "youWin": "You win!",
+    "tie": "It’s a tie!",
+    "you": "(You)",
+    "summary_one": "{{points}} · {{count}}\u00a0round",
+    "summary_other": "{{points}} · {{count}}\u00a0rounds",
+    "behind": "−{{n}}",
+    "upper": "Upper",
+    "bonus": "Bonus",
+    "lower": "Lower",
+    "awards": {
+      "bestMove": "Best move",
+      "bonus": "Bonus +{{n}} reached",
+      "zeros": "Most zeros",
+      "nobody": "Nobody",
+      "none": "None"
+    },
+    "compare": "All fields compared",
+    "field": "Field",
+    "rematch": "Rematch",
+    "rematchStarting": "Rematch starting …",
+    "waitingForOthers": "Waiting for the other players …",
+    "voteA11y": "{{name}}: {{state}}",
+    "voteState": {
+      "pending": "waiting",
+      "yes": "in",
+      "no": "out"
+    },
+    "endHost": "End round",
+    "endGuest": "Back to home",
+    "endHostDialog": {
+      "title": "End the round for everyone?",
+      "body": "The lobby closes. All players return to the home screen.",
+      "confirm": "End round"
+    },
+    "endGuestDialog": {
+      "title": "Leave round?",
+      "body": "You’ll miss the rematch. The host can keep playing without you.",
+      "confirm": "Back to home"
+    },
+    "training": {
+      "done": "Training finished",
+      "newBest": "New best!",
+      "best": "Training best",
+      "yatzys": "Yatzys this game",
+      "again": "Play again",
+      "home": "Back to home"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "edit": "Edit",
+    "appearance": "Appearance",
+    "language": "Language",
+    "game": "Game",
+    "sound": "Sounds",
+    "music": "Background music",
+    "haptics": "Vibration",
+    "keepAwake": "Keep screen on",
+    "connection": "Connection",
+    "nearby": "Nearby devices",
+    "allowed": "Allowed",
+    "notAllowed": "Not allowed",
+    "openSettings": "Open settings",
+    "data": "Data",
+    "resetStats": "Reset stats",
+    "resetDone": "Stats have been reset.",
+    "resetDialog": {
+      "title": "Reset stats?",
+      "body": "Wins, best score and recent rounds are deleted. You can’t undo this.",
+      "confirm": "Reset"
+    },
+    "version": "Version"
+  }
+}

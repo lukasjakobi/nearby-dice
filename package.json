@@ -1,0 +1,88 @@
+{
+  "name": "nearby-dice",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@expo-google-fonts/fredoka": "^0.4.1",
+    "@expo-google-fonts/work-sans": "^0.4.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~57.0.30",
+    "expo-audio": "~57.0.5",
+    "expo-constants": "~57.0.21",
+    "expo-crypto": "~57.0.4",
+    "expo-font": "~57.0.4",
+    "expo-haptics": "~57.0.3",
+    "expo-keep-awake": "~57.0.2",
+    "expo-linking": "~57.0.13",
+    "expo-localization": "~57.0.2",
+    "expo-router": "~57.0.28",
+    "expo-splash-screen": "~57.0.10",
+    "expo-status-bar": "~57.0.1",
+    "expo-system-ui": "~57.0.4",
+    "i18next": "^26.5.6",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-i18next": "^17.1.4",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.5",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.1.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "~19.2.2",
+    "@typescript/native": "npm:typescript@~7.0.2",
+    "eslint": "^10.13.0",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "jest": "~30.5.2",
+    "jest-expo": "~57.0.6",
+    "prettier": "^3.9.10",
+    "sharp": "^0.35.5",
+    "test-renderer": "^1.3.1",
+    "typescript": "npm:@typescript/typescript6@~6.0.2"
+  },
+  "scripts": {
+    "dev": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android --app-id io.jakobi.nearbydice.dev",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "typecheck": "node node_modules/@typescript/native/bin/tsc --noEmit",
+    "lint": "expo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:names": "! git grep -n -i -I \"kni[f]fel\"",
+    "check": "npm run check:names && npm run typecheck && npm run lint && npm run format:check && npm test",
+    "sounds": "node scripts/generate-sounds.mjs",
+    "icons": "node scripts/generate-icons.mjs",
+    "doctor": "expo-doctor"
+  },
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "testMatch": [
+      "**/__tests__/**/*.test.ts?(x)"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/modules/.*/build",
+      "<rootDir>/.claude/worktrees/"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@modules/(.*)$": "<rootDir>/modules/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/jest.setup.ts"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.after-env.ts"
+    ]
+  }
+}
