@@ -481,6 +481,7 @@
     },
     "scored": "{{name}}: {{label}} {{value}}",
     "timeout": "Time’s up: {{label}} {{value}}",
+    "yatzyFlag": "YATZY!",
     "continue": "Keep playing",
     "leaveHost": "End game for everyone",
     "leaveHostBody": "The game ends for all players. The scores are saved.",

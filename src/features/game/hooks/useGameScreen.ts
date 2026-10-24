@@ -12,6 +12,7 @@ import { useDiceAnimation } from './useDiceAnimation';
 import { useGameFeedback } from './useGameFeedback';
 import { usePendingScore } from './usePendingScore';
 import { useSheetPage } from './useSheetPage';
+import { useYatzyFlag } from './useYatzyFlag';
 
 export enum GameSheet {
   None = 'none',
@@ -55,6 +56,7 @@ export function useGameScreen() {
   const score = usePendingScore(snapshot, sheetIndex, rollPending);
   const { pending, selectedCategory, scorePending } = score;
   useGameFeedback(snapshot);
+  const yatzyFlag = useYatzyFlag(snapshot, dice.shownSeq, dice.shownDice);
 
   const view = buildGameView(t, snapshot, {
     sheetIndex,
@@ -110,6 +112,8 @@ export function useGameScreen() {
   return {
     view,
     shakeKeys: dice.shakeKeys,
+    yatzyFlag: yatzyFlag.flag,
+    closeYatzyFlag: yatzyFlag.close,
     scoreboard,
     openSheet,
     dialog,
