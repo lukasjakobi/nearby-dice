@@ -110,10 +110,13 @@ describe('Classic XL scoring', () => {
   const rules = PRESETS[PresetId.ClassicXl];
 
   test.each([
-    [Category.TwoPairs, d(2, 2, 5, 5, 6), 20],
-    [Category.TwoPairs, d(2, 2, 5, 5, 5), 19],
+    [Category.TwoPairs, d(2, 2, 5, 5, 6), 14],
+    [Category.TwoPairs, d(2, 2, 5, 5, 5), 14],
+    [Category.TwoPairs, d(3, 3, 5, 5, 1), 16],
+    [Category.TwoPairs, d(6, 6, 5, 5, 1), 22],
     [Category.TwoPairs, d(5, 5, 5, 5, 5), 0],
     [Category.TwoPairs, d(5, 5, 5, 5, 2), 0],
+    [Category.TwoPairs, d(4, 4, 4, 4, 4), 0],
     [Category.TwoPairs, d(1, 2, 3, 4, 5), 0],
     [Category.Even, d(2, 4, 6, 2, 4), 18],
     [Category.Even, d(6, 6, 6, 6, 6), 30],
