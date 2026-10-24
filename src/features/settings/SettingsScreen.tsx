@@ -20,7 +20,7 @@ import {
 import { NearbyPermissionCard, ProfileCard, SettingsSection } from './components';
 import { useSettingsScreen } from './hooks';
 
-const THEMES = [ThemeMode.Light, ThemeMode.Dark, ThemeMode.System];
+const THEMES = [ThemeMode.System, ThemeMode.Light, ThemeMode.Dark];
 const LANGUAGES = [LanguageMode.System, LanguageMode.German, LanguageMode.English];
 
 export function SettingsScreen() {
