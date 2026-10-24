@@ -28,3 +28,29 @@ work around them.
 
 Only the [latest release](https://github.com/lukasjakobi/nearby-dice/releases/latest) receives
 security fixes.
+
+## Dependency security fixes
+
+**Confirmed — 2026-10-24:** `package.json` overrides Zod to 4.6.7 and
+`decode-uri-component` to 0.5.1 for
+[GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) and
+[GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr). Expo SDK 57's
+`query-string` 7.1.3 consumer needs the decoder's ESM default export, so an install patch adapts
+that import. Zod 4 remains compatible with the CLI's plugin schemas and the React Hooks linter.
+
+**Confirmed — 2026-10-24:** `node-forge` has no published fix for
+[GHSA-86w9-cpqp-85rv](https://github.com/advisories/GHSA-86w9-cpqp-85rv). The install patch
+backports the nested DigestAlgorithm element-count check from
+[upstream PR #1152, commit ceba344](https://github.com/digitalbazaar/forge/pull/1152/commits/ceba34402e329f0365134f23fe19898756527d65)
+to version 1.4.0, used by Expo's CLI and code-signing tools. The package keeps its real version:
+npm audit and Dependabot will continue reporting it until a patched release is available. Do not
+dismiss this alert as fixed or change the version to hide it.
+
+`npm ci` runs `patch-package --error-on-fail`; installation must fail if either patch no longer
+applies. Do not use `--ignore-scripts`. `npm run check` exercises malformed query parameters,
+bounded collection validation, Expo CLI schemas, malformed RSA signatures and Expo signing
+against the installed dependencies. The Node subprocess timeout bounds decoder regressions.
+
+**Open:** remove the `node-forge` override and patch when a fixed official release is available.
+Remove the decoder override, `query-string` pin and import patch once an Expo SDK 57 update
+supports a patched decoder. Remove the Zod override once its consumers require a patched version.
