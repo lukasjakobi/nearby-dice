@@ -139,4 +139,3 @@ export const LUCKY_NUMBER_POINTS = 40;
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 6;
-export const DEFAULT_MAX_PLAYERS = 4;

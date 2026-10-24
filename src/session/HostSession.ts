@@ -2,7 +2,7 @@
  * The authoritative session on the host's phone: admits guests, runs the game
  * engine, enforces every rule, and broadcasts the full shared state after each change.
  */
-import { ActionType, createGame, Link, PRESETS, randomSeed, reduce } from '@/domain';
+import { ActionType, createGame, Link, MAX_PLAYERS, PRESETS, randomSeed, reduce } from '@/domain';
 import type {
   Category,
   Focus,
@@ -39,7 +39,6 @@ export type HostOptions = {
   profile: Profile;
   roundName: string;
   preset: PresetId;
-  maxPlayers: number;
   allowRejoin?: boolean;
   rng?: Rng;
 };
@@ -126,7 +125,7 @@ export class HostSession implements HostController {
         code,
         roundName: options.roundName,
         preset: options.preset,
-        maxPlayers: options.maxPlayers,
+        maxPlayers: MAX_PLAYERS,
         allowRejoin: options.allowRejoin ?? true,
         phase: SessionPhase.Lobby,
         players: [me],

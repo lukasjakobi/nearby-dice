@@ -97,7 +97,7 @@ beforeEach(() => {
   network = new FakeNetwork(10);
 });
 
-async function lobbyWith(guestNames: string[], maxPlayers = 4) {
+async function lobbyWith(guestNames: string[]) {
   const hostTransport = new FakeTransport(network, 'Lukas');
   const host = await settle(
     HostSession.open({
@@ -106,7 +106,6 @@ async function lobbyWith(guestNames: string[], maxPlayers = 4) {
       profile: { name: 'Lukas', color: PlayerColor.Amber },
       roundName: 'Lukas Runde',
       preset: PresetId.Blitz,
-      maxPlayers,
       rng: seededRng(7),
     }),
   );
@@ -361,7 +360,7 @@ describe('admission limits', () => {
 
 describe('advertised occupancy', () => {
   test('follows joins, leaves and kicks', async () => {
-    const { host, hostTransport, guests, join } = await lobbyWith(['Antonia'], 2);
+    const { host, hostTransport, guests, join } = await lobbyWith(['Antonia']);
     const advertised = () => network.advertisementOf(hostTransport)?.players;
     expect(advertised()).toBe(2);
 

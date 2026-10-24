@@ -339,7 +339,6 @@
     "roundNameDefault": "{{name, possessive}} round",
     "roundNameEmpty": "Please enter a name.",
     "styleLabel": "Game style",
-    "maxPlayersLabel": "Players (max.)",
     "open": "Open lobby",
     "opening": "Making the round visible …",
     "retry": "Try again"
