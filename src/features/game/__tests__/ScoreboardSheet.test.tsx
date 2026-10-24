@@ -52,7 +52,7 @@ test.each([
   const table = await showBoard(players);
   expect(screen.getByTestId('score-table').props.horizontal).toBe(true);
   for (const { name } of players) {
-    expect(styleOf(table.getByText(name)).width).toBe(COLUMN_WIDTH);
+    expect(styleOf(table.getByText(name))?.width).toBe(COLUMN_WIDTH);
   }
 
   expect(table.getByText('Kleine Straße')).toBeTruthy();
@@ -73,5 +73,5 @@ test.each([
   [2, 1.3],
 ])('at text size %s the columns grow by %s', async (fontScale, growth) => {
   await showBoard(SIX, fontScale);
-  expect(styleOf(screen.getByText('Jonas')).width).toBeCloseTo(COLUMN_WIDTH * growth);
+  expect(styleOf(screen.getByText('Jonas'))?.width).toBeCloseTo(COLUMN_WIDTH * growth);
 });
