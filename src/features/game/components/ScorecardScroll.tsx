@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import type { ScrollViewInstance } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { Icon, IconName, Text, useTheme } from '@/ui';
@@ -20,7 +21,7 @@ type Extent = { viewport: number; content: number; offset: number };
 export function ScorecardScroll({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const scroll = useRef<ScrollView>(null);
+  const scroll = useRef<ScrollViewInstance>(null);
   const extent = useRef<Extent>({ viewport: 0, content: 0, offset: 0 });
   const [hiddenBelow, setHiddenBelow] = useState(false);
 

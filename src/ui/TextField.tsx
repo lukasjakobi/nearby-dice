@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
+import type { TextInputInstance } from 'react-native';
 
 import { Icon, IconName } from './icons/Icon';
 import { Text, TextVariant } from './Text';
@@ -36,7 +37,7 @@ export function TextField({
   onBlur,
 }: TextFieldProps) {
   const { colors } = useTheme();
-  const input = useRef<TextInput>(null);
+  const input = useRef<TextInputInstance>(null);
   const [focused, setFocused] = useState(false);
   const message = error ?? help;
   const borderColor = error ? colors.danger : focused ? colors.primary : colors.line;

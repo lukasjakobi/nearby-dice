@@ -13,7 +13,7 @@
   <a href="https://github.com/lukasjakobi/nearby-dice/releases/latest"><img src="https://img.shields.io/github/v/release/lukasjakobi/nearby-dice?label=release&color=4FE3C1" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/lukasjakobi/nearby-dice?color=blue" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-lightgrey" alt="Android and iOS">
-  <img src="https://img.shields.io/badge/Expo%20SDK-57-000020?logo=expo&logoColor=white" alt="Expo SDK 57">
+  <img src="https://img.shields.io/badge/Expo%20SDK-58-000020?logo=expo&logoColor=white" alt="Expo SDK 58">
   <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white" alt="TypeScript strict">
 </p>
 
