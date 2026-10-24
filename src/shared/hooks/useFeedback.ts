@@ -15,6 +15,8 @@ export type Feedback = {
   start: () => void;
   strike: () => void;
   yatzy: () => void;
+  /** Someone rolled a Yatzy: the flag waves on every phone. */
+  fanfare: () => void;
   finish: () => void;
   /** It is my turn now: the phone may be lying on the table. */
   turn: () => void;
@@ -61,6 +63,10 @@ export function useFeedback({ vibrate = true }: { vibrate?: boolean } = {}): Fee
       },
       yatzy: () => {
         if (sound) void playSound(Sound.Yatzy);
+        if (haptics) void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      },
+      fanfare: () => {
+        if (sound) void playSound(Sound.Fanfare);
         if (haptics) void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
       finish: () => {

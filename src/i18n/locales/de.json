@@ -481,6 +481,7 @@
     },
     "scored": "{{name}}: {{label}} {{value}}",
     "timeout": "Zeit abgelaufen: {{label}} {{value}}",
+    "yatzyFlag": "YATZY!",
     "continue": "Weiterspielen",
     "leaveHost": "Spiel für alle beenden",
     "leaveHostBody": "Das Spiel endet für alle Mitspieler. Der Spielstand wird gespeichert.",

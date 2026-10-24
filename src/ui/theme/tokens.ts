@@ -83,6 +83,9 @@ export const FIXED = {
   /** Text on player colours and on the felt. */
   onPlayer: '#101214',
   onFelt: '#ECF7F4',
+  /** Yatzy flag: the letters' drop shadow and the lit side of a fold. */
+  flagShadow: '#000000',
+  flagLight: '#FFFFFF',
   timeLow: '#FF8A80',
   /** Badge for places below first in "Zuletzt gespielt". */
   silver: '#CFC6B0',

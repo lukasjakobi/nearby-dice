@@ -35,6 +35,7 @@ A round seats two to six players, and the app speaks German and English.
   left off. Even after the app restarts, you can return to the round from the start screen.
 - 🧘 **Training mode:** practise on your own and chase your personal best.
 - 📊 **Your history:** your last 10 games and lifetime statistics are stored on your phone.
+- 🎉 **Yatzy celebration:** five equal dice wave a big "YATZY!" flag with a fanfare on every phone.
 - 🔊 **Sound and haptics:** sound effects, optional background music and vibration, each with its own
   switch.
 - 🌗 **Comfortable to use:** light and dark themes, large touch targets, and support for larger text

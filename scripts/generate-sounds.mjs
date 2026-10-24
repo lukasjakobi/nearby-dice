@@ -105,6 +105,35 @@ function chime(notes, spacing = 0.1, duration = 0.3, gain = 0.24) {
   return samples;
 }
 
+/** A brassy note: the upper harmonics swell with the attack, then a gentle vibrato. */
+function brass(samples, midi, at, duration, gain) {
+  const start = Math.round(at * RATE);
+  const length = Math.round(duration * RATE);
+  const freq = frequency(midi);
+  let phase = 0;
+  for (let i = 0; i < length && start + i < samples.length; i++) {
+    const time = i / RATE;
+    const attack = Math.min(1, time / 0.025);
+    const release = Math.min(1, (length - 1 - i) / (RATE * 0.06));
+    const envelope = attack * release * (0.75 + 0.25 * Math.exp(-time / 0.08));
+    const vibrato = time > 0.18 ? 0.004 * Math.sin(2 * Math.PI * 5.5 * time) : 0;
+    phase += (2 * Math.PI * freq * (1 + vibrato)) / RATE;
+    const bright = 0.35 + 0.65 * attack;
+    let wave = 0;
+    for (let n = 1; n <= 8; n++) wave += (Math.sin(n * phase) / n) * bright ** (n - 1);
+    samples[start + i] += gain * envelope * wave;
+  }
+}
+
+/** Ta-ta-ta-taaa for a rolled Yatzy: three pickups, then a held major chord. */
+function fanfare() {
+  const samples = silence(1.5);
+  [67, 67, 67].forEach((note, i) => brass(samples, note, i * 0.12, 0.1, 0.16));
+  [72, 76, 79].forEach((note) => brass(samples, note, 0.38, 1.1, 0.11));
+
+  return samples;
+}
+
 /** Eight relaxed bars in C major. Every note and its tail belongs to the loop. */
 function music() {
   const beat = 60 / 88;
@@ -159,6 +188,7 @@ for (const [name, make] of Object.entries({
   strike: () => chime([64, 60], 0.08, 0.2, 0.15),
   yatzy: () => chime([72, 76, 79, 84, 88, 91], 0.08, 0.55),
   finish: () => chime([72, 76, 79, 84, 79, 88, 84], 0.14, 0.7),
+  fanfare,
   music,
 })) {
   writeFileSync(join(out, `${name}.wav`), wav(make()));

@@ -18,6 +18,7 @@ import {
   ScoreboardSheet,
   ScreenOverlay,
   SheetBackButton,
+  YatzyFlag,
 } from './components';
 import { GameDialog, GameSheet, useGameScreen } from './hooks';
 
@@ -121,6 +122,14 @@ export function GameScreen() {
         <ScreenOverlay background={colors.primary}>
           <Countdown endsAt={view.countdownEndsAt} />
         </ScreenOverlay>
+      ) : null}
+
+      {screen.yatzyFlag ? (
+        <YatzyFlag
+          key={screen.yatzyFlag.seq}
+          flag={screen.yatzyFlag}
+          onClose={screen.closeYatzyFlag}
+        />
       ) : null}
 
       {view.connectionFailed ? (
