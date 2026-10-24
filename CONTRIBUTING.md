@@ -180,9 +180,9 @@ change alters documented behaviour, update the document that owns it (see
   verification status and any new strings.
 - `main` only changes through pull requests. Before merging, the `check` job must pass on a branch
   that is up to date with `main` ("Update branch" brings it up to date), CodeQL must report no new
-  errors or high-severity alerts, every review thread must be resolved, and the maintainer must
-  approve. Pull requests are squash-merged, so the title becomes
-  the commit message; the branch is deleted afterwards.
+  errors or high-severity alerts, and every review thread must be resolved. Only the maintainer can
+  merge. Pull requests are squash-merged, so the title becomes the commit message; the branch is
+  deleted afterwards.
 
 ## Code of conduct
 
