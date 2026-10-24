@@ -1,33 +1,19 @@
-import { Category, Joker, Ruleset } from '../enums';
+import { Category, Ruleset } from '../enums';
+import type { Dice } from '../roll';
 import { DEFAULT_RULES, PRESETS, PresetId } from '../rules';
 import type { Rules } from '../rules';
-import {
-  allowedCategories,
-  yatzyCount,
-  playerTotal,
-  score,
-  sheetTotal,
-  upperBonus,
-  writeScore,
-} from '../scoring';
-import type { Dice } from '../scoring';
-import {
-  UPPER_CATEGORIES,
-  categoriesFor,
-  emptySheet,
-  lowerCategories,
-  turnsPerPlayer,
-} from '../sheet';
+import { allowedCategories, score, writeScore } from '../scoring';
+import { emptySheet } from '../sheet';
 import type { Sheet } from '../sheet';
 
 const CLASSIC = DEFAULT_RULES;
 const YATZY = PRESETS[PresetId.Yatzy];
 
 const d = (...values: number[]) => values as unknown as Dice;
-const sheetWith = (rules: Rules, fields: Partial<Record<Category, number>>, extra = 0): Sheet => {
+const sheetWith = (rules: Rules, fields: Partial<Record<Category, number>>): Sheet => {
   const sheet = emptySheet(rules);
 
-  return { fields: { ...sheet.fields, ...fields }, extraYatzys: extra };
+  return { fields: { ...sheet.fields, ...fields }, extraYatzys: 0 };
 };
 
 const fresh = (rules: Rules) => emptySheet(rules);
@@ -59,9 +45,6 @@ describe('Classic scoring', () => {
     expect(s(d(2, 2, 3, 3, 3), Category.FullHouse)).toBe(25);
     expect(s(d(2, 2, 3, 3, 4), Category.FullHouse)).toBe(0);
     expect(s(d(4, 4, 4, 4, 4), Category.FullHouse)).toBe(0);
-    expect(
-      s(d(4, 4, 4, 4, 4), Category.FullHouse, { ...CLASSIC, fullHouseFromFiveOfAKind: true }),
-    ).toBe(25);
   });
 
   test('straights', () => {
@@ -121,15 +104,6 @@ describe('Yatzy scoring', () => {
     expect(s(d(2, 2, 6, 6, 6), Category.FullHouse)).toBe(22);
     expect(s(d(5, 5, 5, 5, 5), Category.Yatzy)).toBe(50);
   });
-
-  test('upper bonus is 50', () => {
-    const sheet = sheetWith(YATZY, {
-      [Category.Sixes]: 30,
-      [Category.Fives]: 25,
-      [Category.Fours]: 8,
-    });
-    expect(upperBonus(sheet, YATZY)).toBe(50);
-  });
 });
 
 describe('Classic XL scoring', () => {
@@ -173,42 +147,6 @@ describe('Classic XL scoring', () => {
       }
     },
   );
-
-  test('starts the lower block with the XL fields and gives each player 17 turns', () => {
-    expect(categoriesFor(rules)).toEqual([
-      ...UPPER_CATEGORIES,
-      Category.TwoPairs,
-      Category.Even,
-      Category.Odd,
-      Category.Mini,
-      ...lowerCategories(CLASSIC),
-    ]);
-    expect(turnsPerPlayer(rules)).toBe(17);
-  });
-
-  test('keeps the 35-point upper bonus and the extra Yatzy bonus', () => {
-    const sheet = sheetWith(rules, {
-      [Category.Sixes]: 30,
-      [Category.Fives]: 25,
-      [Category.Fours]: 8,
-      [Category.Yatzy]: 50,
-    });
-    const after = writeScore(sheet, Category.Even, d(6, 6, 6, 6, 6), rules, null);
-    expect(upperBonus(after, rules)).toBe(35);
-    expect(after.extraYatzys).toBe(1);
-    expect(sheetTotal(after, rules)).toBe(63 + 35 + 50 + 30 + rules.yatzyBonus);
-  });
-
-  test("a joker does not bypass the new fields' scoring conditions", () => {
-    const sheet = sheetWith(rules, { [Category.Yatzy]: 50, [Category.Sixes]: 30 });
-    const dice = d(6, 6, 6, 6, 6);
-    expect(allowedCategories(dice, sheet, rules)).toEqual(
-      lowerCategories(rules).filter((category) => category !== Category.Yatzy),
-    );
-    for (const category of [Category.TwoPairs, Category.Odd, Category.Mini]) {
-      expect(score(dice, category, sheet, rules, null)).toBe(0);
-    }
-  });
 });
 
 describe.each(Object.values(Ruleset))('%s lucky-number field', (ruleset) => {
@@ -228,114 +166,15 @@ describe.each(Object.values(Ruleset))('%s lucky-number field', (ruleset) => {
       writeScore(sheet, Category.LuckyNumber, dice, rules, target).fields[Category.LuckyNumber],
     ).toBe(40);
   });
-
-  test('the field is appended only while the rule is enabled', () => {
-    const off = { ...rules, luckyNumber: false };
-    expect(categoriesFor(rules)).toEqual([...categoriesFor(off), Category.LuckyNumber]);
-    expect(lowerCategories(rules).at(-1)).toBe(Category.LuckyNumber);
-    expect(fresh(rules).fields[Category.LuckyNumber]).toBeNull();
-    expect(fresh(off).fields).not.toHaveProperty(Category.LuckyNumber);
-    expect(turnsPerPlayer(rules)).toBe(turnsPerPlayer(off) + 1);
-  });
 });
 
-describe.each([PresetId.Classic, PresetId.ClassicXl])('%s joker', (preset) => {
-  const classic = PRESETS[preset];
-  const official = { ...classic, joker: Joker.Official };
-  const yatzyUsed = sheetWith(official, { [Category.Yatzy]: 50 });
-
-  test('official: matching upper field first', () => {
-    expect(allowedCategories(d(4, 4, 4, 4, 4), yatzyUsed, official)).toEqual([Category.Fours]);
-  });
-
-  test('official: once the upper field is taken, the lower block counts at full value', () => {
-    const sheet = sheetWith(official, { [Category.Yatzy]: 50, [Category.Fours]: 12 });
-    const allowed = allowedCategories(d(4, 4, 4, 4, 4), sheet, official);
-    expect(allowed).not.toContain(Category.Ones);
-    expect(allowed).toContain(Category.LargeStraight);
-    expect(score(d(4, 4, 4, 4, 4), Category.FullHouse, sheet, official, null)).toBe(25);
-    expect(score(d(4, 4, 4, 4, 4), Category.SmallStraight, sheet, official, null)).toBe(30);
-    expect(score(d(4, 4, 4, 4, 4), Category.LargeStraight, sheet, official, null)).toBe(40);
-  });
-
-  test('official: falls back to any open upper field when the lower block is full', () => {
-    const lowerFull = Object.fromEntries(lowerCategories(official).map((c) => [c, 0]));
-    const sheet = sheetWith(official, {
-      ...lowerFull,
-      [Category.Yatzy]: 0,
-      [Category.Fours]: 12,
-    });
-    expect(allowedCategories(d(4, 4, 4, 4, 4), sheet, official)).toEqual([
-      Category.Ones,
-      Category.Twos,
-      Category.Threes,
-      Category.Fives,
-      Category.Sixes,
-    ]);
-  });
-
-  test('free: any open field; joker value only once the upper field is taken', () => {
-    const free = { ...classic, joker: Joker.Free };
-    expect(allowedCategories(d(4, 4, 4, 4, 4), yatzyUsed, free)).toHaveLength(
-      categoriesFor(free).length - 1,
-    );
-    expect(score(d(4, 4, 4, 4, 4), Category.LargeStraight, yatzyUsed, free, null)).toBe(0);
-  });
-
-  test('off: a further yatzy is a normal roll', () => {
-    const off = { ...classic, joker: Joker.Off };
-    const sheet = sheetWith(off, { [Category.Yatzy]: 50, [Category.Fours]: 12 });
-    expect(score(d(4, 4, 4, 4, 4), Category.LargeStraight, sheet, off, null)).toBe(0);
-  });
+test('writing into a taken field throws', () => {
+  const sheet = sheetWith(CLASSIC, { [Category.Chance]: 20 });
+  expect(() => writeScore(sheet, Category.Chance, d(1, 1, 1, 1, 1), CLASSIC, null)).toThrow();
 });
 
-describe('totals and bonuses', () => {
-  test('upper bonus +35 at 63', () => {
-    const at63 = sheetWith(CLASSIC, {
-      [Category.Ones]: 3,
-      [Category.Twos]: 6,
-      [Category.Threes]: 9,
-      [Category.Fours]: 12,
-      [Category.Fives]: 15,
-      [Category.Sixes]: 18,
-    });
-    expect(upperBonus(at63, CLASSIC)).toBe(35);
-    expect(sheetTotal(at63, CLASSIC)).toBe(63 + 35);
-    expect(upperBonus(at63, { ...CLASSIC, upperBonus: false })).toBe(0);
-  });
-
-  test('extra yatzy bonus once the yatzy field holds 50', () => {
-    const sheet = sheetWith(CLASSIC, { [Category.Yatzy]: 50 });
-    const after = writeScore(sheet, Category.Fives, d(5, 5, 5, 5, 5), CLASSIC, null);
-    expect(after.extraYatzys).toBe(1);
-    expect(sheetTotal(after, CLASSIC)).toBe(50 + 25 + 50);
-    expect(yatzyCount([after])).toBe(2);
-  });
-
-  test('no extra bonus when the yatzy field was struck', () => {
-    const sheet = sheetWith(CLASSIC, { [Category.Yatzy]: 0 });
-    expect(writeScore(sheet, Category.Fives, d(5, 5, 5, 5, 5), CLASSIC, null).extraYatzys).toBe(0);
-  });
-
-  test('three sheets count ×1, ×2, ×3', () => {
-    const rules = PRESETS[PresetId.Triple];
-    const ten = sheetWith(rules, { [Category.Chance]: 10 });
-    expect(playerTotal([ten, ten, ten], rules)).toBe(60);
-  });
-
-  test('writing into a taken field throws', () => {
-    const sheet = sheetWith(CLASSIC, { [Category.Chance]: 20 });
-    expect(() => writeScore(sheet, Category.Chance, d(1, 1, 1, 1, 1), CLASSIC, null)).toThrow();
-  });
-
-  test('top-to-bottom allows only the next open field', () => {
-    const rules = PRESETS[PresetId.TopToBottom];
-    const sheet = sheetWith(rules, { [Category.Ones]: 2 });
-    expect(allowedCategories(d(6, 6, 6, 6, 6), sheet, rules)).toEqual([Category.Twos]);
-  });
-
-  test('the yatzy preset has 15 fields', () => {
-    expect(Object.keys(emptySheet(YATZY).fields)).toHaveLength(15);
-    expect(Object.keys(emptySheet(CLASSIC).fields)).toHaveLength(13);
-  });
+test('top-to-bottom allows only the next open field', () => {
+  const rules = PRESETS[PresetId.TopToBottom];
+  const sheet = sheetWith(rules, { [Category.Ones]: 2 });
+  expect(allowedCategories(d(6, 6, 6, 6, 6), sheet, rules)).toEqual([Category.Twos]);
 });

@@ -2,7 +2,7 @@ import { ActionType, luckyNumberOf } from '@/domain/engine';
 import { Category, Link, Ruleset } from '@/domain/enums';
 import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
 import type { GameState } from '@/domain/engine';
-import type { Dice } from '@/domain/scoring';
+import type { Dice } from '@/domain/roll';
 import { t } from '@/test/i18n';
 import { ConnectionStatus, Role } from '@/session/types';
 import {

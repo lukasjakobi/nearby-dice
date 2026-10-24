@@ -4,7 +4,7 @@
  */
 import { Category } from '@/domain/enums';
 import { PRESETS, PresetId } from '@/domain/rules';
-import { playerTotal } from '@/domain/scoring';
+import { playerTotal } from '@/domain/totals';
 import type { GameState } from '@/domain/engine';
 import { LUKAS, ANTONIA, game } from '@/test/fixtures';
 import { t } from '@/test/i18n';

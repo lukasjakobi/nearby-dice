@@ -10,12 +10,13 @@ import type { Category } from './enums';
 import { autoPick } from './autopick';
 import { mixSeed, rollDie, seededRng } from './random';
 import type { Rng } from './random';
+import type { Dice } from './roll';
 import { LUCKY_NUMBER_MAX, LUCKY_NUMBER_MIN } from './rules';
 import type { Rules } from './rules';
-import { allowedCategories, playerTotal, score, writeScore } from './scoring';
-import type { Dice } from './scoring';
+import { allowedCategories, score, writeScore } from './scoring';
 import { emptySheet, turnsPerPlayer } from './sheet';
 import type { Sheet } from './sheet';
+import { playerTotal } from './totals';
 
 export type PlayerId = string;
 export type Held = readonly [boolean, boolean, boolean, boolean, boolean];

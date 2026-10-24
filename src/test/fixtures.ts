@@ -6,7 +6,7 @@ import type { NamedPlayer } from '@/domain/player';
 import { seededRng } from '@/domain/random';
 import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
 import type { Rules } from '@/domain/rules';
-import type { Dice } from '@/domain/scoring';
+import type { Dice } from '@/domain/roll';
 import type { SavedGame } from '@/domain/stats';
 import { ConnectionStatus, Role, SessionPhase } from '@/session/types';
 import type { PlayerInfo, SessionSnapshot, SharedSession } from '@/session/types';
