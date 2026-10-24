@@ -144,7 +144,8 @@ did, name the devices, OS versions and what you tried. `android/` and `ios/` are
 to `main`. [`build.yml`](.github/workflows/build.yml) builds a signed Android release APK:
 
 - **Release:** push a tag (`git tag v1.0.0 && git push origin v1.0.0`); the APK is attached to a
-  GitHub release of that name.
+  GitHub release of that name. Only the maintainer can push `v*` tags, and once pushed they can't be
+  moved or deleted, so tag the right commit on `main`.
 - **Test build:** Actions → Build → Run workflow (tag left empty); the APK is a downloadable workflow
   artifact.
 
@@ -177,6 +178,14 @@ change alters documented behaviour, update the document that owns it (see
   `fix: free the seat when the host kicks a player` or `docs: explain iOS Local Network prompts`.
 - Fill in the pull request template: what and why, the issue it closes, how you tested, device
   verification status and any new strings.
+- `main` only changes through pull requests. Before merging, the `check` job must pass on a branch
+  that is up to date with `main` ("Update branch" brings it up to date), every review thread must be
+  resolved, and the maintainer must approve. Pull requests are squash-merged, so the title becomes
+  the commit message; the branch is deleted afterwards.
+
+## Code of conduct
+
+Everyone taking part follows the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 
