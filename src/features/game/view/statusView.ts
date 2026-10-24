@@ -13,7 +13,10 @@ export type PillView = {
   name: string;
   avatar: AvatarView;
   total: number;
+  /** Their turn. */
   active: boolean;
+  /** Their sheet is on the card: the turn's, or the one opened from the pills. */
+  shown: boolean;
   dimmed: boolean;
 };
 
@@ -27,6 +30,7 @@ export type BannerView = { kind: BannerKind; message: string };
 
 export function buildPills(ctx: TurnContext): PillView[] {
   const { snapshot, game, turn } = ctx;
+  const shownId = ctx.viewed?.player.id ?? turn.playerId;
 
   return game.turnOrder
     .map((id) => playerById(snapshot, id))
@@ -37,6 +41,7 @@ export function buildPills(ctx: TurnContext): PillView[] {
       avatar: avatarOf(p),
       total: totalOf(game, p.id),
       active: p.id === turn.playerId,
+      shown: p.id === shownId,
       dimmed: p.link !== Link.Connected,
     }));
 }

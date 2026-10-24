@@ -13,8 +13,8 @@ import type { SessionSnapshot } from '@/session';
 
 import { buildControl, buildDice } from './controlView';
 import type { ControlView, DieView } from './controlView';
-import { buildSheet, focusedCellOf } from './sheetView';
-import type { SheetView } from './sheetView';
+import { buildSheet, buildViewedSheet, focusedCellOf } from './sheetView';
+import type { CellView, SheetView } from './sheetView';
 import { buildBanner, buildPills, lostPlayerOf } from './statusView';
 import type { BannerView, PillView } from './statusView';
 import { turnContext } from './turnContext';
@@ -26,6 +26,10 @@ export type GameView = {
   banner: BannerView | null;
   cardDimmed: boolean;
   sheet: SheetView;
+  /** The card shows another player's sheet, opened from the pills: "Zurück" leads back. */
+  viewingOther: boolean;
+  /** My field waiting for "Eintragen"; it stays while I look at another sheet. */
+  selectedCell: CellView | null;
   dice: DieView[];
   control: ControlView;
   /**
@@ -53,8 +57,9 @@ export function buildGameView(
   if (!ctx) return null;
   const { shared, connection } = snapshot;
 
-  const sheet = buildSheet(t, ctx);
-  const focused = focusedCellOf(sheet);
+  // Dice and roll button follow the turn, whichever sheet the card shows.
+  const turnSheet = buildSheet(t, ctx);
+  const focused = focusedCellOf(turnSheet);
   const lost = lostPlayerOf(ctx);
 
   return {
@@ -62,7 +67,9 @@ export function buildGameView(
     pills: buildPills(ctx),
     banner: buildBanner(t, ctx, lost),
     cardDimmed: !ctx.connected,
-    sheet,
+    sheet: ctx.viewed ? buildViewedSheet(t, ctx, ctx.viewed) : turnSheet,
+    viewingOther: !!ctx.viewed,
+    selectedCell: ctx.myTurn ? focused : null,
     dice: buildDice(t, ctx, focused),
     control: buildControl(t, ctx, focused),
     timer: timerOf(ctx),

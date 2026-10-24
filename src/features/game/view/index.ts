@@ -1,7 +1,7 @@
 export { buildGameView } from './gameView';
 export type { GameView } from './gameView';
 export { turnKey } from './turnContext';
-export type { LocalState } from './turnContext';
+export type { LocalState, ViewedSheet } from './turnContext';
 export { CellState } from './sheetView';
 export type { BonusView, CellView, SheetView } from './sheetView';
 export { ControlKind } from './controlView';
