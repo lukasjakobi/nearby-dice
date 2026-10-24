@@ -52,35 +52,35 @@
     "preset": {
       "classic": {
         "title": "Klassisch",
-        "description": "Freie Feldwahl, 13 Runden, Yatzy-Bonus."
+        "description": "Der Spieleabend-Klassiker: Du entscheidest, wohin jeder Wurf wandert, 13 Runden lang."
       },
       "top-to-bottom": {
         "title": "Der Reihe nach",
-        "description": "Felder von oben nach unten, 60 Sekunden pro Zug."
+        "description": "Kein Aussuchen, kein Zurück: Feld für Feld von oben nach unten, und die Uhr tickt mit."
       },
       "blitz": {
         "title": "Blitz",
-        "description": "6 Runden, 30 Sekunden pro Zug."
+        "description": "Sechs Runden, 30 Sekunden pro Zug. Wer zögert, hat schon verloren."
       },
       "same-dice": {
         "title": "Gleiche Würfel",
-        "description": "Alle Spieler bekommen dieselben Würfe."
+        "description": "Alle würfeln dasselbe. Am Ende zählt nur, wer mehr daraus macht."
       },
       "triple": {
         "title": "Dreifach",
-        "description": "Drei Blätter mit Faktor 1, 2 und 3."
+        "description": "Drei Blätter, dreifacher Nervenkitzel: Das zweite zählt doppelt, das dritte dreifach."
       },
       "yatzy": {
         "title": "Yatzy",
-        "description": "Mit Ein Paar und Zwei Paaren, Straßen nur 1–5 und 2–6, Bonus 50."
+        "description": "Die skandinavische Spielart: Paare zählen, Straßen sind streng, der Bonus bringt 50."
       },
       "classic-xl": {
         "title": "Klassisch XL",
-        "description": "17 Felder: dazu Zwei Paare, Gerade, Ungerade und Mini."
+        "description": "Mehr Blatt, mehr Chancen: Zwei Paare, Gerade, Ungerade und Mini spielen mit."
       },
       "lucky-number": {
         "title": "Glückszahl",
-        "description": "Jede Runde eine neue Glückszahl. Genau getroffen: 40 Punkte."
+        "description": "Jede Runde lost das Glück eine neue Zahl aus. Triffst du sie genau, gibt's 40 Punkte."
       }
     },
     "secondsPerTurn": {
@@ -88,18 +88,10 @@
       "30": "30\u00a0s",
       "60": "60\u00a0s"
     },
-    "yatzyBonus": {
-      "0": "Aus",
-      "50": "+50"
-    },
     "ruleset": {
       "classic": "Klassisch",
       "classic-xl": "Klassisch XL",
       "yatzy": "Yatzy"
-    },
-    "joker": {
-      "off": "Aus",
-      "official": "Offiziell"
     },
     "sheetCount": {
       "1": "1",
@@ -391,8 +383,6 @@
       "time": "Zeit pro Zug",
       "order": "Feldwahl",
       "upperBonus": "Bonus ab {{threshold}} Punkten",
-      "extraYatzy": "Weitere Yatzy",
-      "joker": "Joker",
       "sameDice": "Gleiche Würfel für alle",
       "luckyNumber": "Glückszahl",
       "on": "An",

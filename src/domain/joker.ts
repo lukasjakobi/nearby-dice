@@ -1,46 +1,46 @@
-import { Category, Joker } from './enums';
+import { Category } from './enums';
+import { lowerFields } from './fields';
+import type { SheetRules } from './fields';
 import { isYatzy } from './roll';
 import type { Dice } from './roll';
-import { isClassicFamily } from './rules';
-import type { Rules } from './rules';
 import { isOpen, lowerCategories, upperCategoryFor } from './sheet';
 import type { Sheet } from './sheet';
 
-/** Five equal dice again, while the Yatzy field is used and the official joker rule applies. */
-function isFurtherYatzy(dice: Dice, sheet: Sheet, rules: Rules): boolean {
-  return (
-    isClassicFamily(rules.ruleset) &&
-    rules.joker === Joker.Official &&
-    isYatzy(dice) &&
-    !isOpen(sheet, Category.Yatzy)
-  );
-}
+/*
+ * The further Yatzy ("joker") rule, the same in every ruleset and preset: once a sheet's Yatzy
+ * field holds 50, five equal dice are a further Yatzy. Each one earns the 50 bonus and goes into
+ * the matching upper field (50) or any open lower field (that field's maximum). Only when neither
+ * is open may it go into another open field, which then scores its normal points. With the Yatzy
+ * field crossed out or still open there is no joker.
+ */
 
-/** Five of a kind while the Yatzy field is used and the matching upper field is taken. */
-export function isJoker(dice: Dice, sheet: Sheet, rules: Rules): boolean {
-  return isFurtherYatzy(dice, sheet, rules) && !isOpen(sheet, upperCategoryFor(dice[0]));
+/** A joker in the matching upper field scores this, in every ruleset. */
+const JOKER_UPPER_POINTS = 50;
+
+/** Five equal dice while this sheet's Yatzy field holds 50. */
+export function isJoker(dice: Dice, sheet: Sheet): boolean {
+  return isYatzy(dice) && sheet.fields[Category.Yatzy] === 50;
 }
 
 /**
- * The fields a further Yatzy is limited to: the matching upper field, else the open lower fields.
- * `null` when the joker rule does not limit these dice, so every open field is allowed.
+ * The fields a joker may go into: the matching upper field (if open) and every open lower field.
+ * `null` when the dice are no joker or neither kind is open: then every open field is allowed.
  */
-export function jokerFields(dice: Dice, sheet: Sheet, rules: Rules): Category[] | null {
-  if (!isFurtherYatzy(dice, sheet, rules)) return null;
+export function jokerFields(dice: Dice, sheet: Sheet, rules: SheetRules): Category[] | null {
+  if (!isJoker(dice, sheet)) return null;
+  const fields = [upperCategoryFor(dice[0]), ...lowerCategories(rules)].filter((category) =>
+    isOpen(sheet, category),
+  );
 
-  const matchingUpper = upperCategoryFor(dice[0]);
-  if (isOpen(sheet, matchingUpper)) return [matchingUpper];
-  const openLower = lowerCategories(rules).filter((category) => isOpen(sheet, category));
-
-  return openLower.length > 0 ? openLower : null;
+  return fields.length > 0 ? fields : null;
 }
 
-/** A further Yatzy earns the bonus once the Yatzy field holds 50, whichever field it goes into. */
-export function earnsYatzyBonus(dice: Dice, sheet: Sheet, rules: Rules): boolean {
-  return (
-    isClassicFamily(rules.ruleset) &&
-    rules.yatzyBonus > 0 &&
-    isYatzy(dice) &&
-    sheet.fields[Category.Yatzy] === 50
-  );
+/**
+ * What a joker scores in `category`: 50 in the matching upper field, the maximum of a lower field.
+ * `null` for any other field, which scores its normal points. Call it only for a joker.
+ */
+export function jokerPoints(dice: Dice, category: Category, rules: SheetRules): number | null {
+  if (category === upperCategoryFor(dice[0])) return JOKER_UPPER_POINTS;
+
+  return lowerFields(rules).find((field) => field.category === category)?.max ?? null;
 }

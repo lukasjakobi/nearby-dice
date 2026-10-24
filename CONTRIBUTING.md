@@ -87,8 +87,8 @@ features/<name>/
   `SessionPhase.Lobby`, `CellState.Preview`). Compare against enum members, never against strings.
 - **One component per file.** Helper components get their own file in the feature's `components/`.
 - **Game options have one source of truth.** The allowed values (`ROLLS_PER_TURN`, `SECONDS_PER_TURN`,
-  `YATZY_BONUSES`, `SHEET_COUNTS`) live in `domain/rules.ts`; the setup screen, message validation and
-  labels derive from them.
+  `SHEET_COUNTS`) live in `domain/rules.ts`; the setup screen, message validation and labels derive
+  from them.
 - **Screens = view model + components.** For example, `useGameScreen` / `buildGameView` turn the session
   snapshot into display-ready props (`CellView`, `ControlView` …). Components only render props and call
   callbacks. Visual variants are enum-keyed maps (`Record<CellState, CellLook>`), not `if` chains.

@@ -115,14 +115,12 @@ These are the types everything else is built on, shortened to their essentials:
 enum Ruleset { Classic, ClassicXl, Yatzy }
 enum Category { Ones … Sixes, OnePair, TwoPairs, ThreeOfAKind, FourOfAKind,
                 FullHouse, SmallStraight, LargeStraight, Yatzy, Chance, Even, Odd, Mini, LuckyNumber }
-enum Joker { Off, Official }              enum GameLength { Full, Short }
-enum FieldOrder { Free, TopToBottom }     enum StartingPlayer { Random, Host }
-enum Link { Connected, Lost, Removed, Left }
-// Allowed values: ROLLS_PER_TURN, SECONDS_PER_TURN, YATZY_BONUSES, SHEET_COUNTS (domain/rules.ts)
+enum GameLength { Full, Short }            enum FieldOrder { Free, TopToBottom }
+enum StartingPlayer { Random, Host }      enum Link { Connected, Lost, Removed, Left }
+// Allowed values: ROLLS_PER_TURN, SECONDS_PER_TURN, SHEET_COUNTS (domain/rules.ts)
 // Rules only ever come from PRESETS[PresetId]; matchPreset(rules) maps them back.
 type Rules = { ruleset; rollsPerTurn: 2|3|4; secondsPerTurn: 0|30|60; sameDice; luckyNumber; upperBonus;
-               yatzyBonus: 0|50; joker; length; sheets: 1|3;
-               fieldOrder; startingPlayer };
+               length; sheets: 1|3; fieldOrder; startingPlayer };
 type GameState = { rules; seed; players: GamePlayer[]; turnOrder; turn: Turn; finished;
                    history: HistoryEntry[]; rev };
 function reduce(state, action: GameAction, ctx: { now; rng }): { state; rejected?: RejectReason };
@@ -154,8 +152,8 @@ results screen (in Training, on its results screen). Switching on the results sc
 guest's "yes" rematch vote to pending, so nobody ends up playing a mode they didn't agree to; the
 host's own vote stays. Guests see the mode read-only and get the toast „Spielstil geändert: …“.
 
-**Confirmed:** `ClassicXl` keeps Classic's upper bonus (+35), its joker rules and the extra-Yatzy
-bonus, and has 17 fields per sheet. Its lower block starts with `TwoPairs`, `Even`, `Odd` and `Mini`,
+**Confirmed:** `ClassicXl` keeps Classic's upper bonus (+35) and the [further-Yatzy rule](#further-yatzys),
+and has 17 fields per sheet. Its lower block starts with `TwoPairs`, `Even`, `Odd` and `Mini`,
 continues with the usual Classic fields and ends with `Chance`:
 
 | Field      | Points                                                                                               |
@@ -172,6 +170,35 @@ the same way. For example, `[5, 1, 6, 6, 2]` scores 14 in `Even`, 6 in `Odd` and
 round's target sum exactly scores 40; anything else scores 0. While the field is open it shows the
 current target; once it is filled or struck, the hint disappears. The Lucky Number preset turns this
 rule on for Classic, and the XL preset selects `ClassicXl`.
+
+### Further Yatzys
+
+**Confirmed:** every mode uses the same rule for further Yatzys (also called the joker). Once a
+sheet's Yatzy field holds 50, five equal dice are a further Yatzy:
+
+- Each one adds 50 to the sheet's extra-Yatzy bonus, whichever field it goes into.
+- It goes into the matching upper field (50 points) or any open lower field (that field's maximum
+  from the table below). Those are the allowed fields, in any order.
+- Only when neither is open may it go into another open field. That field scores its normal points,
+  which is 0 for an upper field other than the matching one.
+- With the Yatzy field crossed out (0) or still open, there is no joker and no bonus. Five of a kind
+  scores normally and may go into any allowed field.
+- In "Der Reihe nach" the next open field is the only allowed one, and it scores by the same rule.
+- With three sheets, each sheet decides for itself, and the sheet's factor applies in the totals.
+
+Maximum points of each lower field with a further Yatzy (`max` in `src/domain/fields.ts`, checked
+against every roll in the tests):
+
+| Field                  | Classic and Classic XL | Yatzy   |
+| ---------------------- | ---------------------- | ------- |
+| Matching upper field   | 50                     | 50      |
+| Three / Four of a kind | 30 / 30                | 18 / 24 |
+| One pair / Two pairs   | – / 22 (XL)            | 12 / 22 |
+| Full House             | 25                     | 28      |
+| Small / Large straight | 30 / 40                | 15 / 20 |
+| Chance                 | 30                     | 30      |
+| Even / Odd / Mini (XL) | 30 / 25 / 30           | –       |
+| Lucky number (if on)   | 40                     | 40      |
 
 ## A move, end to end
 
@@ -203,13 +230,14 @@ nth turn shares the same target, whether or not "Gleiche Würfel" is on. No extr
 
 ## Protocol (`session/protocol.ts`)
 
-Messages are JSON with `v: 5` and are validated on arrival: unknown types, other versions and
+Messages are JSON with `v: 6` and are validated on arrival: unknown types, other versions and
 messages with missing fields are dropped.
 
 **Confirmed compatibility:** version 2 replaced free-form `rules` with the session's `preset`, and
 version 3 renamed the ruleset and category values, version 4 removed the rule options no preset
-used, and version 5 changed Classic XL's `TwoPairs` points, so phones on different versions simply
-ignore each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
+used, version 5 changed Classic XL's `TwoPairs` points, and version 6 gave every mode the same
+[further-Yatzy rule](#further-yatzys) and removed the `joker` and `yatzyBonus` options, so phones on
+different versions simply ignore each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
 session's preset; afterwards the host may already have picked the next one. Sheets and history must
 match the game's rules.
 

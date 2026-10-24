@@ -1,4 +1,4 @@
-import { Category, FieldOrder, Joker, NameProblem, PlayerColor, PresetId, Ruleset } from '@/domain';
+import { Category, FieldOrder, NameProblem, PlayerColor, PresetId, Ruleset } from '@/domain';
 import { EndReason, HostError, JoinError, JoinStep, RematchVote } from '@/session';
 import { LanguageMode, ThemeMode } from '@/store';
 
@@ -35,7 +35,6 @@ test.each([
   ['category', Category],
   ['playerColor', PlayerColor],
   ['ruleset', Ruleset],
-  ['joker', Joker],
   ['fieldOrder', FieldOrder],
   ['themeMode', ThemeMode],
   ['languageMode', LanguageMode],

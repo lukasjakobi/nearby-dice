@@ -1,6 +1,6 @@
 /** "Alle Felder im Vergleich": one row per field, one column per player in ranking order. */
 import type { TFunction } from '@/i18n';
-import { lowerCategories, UPPER_CATEGORIES, weightedSum } from '@/domain';
+import { lowerCategories, UPPER_CATEGORIES, weightedSum, YATZY_BONUS } from '@/domain';
 import type { Category, GamePlayer, Rules } from '@/domain';
 
 import { signed } from './rankingView';
@@ -42,7 +42,7 @@ export function buildCompare(
         : null,
     );
   const yatzyBonus = (player: GamePlayer) =>
-    weightedSum(player.sheets, (sheet) => sheet.extraYatzys * rules.yatzyBonus);
+    weightedSum(player.sheets, (sheet) => sheet.extraYatzys * YATZY_BONUS);
 
   return [
     ...UPPER_CATEGORIES.map(fieldRow),

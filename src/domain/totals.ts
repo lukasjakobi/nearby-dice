@@ -1,5 +1,5 @@
 import { Category } from './enums';
-import { SHEET_FACTORS, UPPER_BONUS_THRESHOLD, upperBonusPoints } from './rules';
+import { SHEET_FACTORS, UPPER_BONUS_THRESHOLD, YATZY_BONUS, upperBonusPoints } from './rules';
 import type { Rules } from './rules';
 import { UPPER_CATEGORIES, categoriesFor } from './sheet';
 import type { Sheet } from './sheet';
@@ -22,7 +22,7 @@ export function sheetTotal(sheet: Sheet, rules: Rules): number {
     0,
   );
 
-  return fields + upperBonus(sheet, rules) + sheet.extraYatzys * rules.yatzyBonus;
+  return fields + upperBonus(sheet, rules) + sheet.extraYatzys * YATZY_BONUS;
 }
 
 /** The factor of the sheet at `index` (×1, ×2, ×3); 1 outside the known sheets. */
