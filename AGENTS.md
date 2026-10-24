@@ -1,6 +1,6 @@
 # Nearby Dice
 
-Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo SDK 57, React Native, strict TS).
+Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo SDK 58, React Native, strict TS).
 
 ## Read first
 

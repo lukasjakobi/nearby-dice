@@ -36,6 +36,7 @@
       "expo-status-bar",
       "expo-font",
       "expo-audio",
+      "expo-asset",
       "./plugins/withReleaseSigning",
       "./plugins/withDevVariant",
       [
