@@ -138,6 +138,8 @@ did, name the devices, OS versions and what you tried. `android/` and `ios/` are
 - Dependabot groups Expo SDK packages into one pull request of patch updates. Before merging it, run
   `npx expo install --check`, and `npx expo install --fix` if it reports mismatches. Upgrade the SDK
   itself with `npx expo install expo@latest`, then `npx expo install --fix`.
+- Keep React and React DOM at the exact versions selected by Expo for the SDK, matching the native
+  renderer. Dependabot ignores standalone React updates; update these versions through SDK alignment.
 - Keep `@eslint/compat` around the Expo ESLint config until its plugins support ESLint 10, and keep
   `eslint-import-resolver-typescript` as a direct dependency.
 - `npm run typecheck` uses TypeScript 7 through the `@typescript/native` alias; `typescript` stays on
