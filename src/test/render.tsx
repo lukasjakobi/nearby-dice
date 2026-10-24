@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react-native';
+import { act, render } from '@testing-library/react-native';
+import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -29,6 +30,28 @@ export async function renderScreen(
       </ThemeProvider>
     </SafeAreaProvider>,
   );
+}
+
+/**
+ * Renders a session screen whose snapshot the test replaces with `update`, as the host's
+ * broadcasts would; the commands are jest mocks (see `fakeSession`).
+ */
+export async function renderLiveSession(ui: ReactElement, snap: SessionSnapshot) {
+  const session = fakeSession(snap);
+  let update: (next: SessionSnapshot) => void = () => {};
+
+  function LiveSession() {
+    const [value, setValue] = useState(snap);
+    update = setValue;
+
+    return (
+      <SessionContext.Provider value={{ session, snapshot: value }}>{ui}</SessionContext.Provider>
+    );
+  }
+
+  await renderScreen(<LiveSession />);
+
+  return { session, update: (next: SessionSnapshot) => act(() => update(next)) };
 }
 
 /** A controller whose commands are jest mocks; enough for screen tests. */

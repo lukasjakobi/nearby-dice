@@ -10,6 +10,7 @@ import { buildGameView } from '../view';
 
 const local = (sheetIndex = 0, dice: number[] = [0, 0, 0, 0, 0]) => ({
   sheetIndex,
+  viewed: null,
   shownDice: dice as unknown as Dice,
   shownRolled: dice.some((d) => d > 0),
   rolling: false,
