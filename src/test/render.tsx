@@ -1,6 +1,6 @@
 import { act, render } from '@testing-library/react-native';
-import { useState } from 'react';
-import type { ReactElement } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionContext } from '@/features/session/SessionContext';
@@ -11,6 +11,17 @@ const METRICS = {
   frame: { x: 0, y: 0, width: 390, height: 844 },
   insets: { top: 47, left: 0, right: 0, bottom: 34 },
 };
+
+/** The app's providers, also usable as a `renderHook` wrapper. */
+export function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <SafeAreaProvider initialMetrics={METRICS}>
+      <ThemeProvider scheme={ColorScheme.Light}>
+        <ToastProvider>{children}</ToastProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
 
 /** Renders with the app's providers; pass a session to render session screens. */
 export async function renderScreen(
@@ -23,13 +34,7 @@ export async function renderScreen(
     ui
   );
 
-  return await render(
-    <SafeAreaProvider initialMetrics={METRICS}>
-      <ThemeProvider scheme={ColorScheme.Light}>
-        <ToastProvider>{content}</ToastProvider>
-      </ThemeProvider>
-    </SafeAreaProvider>,
-  );
+  return await render(<AppProviders>{content}</AppProviders>);
 }
 
 /**
@@ -42,7 +47,9 @@ export async function renderLiveSession(ui: ReactElement, snap: SessionSnapshot)
 
   function LiveSession() {
     const [value, setValue] = useState(snap);
-    update = setValue;
+    useEffect(() => {
+      update = setValue;
+    }, []);
 
     return (
       <SessionContext.Provider value={{ session, snapshot: value }}>{ui}</SessionContext.Provider>

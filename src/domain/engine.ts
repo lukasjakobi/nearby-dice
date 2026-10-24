@@ -215,6 +215,18 @@ export function lastEntry(state: GameState): HistoryEntry | null {
   return state.history[state.history.length - 1] ?? null;
 }
 
+/**
+ * `to` is `from` later in the same turn. Every roll moves `rollSeq` and `rollsUsed`
+ * together, so any other difference means an entry or skip passed the turn on.
+ */
+export function sameTurn(from: Turn, to: Turn): boolean {
+  return (
+    from.playerId === to.playerId &&
+    to.rollsUsed >= from.rollsUsed &&
+    to.rollSeq - from.rollSeq === to.rollsUsed - from.rollsUsed
+  );
+}
+
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 type NewEntry = DistributiveOmit<HistoryEntry, 'seq' | 'round'>;
 

@@ -1,17 +1,40 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef } from 'react';
 
-import { Category, HistoryKind, lastEntry } from '@/domain';
+import { Category, HistoryKind, lastEntry, sameTurn } from '@/domain';
+import type { Focus, Turn } from '@/domain';
 import { playerById } from '@/session';
 import type { SessionSnapshot } from '@/session';
 import { DEFAULT_TOAST_OFFSET, useToast } from '@/ui';
 import { useFeedback } from '@/shared';
+import type { Feedback } from '@/shared';
 
-/** Toasts, sounds and haptics that react to the game itself, not to my own taps. */
+const sameFocus = (a: Focus | null, b: Focus | null) =>
+  a?.category === b?.category && a?.sheet === b?.sheet;
+
+/** Plays what another player's phone played on tap for this step of their turn. */
+function playWatchedMove(before: Turn, after: Turn, feedback: Feedback): void {
+  if (after.rollSeq > before.rollSeq) {
+    feedback.roll();
+
+    return;
+  }
+
+  const die = after.held.findIndex((held, i) => held !== before.held[i]);
+  if (die >= 0) feedback.hold(after.held[die]!);
+  else if (after.focus && !sameFocus(before.focus, after.focus)) feedback.tap();
+}
+
+/**
+ * Toasts, sounds and haptics that react to the game itself, not to my own taps.
+ * Every phone hears every move: my own rolls, holds and field picks sound on tap, the
+ * other players' when their snapshot arrives. Other players' moves never vibrate.
+ */
 export function useGameFeedback(snapshot: SessionSnapshot) {
   const { t } = useTranslation();
   const toast = useToast();
   const feedback = useFeedback();
+  const watching = useFeedback({ vibrate: false });
   const game = snapshot.shared.game;
 
   // The turn passed to me: a nudge, since the phone may be lying on the table.
@@ -23,7 +46,17 @@ export function useGameFeedback(snapshot: SessionSnapshot) {
     if (previous && turnPlayer === snapshot.myId && previous !== turnPlayer) feedback.turn();
   }, [turnPlayer, snapshot.myId, feedback]);
 
-  // One toast per history entry: automatic picks and other players' fields.
+  // Another player's roll, hold or field pick.
+  const turn = game?.turn;
+  const lastTurn = useRef(turn);
+  useEffect(() => {
+    const before = lastTurn.current;
+    lastTurn.current = turn;
+    if (!before || !turn || turn.playerId === snapshot.myId || !sameTurn(before, turn)) return;
+    playWatchedMove(before, turn, watching);
+  }, [turn, snapshot.myId, watching]);
+
+  // A sound for every entered field; a toast for automatic picks and other players' fields.
   const lastSeq = useRef(game?.history.length ?? 0);
   useEffect(() => {
     if (!game) return;
@@ -43,12 +76,11 @@ export function useGameFeedback(snapshot: SessionSnapshot) {
           value: entry.points,
         }),
       );
-    if (mine) {
-      if (entry.points === 0) feedback.strike();
-      else if (entry.category === Category.Yatzy) feedback.yatzy();
-      else feedback.score();
-    }
-  }, [game, snapshot, toast, feedback, t]);
+    const entryFeedback = mine ? feedback : watching;
+    if (entry.points === 0) entryFeedback.strike();
+    else if (entry.category === Category.Yatzy) entryFeedback.yatzy();
+    else entryFeedback.score();
+  }, [game, snapshot, toast, feedback, watching, t]);
 
   // Toasts sit above the action bar while the game is on screen.
   const { setOffset } = toast;
