@@ -10,3 +10,5 @@ export { BannerKind } from './statusView';
 export type { BannerView, PillView } from './statusView';
 export { BoardRowKind, buildScoreboard } from './scoreboardView';
 export type { BoardRow, ScoreboardView } from './scoreboardView';
+export { buildYatzyFlag } from './yatzyFlagView';
+export type { YatzyFlagView } from './yatzyFlagView';

@@ -17,6 +17,7 @@ export enum Sound {
   Strike = 'strike',
   Yatzy = 'yatzy',
   Finish = 'finish',
+  Fanfare = 'fanfare',
 }
 
 const SOURCES: Record<Sound, number> = {
@@ -32,6 +33,7 @@ const SOURCES: Record<Sound, number> = {
   [Sound.Strike]: require('../../assets/sounds/strike.wav'),
   [Sound.Yatzy]: require('../../assets/sounds/yatzy.wav'),
   [Sound.Finish]: require('../../assets/sounds/finish.wav'),
+  [Sound.Fanfare]: require('../../assets/sounds/fanfare.wav'),
 };
 const MUSIC = require('../../assets/sounds/music.wav');
 /** Music sits under the effects: full music volume is this loud. */

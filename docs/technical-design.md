@@ -190,6 +190,9 @@ sequenceDiagram
 
 The host's own moves skip the network and call `reduce` directly. Only the host rolls dice (with a
 seed per round for "Gleiche Würfel"), and every phone shakes its dice when `turn.rollSeq` goes up.
+When the new faces land as five equal dice, every phone waves a "YATZY!" flag with the roller's name
+and plays a fanfare (`useYatzyFlag`). It needs no extra message: each phone sees the same roll land.
+Dice already on the table when the game screen opens, after a reconnect for example, show no flag.
 
 With `luckyNumber`, `luckyNumberFor(seed, round)` derives the round's target from the game seed (the
 rule is in [scoring.md](scoring.md#lucky-number)). `luckyNumberOf(state)` uses `currentRound(state)`,

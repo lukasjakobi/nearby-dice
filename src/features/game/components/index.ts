@@ -16,3 +16,4 @@ export { ScorecardScroll } from './ScorecardScroll';
 export { ScreenOverlay } from './ScreenOverlay';
 export { SheetBackButton } from './SheetBackButton';
 export { TimerBar } from './TimerBar';
+export { YatzyFlag } from './YatzyFlag';

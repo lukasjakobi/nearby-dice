@@ -119,6 +119,8 @@ export function useDiceAnimation(turn: Turn | undefined) {
     rolling: rolling || (pending && !reduceMotion),
     rollPending: pending,
     rollSeq: seq,
+    /** The roll whose faces are on screen: it moves once they have landed. */
+    shownSeq,
     request,
   };
 }
