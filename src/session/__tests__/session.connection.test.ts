@@ -52,7 +52,6 @@ function host(hostPhone: Phone) {
       profile: { name: hostPhone.name, color: PlayerColor.Amber },
       roundName: `${hostPhone.name}s Runde`,
       preset: PresetId.Classic,
-      maxPlayers: 4,
       rng: seededRng(7),
     }),
   );

@@ -46,7 +46,6 @@ beforeEach(async () => {
     profile: LUKAS,
     roundName: 'Lukas’ Runde',
     preset: PresetId.Classic,
-    maxPlayers: 4,
   });
   await jest.advanceTimersByTimeAsync(TIMING.codeCollisionScan);
   host = await opening;

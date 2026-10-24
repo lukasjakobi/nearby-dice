@@ -6,7 +6,7 @@ import { PermissionSheet, PresetDescription, PresetGrid } from '@/shared';
 import { ROUND_NAME_MAX_LENGTH } from '@/domain';
 import { Button, Footer, Header, IconName, Screen, Text, TextField, TextVariant } from '@/ui';
 
-import { HostErrorCard, PlayerCountChoice } from './components';
+import { HostErrorCard } from './components';
 import { OpenState, useHostSetup } from './hooks';
 
 function openButtonLabel(t: TFunction, state: OpenState): string {
@@ -53,11 +53,6 @@ export function HostSetupScreen() {
           <Text variant={TextVariant.Label}>{t('hostSetup.styleLabel')}</Text>
           <PresetGrid value={setup.preset} onChange={setup.choosePreset} />
           <PresetDescription preset={setup.preset} />
-        </View>
-
-        <View style={{ gap: 10 }}>
-          <Text variant={TextVariant.Label}>{t('hostSetup.maxPlayersLabel')}</Text>
-          <PlayerCountChoice value={setup.maxPlayers} onChange={setup.setMaxPlayers} />
         </View>
       </ScrollView>
 
