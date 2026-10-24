@@ -21,6 +21,7 @@ import type { CellView, GameView } from '../view';
 
 const local = (dice: number[] = [0, 0, 0, 0, 0]) => ({
   sheetIndex: 0,
+  viewed: null,
   shownDice: dice as unknown as Dice,
   shownRolled: dice.some((d) => d > 0),
   rolling: false,

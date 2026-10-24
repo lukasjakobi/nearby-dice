@@ -17,6 +17,7 @@ import {
   ScorecardScroll,
   ScoreboardSheet,
   ScreenOverlay,
+  SheetBackButton,
 } from './components';
 import { GameDialog, GameSheet, useGameScreen } from './hooks';
 
@@ -58,7 +59,8 @@ export function GameScreen() {
         </View>
       ) : null}
 
-      <PlayerPills pills={view.pills} />
+      <PlayerPills pills={view.pills} onSelect={screen.viewPlayer} />
+      {view.viewingOther ? <SheetBackButton onPress={screen.showTurnSheet} /> : null}
 
       <ScorecardScroll>
         <Scorecard

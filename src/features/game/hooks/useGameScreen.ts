@@ -47,7 +47,8 @@ export function useGameScreen() {
   const feedbackSwitches = useFeedbackSwitches();
   const game = snapshot.shared.game;
   const dice = useDiceAnimation(game?.turn);
-  const [sheetIndex, setSheetIndex] = useSheetPage(game, snapshot.shared.gameNumber);
+  const page = useSheetPage(game, snapshot.shared.gameNumber);
+  const { sheetIndex } = page;
   const [openSheet, setOpenSheet] = useState(GameSheet.None);
   const [dialog, setDialog] = useState(GameDialog.None);
   const rollPending = dice.rollPending;
@@ -57,6 +58,7 @@ export function useGameScreen() {
 
   const view = buildGameView(t, snapshot, {
     sheetIndex,
+    viewed: page.viewed,
     shownDice: dice.shownDice,
     shownRolled: dice.shownRolled,
     rolling: dice.rolling,
@@ -77,12 +79,7 @@ export function useGameScreen() {
     return () => clearTimeout(timer);
   }, [finished]);
 
-  const selectedCell =
-    selectedCategory && view && pending?.sheet === view.sheet.selectedTab
-      ? [...view.sheet.upper, ...view.sheet.lower].find(
-          (cell) => cell.category === selectedCategory && cell.pickable,
-        )
-      : null;
+  const selectedCell = view?.selectedCell;
   const confirm = selectedCell
     ? {
         category: selectedCell.category,
@@ -132,10 +129,17 @@ export function useGameScreen() {
       session.toggleHold(die);
     },
     selectSheet: (index: number) => {
+      // A sheet opened from the pills turns its pages on this phone alone.
+      if (view?.viewingOther && page.viewed) {
+        page.setViewed({ ...page.viewed, sheetIndex: index });
+
+        return;
+      }
+
       // Only the player whose turn it is turns the pages; everyone else follows them.
       if (game?.turn.playerId !== snapshot.myId) return;
       clearSelection();
-      setSheetIndex(index);
+      page.setSheetIndex(index);
       if (index !== sheetIndex) session.viewSheet(index);
     },
     pick: (cell: CellView) => {
@@ -156,6 +160,13 @@ export function useGameScreen() {
         session.score(pending.category, pending.sheet);
       }
     },
+    viewPlayer: (playerId: string) => {
+      // Their sheet opens on this phone only. Tapping the player whose turn it is, or the
+      // pill already open, follows the turn again.
+      const follow = playerId === game?.turn.playerId || playerId === page.viewed?.playerId;
+      page.setViewed(follow ? null : { playerId, sheetIndex: 0 });
+    },
+    showTurnSheet: () => page.setViewed(null),
     closeSheet: close,
     openScoreboard: () => setOpenSheet(GameSheet.Scoreboard),
     openMenu: () => setOpenSheet(GameSheet.Menu),

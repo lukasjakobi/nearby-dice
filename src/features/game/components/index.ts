@@ -14,4 +14,5 @@ export { ScoreboardSheet } from './ScoreboardSheet';
 export { Scorecard } from './Scorecard';
 export { ScorecardScroll } from './ScorecardScroll';
 export { ScreenOverlay } from './ScreenOverlay';
+export { SheetBackButton } from './SheetBackButton';
 export { TimerBar } from './TimerBar';
