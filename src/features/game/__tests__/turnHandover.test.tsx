@@ -4,18 +4,16 @@
  * turn (its sheet, roll, previews or pending buttons) is held on screen.
  */
 import { act, fireEvent, renderHook, screen } from '@testing-library/react-native';
-import { useState } from 'react';
 import { t } from '@/test/i18n';
 
 import { ActionType, HistoryKind, NO_DICE, lastEntry } from '@/domain/engine';
 import type { GameState, Turn } from '@/domain/engine';
 import { Category } from '@/domain/enums';
 import type { Dice } from '@/domain/scoring';
-import { SessionContext } from '@/features/session/SessionContext';
 import { Role } from '@/session/types';
 import type { SessionSnapshot } from '@/session/types';
 import { LUKAS, ANTONIA, game, play, snapshot, withDice } from '@/test/fixtures';
-import { fakeSession, renderScreen } from '@/test/render';
+import { fakeSession, renderLiveSession } from '@/test/render';
 
 import { GameScreen } from '../GameScreen';
 import { CellState, ControlKind, buildGameView } from '../view';
@@ -23,6 +21,7 @@ import { useDiceAnimation } from '../hooks';
 
 const local = (dice: number[] = [0, 0, 0, 0, 0]) => ({
   sheetIndex: 0,
+  viewed: null,
   shownDice: dice as unknown as Dice,
   shownRolled: dice.some((d) => d > 0),
   rolling: false,
@@ -147,25 +146,7 @@ describe('the dice when the turn passes', () => {
   );
 });
 
-async function mount(snap: SessionSnapshot) {
-  const session = fakeSession(snap);
-  let update: (next: SessionSnapshot) => void = () => {};
-
-  function TestSession() {
-    const [value, setValue] = useState(snap);
-    update = setValue;
-
-    return (
-      <SessionContext.Provider value={{ session, snapshot: value }}>
-        <GameScreen />
-      </SessionContext.Provider>
-    );
-  }
-
-  await renderScreen(<TestSession />);
-
-  return { session, update: (next: SessionSnapshot) => act(() => update(next)) };
-}
+const mount = (snap: SessionSnapshot) => renderLiveSession(<GameScreen />, snap);
 
 describe('the game screen after "Eintragen"', () => {
   async function confirmFullHouse(session: ReturnType<typeof fakeSession>) {

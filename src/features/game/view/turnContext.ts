@@ -7,10 +7,15 @@ import type { Category, Dice, GameState, Rules, Turn } from '@/domain';
 import { ConnectionStatus, playerById, SessionPhase } from '@/session';
 import type { PlayerInfo, SessionSnapshot } from '@/session';
 
+/** A sheet this phone opened by tapping a player's pill; nothing about it is shared. */
+export type ViewedSheet = { playerId: string; sheetIndex: number };
+
 /** Screen-local state the builder needs besides the snapshot. */
 export type LocalState = {
   /** Which of the three sheets is shown. */
   sheetIndex: number;
+  /** Another player's sheet opened from the pills; `null` follows the turn. */
+  viewed: ViewedSheet | null;
   /** Dice as currently drawn (they change after the shake). */
   shownDice: Dice;
   /** The shown dice come from a roll in this turn (the old roll while shaking). */
@@ -31,6 +36,11 @@ export type TurnContext = {
   turn: Turn;
   /** The player whose turn it is. */
   turnPlayer: PlayerInfo;
+  /**
+   * The other player whose sheet I opened, while they are still in the game; `null` shows
+   * the sheet of the player whose turn it is.
+   */
+  viewed: { player: PlayerInfo; sheetIndex: number } | null;
   myTurn: boolean;
   /** This phone is connected to the round. */
   connected: boolean;
@@ -60,6 +70,7 @@ export function turnContext(snapshot: SessionSnapshot, local: LocalState): TurnC
     rules: game.rules,
     turn,
     turnPlayer,
+    viewed: viewedOf(snapshot, game, local.viewed),
     myTurn: turn.playerId === snapshot.myId,
     connected,
     playing,
@@ -68,6 +79,19 @@ export function turnContext(snapshot: SessionSnapshot, local: LocalState): TurnC
     rolled: turn.rollsUsed > 0,
     rollsLeft: rollsLeft(game),
   };
+}
+
+/** Opening the turn player's sheet, or a removed player's, just follows the turn. */
+function viewedOf(
+  snapshot: SessionSnapshot,
+  game: GameState,
+  viewed: ViewedSheet | null,
+): TurnContext['viewed'] {
+  if (!viewed || viewed.playerId === game.turn.playerId) return null;
+  if (!game.turnOrder.includes(viewed.playerId)) return null;
+  const player = playerById(snapshot, viewed.playerId);
+
+  return player && player.link !== Link.Removed ? { player, sheetIndex: viewed.sheetIndex } : null;
 }
 
 /** Tells one turn from the next, also across games; `null` without a game. */

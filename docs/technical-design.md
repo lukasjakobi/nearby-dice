@@ -221,6 +221,10 @@ match the game's rules.
 | `Kick`, `Close`                          | host → guest(s) | removed; lobby closed or game ended                           |
 | `Ping` / `Pong`                          | both            | liveness every 2 s; a peer counts as lost after 6 s           |
 
+- **Confirmed:** tapping a player's pill opens their sheet on that phone only, without a message.
+  It stays open whatever the player whose turn it is does (rolling, selecting a field, switching
+  sheets) and closes with "Zurück" or when the turn ends. Following along stays shared; looking
+  around is private, so it never moves anyone else's screen.
 - There are no separate lobby or start messages: the phase and `countdownEndsAt` are part of the
   shared state, so applying the same update twice changes nothing.
 - `join(code)` lives in the session layer (`handshake.ts`) rather than in `Transport`, which only
