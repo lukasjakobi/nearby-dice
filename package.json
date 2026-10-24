@@ -40,7 +40,7 @@
     "eslint": "^10.13.0",
     "eslint-config-expo": "~57.0.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-import-resolver-typescript": "^4.4.5",
     "jest": "~30.5.2",
     "jest-expo": "~57.0.6",
     "prettier": "^3.9.10",
