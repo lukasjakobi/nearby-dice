@@ -20,7 +20,8 @@ the native Nearby module, the app runs as a development build on real phones.
 
 - Read up on the part you want to change: [PRODUCT.md](PRODUCT.md) covers scope and open decisions,
   [docs/technical-design.md](docs/technical-design.md) covers layers, protocol, host authority and
-  permissions, and this guide covers structure and conventions.
+  permissions, [docs/scoring.md](docs/scoring.md) covers the scoring rules, and this guide covers
+  structure and conventions.
 - For larger changes, or anything marked **Open** in PRODUCT.md, please open an issue first so we can
   agree on the direction.
 
