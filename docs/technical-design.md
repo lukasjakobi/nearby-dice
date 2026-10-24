@@ -158,16 +158,15 @@ host's own vote stays. Guests see the mode read-only and get the toast „Spiels
 bonus, and has 17 fields per sheet. Its lower block starts with `TwoPairs`, `Even`, `Odd` and `Mini`,
 continues with the usual Classic fields and ends with `Chance`:
 
-| Field      | Points                                                                   |
-| ---------- | ------------------------------------------------------------------------ |
-| `TwoPairs` | Sum of all dice if two different faces each occur at least twice; else 0 |
-| `Even`     | Sum of only the dice showing 2, 4 or 6; other dice contribute 0          |
-| `Odd`      | Sum of only the dice showing 1, 3 or 5; other dice contribute 0          |
-| `Mini`     | 30 if the sum is at most 10; else 0                                      |
+| Field      | Points                                                                                               |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| `TwoPairs` | Sum of the two pairs (each pair's face × 2) if two different faces each occur at least twice; else 0 |
+| `Even`     | Sum of only the dice showing 2, 4 or 6; other dice contribute 0                                      |
+| `Odd`      | Sum of only the dice showing 1, 3 or 5; other dice contribute 0                                      |
+| `Mini`     | 30 if the sum is at most 10; else 0                                                                  |
 
-A full house counts for XL's `TwoPairs`, but five equal dice do not. In the Yatzy ruleset,
-`TwoPairs` still counts only the four matching dice. For example, `[5, 1, 6, 6, 2]` scores 14 in
-`Even`, 6 in `Odd` and 0 in `Mini`.
+A full house counts for XL's `TwoPairs`, but five equal dice do not. XL and Yatzy count `TwoPairs`
+the same way. For example, `[5, 1, 6, 6, 2]` scores 14 in `Even`, 6 in `Odd` and 0 in `Mini`.
 
 **Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block. Hitting the
 round's target sum exactly scores 40; anything else scores 0. While the field is open it shows the
@@ -204,14 +203,15 @@ nth turn shares the same target, whether or not "Gleiche Würfel" is on. No extr
 
 ## Protocol (`session/protocol.ts`)
 
-Messages are JSON with `v: 4` and are validated on arrival: unknown types, other versions and
+Messages are JSON with `v: 5` and are validated on arrival: unknown types, other versions and
 messages with missing fields are dropped.
 
 **Confirmed compatibility:** version 2 replaced free-form `rules` with the session's `preset`, and
-version 3 renamed the ruleset and category values, and version 4 removed the rule options no preset
-used, so phones on different versions simply ignore each other. Every game must use a preset's rules
-exactly. Until a game is finished, that is the session's preset; afterwards the host may already have
-picked the next one. Sheets and history must match the game's rules.
+version 3 renamed the ruleset and category values, version 4 removed the rule options no preset
+used, and version 5 changed Classic XL's `TwoPairs` points, so phones on different versions simply
+ignore each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
+session's preset; afterwards the host may already have picked the next one. Sheets and history must
+match the game's rules.
 
 | Message                                  | Direction       | Purpose                                                       |
 | ---------------------------------------- | --------------- | ------------------------------------------------------------- |

@@ -43,6 +43,10 @@ const isFullHouse = (counts: readonly number[]): boolean =>
 const sumOfFaces = (counts: readonly number[], faces: readonly number[]): number =>
   faces.reduce((sum, face) => sum + counts[face] * face, 0);
 
+/** Two pairs score both faces twice over. `pairs` lists the repeated faces, highest first. */
+const twoPairsPoints = (pairs: readonly number[]): number =>
+  pairs.length >= 2 ? (pairs[0] + pairs[1]) * 2 : 0;
+
 /** The upper block is the same in every ruleset: each field sums the dice showing its face. */
 const upper = (category: Category, face: number): Field =>
   field(category, ({ counts }) => counts[face] * face);
@@ -78,7 +82,7 @@ const CLASSIC_LOWER: readonly Field[] = [
 
 /** Classic XL: the four extra fields come first, then the Classic lower block. */
 const CLASSIC_XL_LOWER: readonly Field[] = [
-  field(Category.TwoPairs, ({ pairs, sum }) => (pairs.length >= 2 ? sum : 0)),
+  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs)),
   field(Category.Even, ({ counts }) => sumOfFaces(counts, [2, 4, 6])),
   field(Category.Odd, ({ counts }) => sumOfFaces(counts, [1, 3, 5])),
   field(Category.Mini, ({ sum }) => (sum <= 10 ? 30 : 0)),
@@ -88,7 +92,7 @@ const CLASSIC_XL_LOWER: readonly Field[] = [
 /** Scandinavian Yatzy: the lower block, top to bottom. */
 const YATZY_LOWER: readonly Field[] = [
   field(Category.OnePair, ({ counts }) => highestOfAKind(counts, 2) * 2),
-  field(Category.TwoPairs, ({ pairs }) => (pairs.length >= 2 ? (pairs[0] + pairs[1]) * 2 : 0)),
+  field(Category.TwoPairs, ({ pairs }) => twoPairsPoints(pairs)),
   field(Category.ThreeOfAKind, ({ counts }) => highestOfAKind(counts, 3) * 3),
   field(Category.FourOfAKind, ({ counts }) => highestOfAKind(counts, 4) * 4),
   field(Category.SmallStraight, ({ counts }) => (hasRun(counts, 1, 5) ? 15 : 0)),
