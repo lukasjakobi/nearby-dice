@@ -90,8 +90,7 @@
     },
     "yatzyBonus": {
       "0": "Aus",
-      "50": "+50",
-      "100": "+100"
+      "50": "+50"
     },
     "ruleset": {
       "classic": "Klassisch",
@@ -100,8 +99,7 @@
     },
     "joker": {
       "off": "Aus",
-      "official": "Offiziell",
-      "free": "Frei"
+      "official": "Offiziell"
     },
     "sheetCount": {
       "1": "1",

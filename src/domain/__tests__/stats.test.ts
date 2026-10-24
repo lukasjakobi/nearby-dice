@@ -2,7 +2,7 @@ import { JONAS, LUKAS, ANTONIA, savedGame } from '@/test/fixtures';
 
 import { gamePlayer, ranking } from '../engine';
 import { PresetId } from '../rules';
-import { yatzyCount } from '../scoring';
+import { yatzyCount } from '../totals';
 import { EMPTY_STATS, recordGame, recordTraining } from '../stats';
 import type { SavedGame } from '../stats';
 

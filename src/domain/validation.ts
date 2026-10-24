@@ -81,7 +81,6 @@ export function isRules(value: unknown): value is Rules {
     isBoolean(value.upperBonus) &&
     (YATZY_BONUSES as readonly number[]).includes(value.yatzyBonus as number) &&
     isOneOf(value.joker, jokers) &&
-    isBoolean(value.fullHouseFromFiveOfAKind) &&
     // Optional: hosts from before the lucky-number rule do not send it.
     (value.luckyNumber === undefined || isBoolean(value.luckyNumber)) &&
     isOneOf(value.length, gameLengths) &&

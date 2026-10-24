@@ -3,7 +3,7 @@ import { FieldOrder, GameLength, Joker, Ruleset, StartingPlayer } from './enums'
 /** Every value a preset may use; the types and message validation use them. */
 export const ROLLS_PER_TURN = [2, 3, 4] as const;
 export const SECONDS_PER_TURN = [0, 30, 60] as const;
-export const YATZY_BONUSES = [0, 50, 100] as const;
+export const YATZY_BONUSES = [0, 50] as const;
 export const SHEET_COUNTS = [1, 3] as const;
 
 export type RollsPerTurn = (typeof ROLLS_PER_TURN)[number];
@@ -23,8 +23,6 @@ export type Rules = {
   /** Bonus per further Yatzy once the Yatzy field holds 50. Classic rulesets only. */
   yatzyBonus: YatzyBonus;
   joker: Joker;
-  /** Five of a kind also counts as a Full House (25). Classic rulesets only. */
-  fullHouseFromFiveOfAKind: boolean;
   /** Adds the "Glückszahl" field: a new target sum every round. */
   luckyNumber: boolean;
   length: GameLength;
@@ -42,7 +40,6 @@ export const DEFAULT_RULES: Rules = {
   upperBonus: true,
   yatzyBonus: 50,
   joker: Joker.Official,
-  fullHouseFromFiveOfAKind: false,
   luckyNumber: false,
   length: GameLength.Full,
   sheets: 1,

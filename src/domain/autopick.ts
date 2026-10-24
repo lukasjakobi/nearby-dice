@@ -1,8 +1,8 @@
 import { Category } from './enums';
+import type { Dice } from './roll';
 import { SHEET_FACTORS } from './rules';
 import type { Rules } from './rules';
 import { allowedCategories, score } from './scoring';
-import type { Dice } from './scoring';
 import type { Sheet } from './sheet';
 
 /** Rough average value of each field; decides the "least valuable" field to strike. */

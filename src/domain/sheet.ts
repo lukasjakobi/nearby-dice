@@ -1,77 +1,29 @@
-import { Category, GameLength, Ruleset } from './enums';
+import { Category, GameLength } from './enums';
+import { UPPER_FIELDS, lowerFields, sheetFields } from './fields';
+import type { SheetRules } from './fields';
 import { SHORT_GAME_TURNS } from './rules';
 import type { Rules } from './rules';
 
 export type Face = 1 | 2 | 3 | 4 | 5 | 6;
 
-export const UPPER_CATEGORIES: readonly Category[] = [
-  Category.Ones,
-  Category.Twos,
-  Category.Threes,
-  Category.Fours,
-  Category.Fives,
-  Category.Sixes,
-];
-
-const CLASSIC_LOWER: readonly Category[] = [
-  Category.ThreeOfAKind,
-  Category.FourOfAKind,
-  Category.FullHouse,
-  Category.SmallStraight,
-  Category.LargeStraight,
-  Category.Yatzy,
-  Category.Chance,
-];
-
-const LOWER_CATEGORIES: Record<Ruleset, readonly Category[]> = {
-  [Ruleset.Classic]: CLASSIC_LOWER,
-  [Ruleset.ClassicXl]: [
-    Category.TwoPairs,
-    Category.Even,
-    Category.Odd,
-    Category.Mini,
-    ...CLASSIC_LOWER,
-  ],
-  [Ruleset.Yatzy]: [
-    Category.OnePair,
-    Category.TwoPairs,
-    Category.ThreeOfAKind,
-    Category.FourOfAKind,
-    Category.SmallStraight,
-    Category.LargeStraight,
-    Category.FullHouse,
-    Category.Chance,
-    Category.Yatzy,
-  ],
-};
-
-const FACE_OF: Partial<Record<Category, Face>> = {
-  [Category.Ones]: 1,
-  [Category.Twos]: 2,
-  [Category.Threes]: 3,
-  [Category.Fours]: 4,
-  [Category.Fives]: 5,
-  [Category.Sixes]: 6,
-};
-
-/** The rules that decide which fields a sheet has. */
-export type SheetRules = Pick<Rules, 'ruleset' | 'luckyNumber'>;
+/** The upper block, top to bottom: the field for one, two … six. */
+export const UPPER_CATEGORIES: readonly Category[] = UPPER_FIELDS.map(({ category }) => category);
 
 /** The lower block: the ruleset's fields, then "Glückszahl" when that rule is on. */
 export function lowerCategories(rules: SheetRules): readonly Category[] {
-  const lower = LOWER_CATEGORIES[rules.ruleset];
-
-  return rules.luckyNumber ? [...lower, Category.LuckyNumber] : lower;
+  return lowerFields(rules).map(({ category }) => category);
 }
 
 /** All fields of a sheet, top to bottom. */
 export function categoriesFor(rules: SheetRules): Category[] {
-  return [...UPPER_CATEGORIES, ...lowerCategories(rules)];
+  return sheetFields(rules).map(({ category }) => category);
 }
 
 /** The face an upper-block category counts, or `undefined` for the lower block. */
 export function faceOf(category: Category): Face | undefined {
-  return FACE_OF[category];
+  const index = UPPER_CATEGORIES.indexOf(category);
+
+  return index === -1 ? undefined : ((index + 1) as Face);
 }
 
 export function upperCategoryFor(face: number): Category {

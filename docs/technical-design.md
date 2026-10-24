@@ -10,7 +10,7 @@ Nearby native bridge has not been confirmed on real devices yet.
 ## Principles
 
 1. **English, typed code; translated text only at the edge.** Every state value is a TypeScript string
-   `enum` (`Joker.Official`, `SessionPhase.Lobby`, `CellState.Preview`). All text lives in
+   `enum` (`FieldOrder.TopToBottom`, `SessionPhase.Lobby`, `CellState.Preview`). All text lives in
    `src/i18n/locales/{de,en}.json`, read through i18next with keys typed from `de.json`; enum labels
    are keyed by the enum value, and a test checks both files for the same keys and a label per enum
    value. The shell picks the language (`useAppLanguage`: the Settings choice, else the first device
@@ -79,7 +79,9 @@ src/
     (session)/_layout.tsx     → features/session/SessionLayout (phase → route, back, keep-awake)
     (session)/host-lobby, guest-lobby, game, results
 
-  domain/                     enums, rules (presets), sheet, scoring, engine, autopick, random, player,
+  domain/                     enums, rules (presets), fields (every field and its points per ruleset),
+                              sheet (layout), roll (dice analysis), joker, totals, scoring (score,
+                              writeScore, allowedCategories), engine, autopick, random, player,
                               stats (saved games, lifetime totals), validation (shape checks for
                               received and stored games)
   net/                        transport.ts (interface), advertisement, roundCode, createTransport,
@@ -113,13 +115,13 @@ These are the types everything else is built on, shortened to their essentials:
 enum Ruleset { Classic, ClassicXl, Yatzy }
 enum Category { Ones … Sixes, OnePair, TwoPairs, ThreeOfAKind, FourOfAKind,
                 FullHouse, SmallStraight, LargeStraight, Yatzy, Chance, Even, Odd, Mini, LuckyNumber }
-enum Joker { Off, Official, Free }        enum GameLength { Full, Short }
+enum Joker { Off, Official }              enum GameLength { Full, Short }
 enum FieldOrder { Free, TopToBottom }     enum StartingPlayer { Random, Host }
 enum Link { Connected, Lost, Removed, Left }
 // Allowed values: ROLLS_PER_TURN, SECONDS_PER_TURN, YATZY_BONUSES, SHEET_COUNTS (domain/rules.ts)
 // Rules only ever come from PRESETS[PresetId]; matchPreset(rules) maps them back.
 type Rules = { ruleset; rollsPerTurn: 2|3|4; secondsPerTurn: 0|30|60; sameDice; luckyNumber; upperBonus;
-               yatzyBonus: 0|50|100; joker; fullHouseFromFiveOfAKind; length; sheets: 1|3;
+               yatzyBonus: 0|50; joker; length; sheets: 1|3;
                fieldOrder; startingPlayer };
 type GameState = { rules; seed; players: GamePlayer[]; turnOrder; turn: Turn; finished;
                    history: HistoryEntry[]; rev };
@@ -202,14 +204,14 @@ nth turn shares the same target, whether or not "Gleiche Würfel" is on. No extr
 
 ## Protocol (`session/protocol.ts`)
 
-Messages are JSON with `v: 3` and are validated on arrival: unknown types, other versions and
+Messages are JSON with `v: 4` and are validated on arrival: unknown types, other versions and
 messages with missing fields are dropped.
 
 **Confirmed compatibility:** version 2 replaced free-form `rules` with the session's `preset`, and
-version 3 renamed the ruleset and category values, so phones on different versions simply ignore
-each other. Every game must use a preset's rules exactly. Until a game is finished, that is the
-session's preset; afterwards the host may already have picked the next one. Sheets and history must
-match the game's rules.
+version 3 renamed the ruleset and category values, and version 4 removed the rule options no preset
+used, so phones on different versions simply ignore each other. Every game must use a preset's rules
+exactly. Until a game is finished, that is the session's preset; afterwards the host may already have
+picked the next one. Sheets and history must match the game's rules.
 
 | Message                                  | Direction       | Purpose                                                       |
 | ---------------------------------------- | --------------- | ------------------------------------------------------------- |

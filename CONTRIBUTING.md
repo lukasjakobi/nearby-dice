@@ -83,8 +83,8 @@ features/<name>/
 
 - **The host is authoritative.** It validates every move and broadcasts the full session state;
   guests only send intents (`Roll`, `Hold`, `Score`, `Vote`).
-- **English, typed state.** Every state value is a string `enum` (`Joker.Official`, `SessionPhase.Lobby`,
-  `CellState.Preview`). Compare against enum members, never against strings.
+- **English, typed state.** Every state value is a string `enum` (`FieldOrder.TopToBottom`,
+  `SessionPhase.Lobby`, `CellState.Preview`). Compare against enum members, never against strings.
 - **One component per file.** Helper components get their own file in the feature's `components/`.
 - **Game options have one source of truth.** The allowed values (`ROLLS_PER_TURN`, `SECONDS_PER_TURN`,
   `YATZY_BONUSES`, `SHEET_COUNTS`) live in `domain/rules.ts`; the setup screen, message validation and
