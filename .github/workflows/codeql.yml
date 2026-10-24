@@ -1,0 +1,83 @@
+name: CodeQL
+
+# Code scanning for the workflows, the TypeScript app and the Kotlin Nearby bridge. Replaces
+# CodeQL default setup, which cannot build Kotlin: android/ only exists after expo prebuild.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '27 4 * * 1'
+
+concurrency:
+  group: codeql-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: java-kotlin
+            build-mode: manual
+    steps:
+      - uses: actions/checkout@v7
+
+      - if: matrix.language == 'java-kotlin'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - if: matrix.language == 'java-kotlin'
+        run: npm ci
+
+      - if: matrix.language == 'java-kotlin'
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - if: matrix.language == 'java-kotlin'
+        uses: gradle/actions/setup-gradle@v6
+
+      # Compiles the bridge's dependencies (expo-modules-core and others) before CodeQL starts
+      # tracing, so only modules/nearby-connections is extracted as source and dependency code
+      # raises no alerts. Debug, because release builds require the production keystore.
+      - name: Compile dependencies
+        if: matrix.language == 'java-kotlin'
+        working-directory: android
+        run: ./gradlew :nearby-connections:compileDebugKotlin --no-daemon --build-cache
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # In-process, so the compiler runs inside the traced build rather than a Kotlin daemon
+      # started without CodeQL.
+      - name: Compile the Nearby bridge
+        if: matrix.language == 'java-kotlin'
+        working-directory: android
+        run: >-
+          ./gradlew :nearby-connections:compileDebugKotlin --rerun --no-daemon
+          -Pkotlin.compiler.execution.strategy=in-process
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}

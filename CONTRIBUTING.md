@@ -141,7 +141,10 @@ did, name the devices, OS versions and what you tried. `android/` and `ios/` are
 ## Releases
 
 [`check.yml`](.github/workflows/check.yml) runs `npm run check` on every pull request and every push
-to `main`. [`build.yml`](.github/workflows/build.yml) builds a signed Android release APK:
+to `main`. [`codeql.yml`](.github/workflows/codeql.yml) runs CodeQL code scanning on pull requests to
+`main`, pushes to `main` and weekly, for the workflows, the TypeScript code and the Kotlin in
+`modules/nearby-connections/` (compiled from a debug prebuild).
+[`build.yml`](.github/workflows/build.yml) builds a signed Android release APK:
 
 - **Release:** push a tag (`git tag v1.0.0 && git push origin v1.0.0`); the APK is attached to a
   GitHub release of that name.
