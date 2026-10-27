@@ -429,7 +429,7 @@ whole rounds across browser tabs without radios. How to use it:
   `react-native` to `web/react-native.js`, which adds it.
 - **Limits:** no radio and no haptics; Android-only branches (`Platform.OS`) do not render; fonts,
   shadows and SVG can differ slightly from a phone. Phone-to-phone behaviour still needs devices
-  ([#25](https://github.com/lukasjakobi/nearby-dice/issues/25)).
+  ([Nearby communication](../PRODUCT.md#open-decisions)).
 
 ## Open questions
 
