@@ -5,7 +5,7 @@
  */
 import { ActionType, createGame, Link, PRESETS, randomSeed, reduce } from '@/domain';
 import type { Category, GameAction, GameState, Held, PresetId, Profile, Rng } from '@/domain';
-import { randomId, Store, Timers } from '@/lib';
+import { randomId, secureRandomId, Store, Timers } from '@/lib';
 import type { Unsubscribe } from '@/lib';
 
 import { TIMING } from './timing';
@@ -43,7 +43,7 @@ export class TrainingSession implements TrainingController {
       ended: null,
       clockOffset: 0,
       shared: {
-        sessionId: randomId(),
+        sessionId: secureRandomId(),
         code: '',
         roundName: '',
         preset: options.preset,

@@ -264,8 +264,8 @@ most 8,000 characters.
   seat's old link. Anything else counts as a new join, which only the lobby accepts while seats are
   free. A device whose lobby link broke without its token (after an app restart, say) joins afresh,
   and its orphaned seat makes room.
-- **Secrets.** Rejoin tokens and device IDs come from `secureRandomId` (`expo-crypto`). Player,
-  session and chunk IDs are not secret and use the injectable `randomId`.
+- **IDs.** Rejoin tokens, device IDs and session IDs come from `secureRandomId` (`expo-crypto`).
+  Player and chunk IDs are not secret and use the injectable `randomId`.
 - **Bans** after a kick or removal match the device ID, so they are best effort: a modified client
   can claim a different one.
 - **One HELLO per connection.** A second HELLO, or one with the wrong Nearby auth token, closes the
