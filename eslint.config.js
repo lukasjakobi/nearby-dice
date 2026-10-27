@@ -30,7 +30,9 @@ const BARRELS_ONLY = {
  * modules it may import. Only `net` reaches the native Nearby bridge; `domain` uses no packages.
  */
 const MAY_IMPORT = {
-  app: ['features'],
+  app: ['features', 'dev'],
+  // Dev-only tooling (bots, scenarios); only `app` reaches it, behind `__DEV__`.
+  dev: ['shared', 'session', 'store', 'i18n', 'net', 'domain', 'lib'],
   features: ['features', 'shared', 'session', 'store', 'i18n', 'ui', 'net', 'domain', 'lib'],
   shared: ['session', 'store', 'i18n', 'ui', 'net', 'domain', 'lib'],
   i18n: ['session', 'store', 'domain'],

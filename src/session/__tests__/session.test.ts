@@ -4,7 +4,7 @@ import { seededRng } from '@/domain/random';
 import { PRESETS, PresetId } from '@/domain/rules';
 import { turnsPerPlayer } from '@/domain/sheet';
 import { FakeNetwork } from '@/net/fake/FakeNetwork';
-import { BotPlayer } from '@/test/BotPlayer';
+import { BotPlayer } from '@/dev';
 import { FakeTransport } from '@/net/fake/FakeTransport';
 import { PermissionStatus, RadioState } from '@/net/transport';
 

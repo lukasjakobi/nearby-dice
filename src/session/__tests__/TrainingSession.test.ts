@@ -2,7 +2,7 @@ import { ActionType, HistoryKind } from '@/domain/engine';
 import { PlayerColor } from '@/domain/player';
 import { seededRng } from '@/domain/random';
 import { PRESETS, PresetId } from '@/domain/rules';
-import { botMove } from '@/test/botMove';
+import { botMove } from '@/dev';
 
 import { TrainingSession } from '../TrainingSession';
 import { TIMING } from '../timing';

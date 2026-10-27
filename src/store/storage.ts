@@ -1,7 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PersistStorage, StorageValue } from 'zustand/middleware';
 
 import { isRecord } from '@/domain';
+
+import { keyValue } from './keyValue';
 
 /** Keeps the known good fields of a stored state and drops the rest. */
 export type Sanitize<D> = (stored: Record<string, unknown>) => Partial<D>;
@@ -42,7 +43,7 @@ function sameJson(a: unknown, b: unknown): boolean {
 /** Copies `raw` to a `.corrupt.` key; true once the copy is on disk. */
 async function backUp(name: string, raw: string): Promise<boolean> {
   try {
-    await AsyncStorage.setItem(`${name}.corrupt.${Date.now()}`, raw);
+    await keyValue.setItem(`${name}.corrupt.${Date.now()}`, raw);
 
     return true;
   } catch {
@@ -70,7 +71,7 @@ export function createValidatedStorage<D>({
   async function write(name: string, value: StorageValue<D>): Promise<void> {
     if (writesBlocked) return;
     try {
-      await AsyncStorage.setItem(name, JSON.stringify(value));
+      await keyValue.setItem(name, JSON.stringify(value));
     } catch {
       // Persistence is best effort; an unavailable disk must not break interaction.
     }
@@ -95,7 +96,7 @@ export function createValidatedStorage<D>({
     async getItem(name) {
       let raw: string | null;
       try {
-        raw = await AsyncStorage.getItem(name);
+        raw = await keyValue.getItem(name);
       } catch {
         writesBlocked = true;
 
@@ -106,7 +107,7 @@ export function createValidatedStorage<D>({
       if (raw === null) return null;
       const loaded = load(raw);
       if (!loaded) {
-        if (await backUp(name, raw)) await AsyncStorage.removeItem(name).catch(() => {});
+        if (await backUp(name, raw)) await keyValue.removeItem(name).catch(() => {});
         else writesBlocked = true;
 
         return null;
@@ -125,7 +126,7 @@ export function createValidatedStorage<D>({
     async removeItem(name) {
       if (writesBlocked) return;
       try {
-        await AsyncStorage.removeItem(name);
+        await keyValue.removeItem(name);
       } catch {
         // Clearing local history must remain usable if storage is unavailable.
       }

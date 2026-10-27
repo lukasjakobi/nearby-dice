@@ -119,8 +119,12 @@ list the new strings in the pull request. Code, comments and docs are in English
 
 Tests live in `__tests__/` folders as `*.test.ts(x)`; Jest skips test files anywhere else. Session
 behaviour is tested with real host and guest sessions over an in-memory network with fake timers.
-Reuse the fixtures, render helpers and bot player in `src/test/`. What each layer covers is listed
-under [technical design → Testing](docs/technical-design.md#testing).
+Reuse the fixtures and render helpers in `src/test/` and the bot player in `src/dev/`. What each
+layer covers is listed under [technical design → Testing](docs/technical-design.md#testing).
+
+Browser smoke flows live in `e2e/` and run with `npm run e2e`; run them when a change touches
+screens, sessions or the transport. See
+[technical design → Browser harness](docs/technical-design.md#browser-harness).
 
 Each test may take up to 20 s (`testTimeout` in `package.json`). With a cold transform cache, as
 on CI, the first test in a file to show a `Spinner` loads React Native's animation modules and can

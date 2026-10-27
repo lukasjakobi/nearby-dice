@@ -1,6 +1,7 @@
 name: Check
 
-# Typecheck, lint, format check and tests for every pull request and every push to main.
+# Typecheck, lint, format check and tests, and the browser smoke flows, for every pull request and
+# every push to main.
 on:
   pull_request:
   push:
@@ -31,3 +32,37 @@ jobs:
       # Takes about a minute; a test that keeps Jest alive should fail here, not use up the job timeout.
       - run: npm run check
         timeout-minutes: 10
+
+  # Browser smoke flows over the web build (docs/technical-design.md, Browser harness).
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # The bots and scenarios in src/dev must never ship.
+      - run: npm run check:release-bundle
+
+      - run: npx playwright install --with-deps chromium
+
+      # Playwright starts the web dev server itself.
+      - run: npm run e2e
+        timeout-minutes: 10
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-traces
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7

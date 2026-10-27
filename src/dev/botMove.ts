@@ -1,13 +1,19 @@
-import { autoPick } from '@/domain/autopick';
-import { ActionType, gamePlayer, luckyNumberOf, rollsLeft } from '@/domain/engine';
-import type { GameState, Held, PlayerAction, PlayerId } from '@/domain/engine';
-import { faceCounts, isYatzy } from '@/domain/roll';
+import {
+  ActionType,
+  autoPick,
+  faceCounts,
+  gamePlayer,
+  isYatzy,
+  luckyNumberOf,
+  rollsLeft,
+} from '@/domain';
+import type { GameState, Held, PlayerAction, PlayerId } from '@/domain';
 
 /** Points at which a bot stops rolling and takes the field. */
 const GOOD_ENOUGH = 25;
 
 /**
- * Test strategy for playing full games: roll, keep the most
+ * Strategy for the bots in tests and scenarios: roll, keep the most
  * frequent face, roll again, then take the best field. Returns `null` when
  * it is not this bot's move.
  */

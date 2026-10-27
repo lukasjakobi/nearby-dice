@@ -97,6 +97,9 @@ Dev", so they can sit alongside the release version.
 | Command                           | What it does                                                      |
 | --------------------------------- | ----------------------------------------------------------------- |
 | `npm run dev`                     | Start Metro for an installed development build                    |
+| `npm run web`                     | Start the web build, the browser test harness (not a release)     |
+| `npm run web:shot -- <scenario>`  | Screenshot a screen state of the web build (`--list` for all)     |
+| `npm run e2e`                     | Run the browser smoke flows (Playwright)                          |
 | `npm run ios` / `npm run android` | Build, install and run the development build on a connected phone |
 | `npm test`                        | Run all tests (`npm run test:watch` while working)                |
 | `npm run typecheck`               | Type-check with `tsc --noEmit`                                    |

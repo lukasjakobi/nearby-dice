@@ -11,6 +11,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
   behind "Every edit")
 - Native bridge, permissions or radio → `docs/technical-design.md`, Permissions
 - Build, signing or CI → `README.md`, Build it yourself; `CONTRIBUTING.md`, Releases
+- Seeing a screen, screenshots or browser smoke flows → `.claude/skills/browser-testing/SKILL.md`
 
 ## Every edit
 
@@ -39,12 +40,14 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - Jest only runs `**/__tests__/**/*.test.ts(x)`; a test file anywhere else is silently skipped.
 - The app needs a development build on real phones (Expo Go lacks the native module).
 - Session behaviour is tested with real `HostSession`/`GuestSession` over `FakeNetwork` with fake
-  timers; reuse `src/test/` (fixtures, `render`, `BotPlayer`) for new tests.
+  timers; reuse `src/test/` (fixtures, `render`) and `BotPlayer` from `@/dev` for new tests.
 - Release keystores and signing credentials stay outside the repo (see CONTRIBUTING, Releases).
 
 ## Done means
 
 - `npm run check` passes (typecheck, lint, format check, tests). CI runs the same before building the APK.
+- A change to screens, `session` or `net` also passes `npm run e2e` and was looked at with
+  `npm run web:shot` (browser-testing skill).
 - Native and radio changes are reported as untested: the Nearby bridge is unverified on devices.
 - A change to documented behaviour updates the doc that owns it, following PRODUCT.md "Keeping the
   Documentation Understandable": one place per rule, status marked **Confirmed/Proposed/Open/Verified**.

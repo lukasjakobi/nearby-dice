@@ -67,8 +67,9 @@ interruptions is still open.
   states.
 - A modern, uncluttered interface in light and dark themes.
 
-The automated tests simulate whole sessions over an in-memory network. They show that the game logic
-behaves correctly, but real phone-to-phone communication still has to be verified on devices.
+The automated tests simulate whole sessions over an in-memory network, and browser smoke flows play
+rounds across tabs of a web build. They show that the game logic and the screens behave correctly,
+but real phone-to-phone communication still has to be verified on devices.
 
 ## Brand Commitments
 
