@@ -1,4 +1,4 @@
-import { botMove } from '@/test/botMove';
+import { botMove } from '@/dev';
 import { diceWithSum, withDice } from '@/test/fixtures';
 
 import { autoPick } from '../autopick';

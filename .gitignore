@@ -90,3 +90,7 @@ Desktop.ini
 
 expo-env.d.ts
 # @end expo-cli
+# Browser harness (screenshots, Playwright)
+/.screenshots/
+/test-results/
+/playwright-report/

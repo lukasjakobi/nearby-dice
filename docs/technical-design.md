@@ -34,6 +34,9 @@ out what each layer may and may not know about.
 ```mermaid
 flowchart TD
   app["app/ – routes (expo-router)"] --> features
+  app -. dev builds only .-> dev
+  dev["dev/ – bots and browser-harness scenarios"] --> session
+  dev --> shared
   features["features/ – screens: view models + components"] --> session
   features --> ui
   features --> shared
@@ -53,18 +56,19 @@ flowchart TD
   native["modules/nearby-connections – Kotlin + Swift"] -.-> net
 ```
 
-| Layer      | Knows about                                      | Must not know about                                      |
-| ---------- | ------------------------------------------------ | -------------------------------------------------------- |
-| `domain`   | nothing                                          | React, network, storage, app text                        |
-| `lib`      | nothing                                          | the game and every other layer                           |
-| `net`      | `domain` types (player colour in advertisements) | sessions, messages, UI                                   |
-| `session`  | `domain`, `net`                                  | React components, routes, app text                       |
-| `store`    | `domain` (types, checks, stats rules), `lib`     | network, UI                                              |
-| `i18n`     | i18next, enums from `domain`, `session`, `store` | components, game logic                                   |
-| `ui`       | theme tokens, `PlayerColor` from `domain`        | game, session, i18n                                      |
-| `shared`   | everything above                                 | features                                                 |
-| `features` | everything above                                 | other features' internals (only their `index.ts` barrel) |
-| `app`      | `features`                                       | logic of any kind                                        |
+| Layer      | Knows about                                                  | Must not know about                                                |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `domain`   | nothing                                                      | React, network, storage, app text                                  |
+| `lib`      | nothing                                                      | the game and every other layer                                     |
+| `net`      | `domain` types (player colour in advertisements)             | sessions, messages, UI                                             |
+| `session`  | `domain`, `net`                                              | React components, routes, app text                                 |
+| `store`    | `domain` (types, checks, stats rules), `lib`                 | network, UI                                                        |
+| `i18n`     | i18next, enums from `domain`, `session`, `store`             | components, game logic                                             |
+| `ui`       | theme tokens, `PlayerColor` from `domain`                    | game, session, i18n                                                |
+| `shared`   | everything above                                             | features                                                           |
+| `features` | everything above                                             | other features' internals (only their `index.ts` barrel)           |
+| `dev`      | `shared`, `session`, `store`, `i18n`, `net`, `domain`, `lib` | features; it never ships (see [Browser harness](#browser-harness)) |
+| `app`      | `features`; `dev` in dev builds                              | logic of any kind                                                  |
 
 ## Folders
 
@@ -84,12 +88,13 @@ src/
                               writeScore, allowedCategories), engine, autopick, random, player,
                               stats (saved games, lifetime totals), validation (shape checks for
                               received and stored games)
-  net/                        transport.ts (interface), advertisement, roundCode, createTransport,
-                              nearby/ (NearbyTransport, chunking), fake/ (in-memory network for tests)
+  net/                        transport.ts (interface), advertisement, roundCode, createTransport
+                              (+ .web), nearby/ (NearbyTransport, chunking), broadcast/ (web
+                              transport for the browser harness), fake/ (in-memory network for tests)
   session/                    types, protocol, HostSession, GuestSession, handshake, RoundScanner,
                               timing, selectors, activeSession + useSession (React binding)
-  store/                      createPersistedStore + storage (validated AsyncStorage), profile,
-                              settings, stats, interrupted (zustand)
+  store/                      createPersistedStore + storage (validated AsyncStorage), keyValue
+                              (+ .web: per-tab data), profile, settings, stats, interrupted (zustand)
   i18n/                       i18next setup, locales/de.json + en.json, format (names, times)
   ui/                         theme/ (tokens, typography, ThemeProvider), Text, Button, IconButton,
                               Screen, Header, Card, TextField, Switch, Choice, Footer, Avatar,
@@ -99,8 +104,9 @@ src/
   shared/                     components/ (PlayerRow, PlayersSection, PresetGrid, PresetRow, PresetSheet, RulesSheet …),
                               hooks/ (useFeedback, useBackAction, useProfileForm …), navigation/
                               (navigate, Route enum), permissions/, view/ (rulesSummary, lobbyRows)
-  lib/                        typed Emitter/Store, timers and delays, ids
-  test/                       fixtures, render helpers, resetStores, BotPlayer + botMove (play full games)
+  lib/                        typed Emitter/Store, timers and delays, ids, harness (URL options)
+  dev/                        BotPlayer + botMove (play full games), browser-harness scenarios
+  test/                       fixtures, render helpers, resetStores
 
 modules/nearby-connections/   Local Expo module: Kotlin (play-services-nearby) + Swift
                               (google/nearby NearbyConnections), permissions included.
@@ -390,10 +396,40 @@ its synchronisation, but not the radio itself.
 | Layer      | What is covered                                                                                                                                                                                                                                    |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `domain`   | Unit tests for every field in all rulesets, jokers, bonuses, lucky-number targets, three sheets, the timeout pick, full games per preset, saved games: limit of 10, duplicates; `scoringExamples` checks every example in [scoring.md](scoring.md) |
-| `net`      | Round codes, advertisements, chunking, the in-memory network, the Bonjour/service-id guard                                                                                                                                                         |
+| `net`      | Round codes, advertisements, chunking, the in-memory network, the web transport, the Bonjour/service-id guard                                                                                                                                      |
 | `session`  | Real `HostSession` + `GuestSession`s over `FakeNetwork` with fake timers: join, rejects, kick, close, a full game with identical state on every phone, rematch, reconnect, give up                                                                 |
 | `features` | Pure view builders (`buildGameView`), routing, and screens rendered with RNTL against a fake controller                                                                                                                                            |
 | `store`    | Validated hydration: one copy per cleaned state, writes blocked after a failed read or copy, migration, dropped rows; no write for unchanged data                                                                                                  |
+
+### Browser harness
+
+**Confirmed:** a tool for agents, reviewers and CI, not a platform; [PRODUCT.md](../PRODUCT.md#platform)
+stays Android and iOS. The web build (`npm run web`, react-native-web) shows every screen and plays
+whole rounds across browser tabs without radios. How to use it:
+[`.claude/skills/browser-testing`](../.claude/skills/browser-testing/SKILL.md).
+
+- **Phones are tabs.** On web, `getTransport()` returns a `BroadcastTransport`: tabs of one browser
+  hear each other over a BroadcastChannel and behave like Nearby (discovery, a guest connects to
+  one host, only the other side hears a deliberate disconnect, a closing tab drops out).
+  `?as=<name>` gives a tab its own stored data (`store/keyValue.web.ts`), kept through navigation
+  and reloads, so resuming can be tested.
+- **Permission and radio states** follow `?permission=denied|blocked|unavailable` and
+  `?radio=bluetooth-off|location-off`; without them the web transport reports granted and ready.
+- **Scenarios** (`?scenario=`, `src/dev/`) build one screen's state: the phone on screen plus bots
+  in the same page, on a channel of their own, with storage that starts empty. The page reports
+  `<html data-scenario="ready">` (or `failed`). `?seed=` changes the dice; the default seed makes
+  every run roll the same.
+- **Dev builds only.** `app/_layout.tsx` requires `@/dev` behind `__DEV__`, so release bundles drop
+  it; `npm run check:release-bundle` (CI) fails when dev code reaches an Android release bundle.
+- **Smoke flows** (`e2e/`, `npm run e2e`, CI job `e2e`): three phones join and each play a turn, a
+  guest reloads mid-game and resumes, and a training game reaches the results. They check the DOM,
+  not pixels: react-native-web is not the phones' renderer, so pixel baselines would fail on
+  differences no phone shows.
+- **Shim:** react-native-web lacks `useAnimatedValue`; on web, `metro.config.js` resolves
+  `react-native` to `web/react-native.js`, which adds it.
+- **Limits:** no radio and no haptics; Android-only branches (`Platform.OS`) do not render; fonts,
+  shadows and SVG can differ slightly from a phone. Phone-to-phone behaviour still needs devices
+  ([#25](https://github.com/lukasjakobi/nearby-dice/issues/25)).
 
 ## Open questions
 

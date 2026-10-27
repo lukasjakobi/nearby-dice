@@ -1,8 +1,8 @@
-import { ActionType } from '@/domain/engine';
-import type { PlayerAction } from '@/domain/engine';
-import type { Unsubscribe } from '@/lib/emitter';
-import { RematchVote, SessionPhase } from '@/session/types';
-import type { SessionController } from '@/session/types';
+import { ActionType } from '@/domain';
+import type { PlayerAction } from '@/domain';
+import type { Unsubscribe } from '@/lib';
+import { RematchVote, SessionPhase } from '@/session';
+import type { SessionController } from '@/session';
 
 import { botMove } from './botMove';
 
@@ -15,7 +15,7 @@ export type BotOptions = {
 
 /**
  * Plays a session like a person would, through the same controller the UI uses.
- * Used by the session integration tests to play full games.
+ * Used by the session integration tests and the browser harness's scenarios.
  */
 export class BotPlayer {
   private readonly unsubscribe: Unsubscribe;

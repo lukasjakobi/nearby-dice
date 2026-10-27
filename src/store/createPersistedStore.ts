@@ -8,7 +8,7 @@ import type { Migrate, Sanitize } from './storage';
 type Update<D> = (change: (data: D) => Partial<D>) => void;
 
 type Options<D extends object, A extends object> = {
-  /** The AsyncStorage key. It never changes, or the data already on phones is lost. */
+  /** The storage key. It never changes, or the data already on phones is lost. */
   key: string;
   /** Raised together with `migrate` when the stored shape changes. */
   version?: number;
@@ -31,7 +31,7 @@ type PersistedStore = {
 
 export const persistedStores: PersistedStore[] = [];
 
-/** A zustand store whose data fields are saved to AsyncStorage through `createValidatedStorage`. */
+/** A zustand store whose data fields are saved through `createValidatedStorage`. */
 export function createPersistedStore<D extends object, A extends object>({
   key,
   version = 0,

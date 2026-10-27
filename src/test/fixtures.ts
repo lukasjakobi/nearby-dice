@@ -11,7 +11,7 @@ import type { SavedGame } from '@/domain/stats';
 import { ConnectionStatus, Role, SessionPhase } from '@/session/types';
 import type { PlayerInfo, SessionSnapshot, SharedSession } from '@/session/types';
 
-import { botMove } from './botMove';
+import { botMove } from '@/dev';
 
 export const LUKAS: PlayerInfo = {
   id: 'lukas',

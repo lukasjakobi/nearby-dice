@@ -5,7 +5,7 @@ import { PresetId } from '@/domain/rules';
 import { FakeNetwork } from '@/net/fake/FakeNetwork';
 import { FakeTransport } from '@/net/fake/FakeTransport';
 import { TransportEvent } from '@/net/transport';
-import { BotPlayer } from '@/test/BotPlayer';
+import { BotPlayer } from '@/dev';
 
 import { GuestSession } from '../GuestSession';
 import { HostSession } from '../HostSession';
