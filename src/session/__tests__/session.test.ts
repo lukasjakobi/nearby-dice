@@ -1,3 +1,5 @@
+import * as Crypto from 'expo-crypto';
+
 import { Category, Link } from '@/domain/enums';
 import { PlayerColor } from '@/domain/player';
 import { seededRng } from '@/domain/random';
@@ -95,6 +97,22 @@ async function lobbyWith(guestNames: string[], preset?: PresetId) {
 }
 
 describe('lobby', () => {
+  test('creates its session ID from the secure random source', async () => {
+    const random = jest.spyOn(Crypto, 'getRandomValues').mockImplementation((array) => {
+      array.fill(1);
+
+      return array;
+    });
+    try {
+      const host = await new Phone(network, 'Lukas').host();
+      expect(host.getSnapshot().shared.sessionId).toBe('b'.repeat(16));
+      expect(random).toHaveBeenCalled();
+      host.dispose();
+    } finally {
+      random.mockRestore();
+    }
+  });
+
   test('guests join by code and everyone sees the same players', async () => {
     const steps: JoinStep[] = [];
     const host = await new Phone(network, 'Lukas').host();

@@ -121,7 +121,7 @@ export class HostSession implements HostController {
       ended: null,
       clockOffset: 0,
       shared: {
-        sessionId: randomId(),
+        sessionId: secureRandomId(),
         code,
         roundName: options.roundName,
         preset: options.preset,

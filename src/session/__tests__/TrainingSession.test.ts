@@ -1,3 +1,5 @@
+import * as Crypto from 'expo-crypto';
+
 import { ActionType, HistoryKind } from '@/domain/engine';
 import { PlayerColor } from '@/domain/player';
 import { seededRng } from '@/domain/random';
@@ -15,6 +17,22 @@ const PROFILE = { name: 'Lukas', color: PlayerColor.Amber };
 function training(preset = PresetId.Classic) {
   return new TrainingSession({ profile: PROFILE, preset, rng: seededRng(7) });
 }
+
+test('creates its session ID from the secure random source', () => {
+  const random = jest.spyOn(Crypto, 'getRandomValues').mockImplementation((array) => {
+    array.fill(1);
+
+    return array;
+  });
+  try {
+    const session = training();
+    expect(session.getSnapshot().shared.sessionId).toBe('b'.repeat(16));
+    expect(random).toHaveBeenCalled();
+    session.dispose();
+  } finally {
+    random.mockRestore();
+  }
+});
 
 /** Plays the bot strategy through the session's own commands until the game ends. */
 function playToEnd(session: TrainingSession) {
