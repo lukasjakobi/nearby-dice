@@ -97,8 +97,10 @@ src/
                               (+ .web: per-tab data), profile, settings, stats, interrupted (zustand)
   i18n/                       i18next setup, locales/de.json + en.json, format (names, times)
   ui/                         theme/ (tokens, typography, ThemeProvider), Text, Button, IconButton,
-                              Screen, Header, Card, TextField, Switch, Choice, Footer, Avatar,
-                              Spinner, Banner, StatusView, Dialog, BottomSheet, Toast, DieFace, Logo, icons
+                              Chip, Screen, Header, Section, Card, CollapsibleCard, TextField,
+                              Switch, Slider, Choice, Footer, Avatar, Tag, Spinner, Skeleton,
+                              PageDots, StepList, Banner, StatusView, Dialog, BottomSheet, Toast,
+                              DieFace, Logo, icons
   features/<screen|layout>/   index.ts barrel, Screen (or Layout), hooks/, view/, components/,
                               __tests__/
   shared/                     components/ (PlayerRow, PlayersSection, PresetGrid, PresetRow, PresetSheet, RulesSheet …),
@@ -106,7 +108,7 @@ src/
                               (navigate, Route enum), permissions/, view/ (rulesSummary, lobbyRows)
   lib/                        typed Emitter/Store, timers and delays, ids, harness (URL options)
   dev/                        BotPlayer + botMove (play full games), browser-harness scenarios
-  test/                       fixtures, render helpers, resetStores
+  test/                       fixtures (also behind the stories), render helpers, resetStores
 
 modules/nearby-connections/   Local Expo module: Kotlin (play-services-nearby) + Swift
                               (google/nearby NearbyConnections), permissions included.
@@ -430,6 +432,30 @@ whole rounds across browser tabs without radios. How to use it:
 - **Limits:** no radio and no haptics; Android-only branches (`Platform.OS`) do not render; fonts,
   shadows and SVG can differ slightly from a phone. Phone-to-phone behaviour still needs devices
   ([Nearby communication](../PRODUCT.md#open-decisions)).
+
+### Storybook
+
+**Confirmed:** every component in `ui/`, `shared/` and `features/*/components/` has a
+`<Name>.stories.tsx` next to it; `npm run storybook` serves them at `http://localhost:6006`. It is
+for building and reviewing components one at a time, beside the browser harness, which shows
+whole screens and rounds.
+
+- **Same renderer as the harness.** `@storybook/react-native-web-vite` renders through
+  react-native-web. `.storybook/main.ts` sends the app's `react-native` imports to
+  `web/react-native.js` as Metro does, and stubs two native-only files for the dev server.
+- **App frame.** `.storybook/preview.tsx` wraps every story in the theme, i18n, safe-area and toast
+  providers, with toolbar switches for light/dark and German/English. Stories with
+  `parameters.screen` fill the frame; others get the screens' 20 pt gutter. Sounds and vibration
+  are off.
+- **Real data.** Feature stories build their props with the real view builders from the test
+  fixtures (`src/test/fixtures.ts`), e.g. bots play part of a game for the scorecard. Story-only
+  data for a folder lives in its `components/fixtures.ts`. App text comes from `i18n.t`, so the
+  language switch changes everything; `ui/` stories use sample text as arguments.
+- **Hierarchy.** Titles follow the layers: `UI/<Foundations|Actions|Inputs|Display|Feedback|Layout|Motion>`,
+  `Shared/<area>`, `Features/<Feature>`.
+- **Checked in CI.** `npm run typecheck` and `npm run lint` cover the stories, and the `check` job
+  runs `npm run storybook:build`. Layouts that only route (`ActiveSessionLayout`, `RedirectTo`)
+  have no stories.
 
 ## Open questions
 

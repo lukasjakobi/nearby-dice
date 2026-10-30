@@ -12,6 +12,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - Native bridge, permissions or radio → `docs/technical-design.md`, Permissions
 - Build, signing or CI → `README.md`, Build it yourself; `CONTRIBUTING.md`, Releases
 - Seeing a screen, screenshots or browser smoke flows → `.claude/skills/browser-testing/SKILL.md`
+- Seeing one component, or writing a story → `docs/technical-design.md`, Storybook
 
 ## Every edit
 
@@ -26,7 +27,8 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - Game option values come from `domain/rules.ts`; setup, validation and labels derive from them.
 - Screens are thin: a view-model hook or pure `build…View` produces props, components render them.
   Each component gets its own file in `components/`, hooks go in `hooks/`, builders in `view/`
-  (CONTRIBUTING, "Feature folders").
+  (CONTRIBUTING, "Feature folders"). Every component has a `<Name>.stories.tsx` beside it.
+- Reach for `ui/` before styling by hand: `Chip`, `Tag`, `Section`, `CollapsibleCard`, `StepList` …
 - Colours come from `useTheme()`; only dice and player colours live in `ui/theme/tokens.ts`.
 - Navigate via `navigate.push/replace(Route.X)` from `@/shared`. The session phase decides the
   screen (`features/session/routing.ts`).
@@ -48,6 +50,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - `npm run check` passes (typecheck, lint, format check, tests). CI runs the same before building the APK.
 - A change to screens, `session` or `net` also passes `npm run e2e` and was looked at with
   `npm run web:shot` (browser-testing skill).
+- A new or changed component has a story that renders (`npm run storybook:build`).
 - Native and radio changes are reported as untested: the Nearby bridge is unverified on devices.
 - A change to documented behaviour updates the doc that owns it, following PRODUCT.md "Keeping the
   Documentation Understandable": one place per rule, status marked **Confirmed/Proposed/Open/Verified**.
