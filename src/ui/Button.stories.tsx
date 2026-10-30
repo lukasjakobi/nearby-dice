@@ -34,7 +34,6 @@ export const Variants: Story = {
       <Button {...args} label="Würfeln" variant={ButtonVariant.Accent} height={48} />
       <Banner
         message="Verbindung unterbrochen"
-        busy={false}
         trailing={
           <Button {...args} label="Optionen" variant={ButtonVariant.OnAccent} height={36} />
         }

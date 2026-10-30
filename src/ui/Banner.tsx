@@ -9,11 +9,10 @@ type BannerProps = {
   message: string;
   /** Right-aligned extra text ("Versuch 2 von 3") or a small action. */
   trailing?: ReactNode;
-  busy?: boolean;
 };
 
 /** The amber status banner for connection problems. */
-export function Banner({ message, trailing, busy = true }: BannerProps) {
+export function Banner({ message, trailing }: BannerProps) {
   const { colors } = useTheme();
 
   return (
@@ -31,7 +30,7 @@ export function Banner({ message, trailing, busy = true }: BannerProps) {
         paddingHorizontal: 14,
       }}
     >
-      {busy ? <Spinner color={colors.onAccent} size={20} strokeWidth={2.8} /> : null}
+      <Spinner color={colors.onAccent} size={20} strokeWidth={2.8} />
       <Text variant={TextVariant.BodyStrong} size={15} color="onAccent" style={{ flex: 1 }}>
         {message}
       </Text>

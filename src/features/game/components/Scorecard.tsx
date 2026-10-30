@@ -21,7 +21,7 @@ export function Scorecard({ sheet, dimmed, onPick, onSelectSheet }: ScorecardPro
 
   return (
     <View style={[styles.card, { opacity: dimmed ? 0.5 : 1 }]}>
-      {sheet.tabs ? <SheetTabs sheet={sheet} tabs={sheet.tabs} onSelect={onSelectSheet} /> : null}
+      {sheet.tabs ? <SheetTabs sheet={sheet} onSelect={onSelectSheet} /> : null}
       <View style={styles.sections}>
         <View style={styles.section}>
           <Text size={13} weight={600} color="muted" style={styles.blockTitle}>

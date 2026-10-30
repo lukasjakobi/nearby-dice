@@ -25,8 +25,6 @@ export function useOnboarding() {
   return {
     slide,
     isLast: slide === LAST,
-    canGoBack: slide > OnboardingSlide.Dice,
-    canSkip: slide < LAST,
     form,
     back: () => setSlide((s) => Math.max(OnboardingSlide.Dice, s - 1)),
     next: () => setSlide((s) => Math.min(LAST, s + 1)),

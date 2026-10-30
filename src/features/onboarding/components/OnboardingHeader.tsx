@@ -7,22 +7,12 @@ import { OnboardingSlide } from '../hooks';
 
 type OnboardingHeaderProps = {
   slide: OnboardingSlide;
-  slides: OnboardingSlide[];
-  canGoBack: boolean;
-  canSkip: boolean;
   onBack: () => void;
   onSkip: () => void;
 };
 
 /** Top bar of the intro: back button, step dots and skip. */
-export function OnboardingHeader({
-  slide,
-  slides,
-  canGoBack,
-  canSkip,
-  onBack,
-  onSkip,
-}: OnboardingHeaderProps) {
+export function OnboardingHeader({ slide, onBack, onSkip }: OnboardingHeaderProps) {
   const { t } = useTranslation();
 
   return (
@@ -38,17 +28,17 @@ export function OnboardingHeader({
       }}
     >
       <View style={{ width: 96 }}>
-        {canGoBack ? (
+        {slide > OnboardingSlide.Dice ? (
           <IconButton icon={IconName.Back} label={t('common.back')} onPress={onBack} />
         ) : null}
       </View>
       <PageDots
-        count={slides.length}
-        current={slides.indexOf(slide)}
+        count={OnboardingSlide.Profile + 1}
+        current={slide}
         label={t('onboarding.step', { n: slide + 1 })}
       />
       <View style={{ width: 96, alignItems: 'flex-end' }}>
-        {canSkip ? (
+        {slide < OnboardingSlide.Profile ? (
           <Pressable
             onPress={onSkip}
             accessibilityRole="button"

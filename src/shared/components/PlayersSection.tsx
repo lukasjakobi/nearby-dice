@@ -41,7 +41,6 @@ export function PlayersSection({ rows, maxPlayers, freeSeat, onPlayerMenu }: Pla
                 ? () => onPlayerMenu(row)
                 : undefined
             }
-            menuLabel={t('lobby.playerActions', { name: row.name })}
           />
         ))}
         {freeSeat ? <FreeSeatRow {...freeSeat} /> : null}
