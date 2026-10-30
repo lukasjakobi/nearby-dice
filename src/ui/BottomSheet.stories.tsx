@@ -4,8 +4,6 @@ import { fn } from 'storybook/test';
 
 import { BottomSheet } from './BottomSheet';
 import { Button, ButtonVariant } from './Button';
-import { IconButton } from './IconButton';
-import { IconName } from './icons/Icon';
 import { Text, TextVariant } from './Text';
 
 const meta: Meta<typeof BottomSheet> = {
@@ -24,7 +22,6 @@ const meta: Meta<typeof BottomSheet> = {
           variant={ButtonVariant.TonalDanger}
           alignStart
         />
-        <Button label="Schließen" onPress={fn()} variant={ButtonVariant.Secondary} />
       </>
     ),
   },
@@ -35,11 +32,10 @@ type Story = StoryObj<typeof BottomSheet>;
 
 export const WithTitle: Story = {};
 
-export const WithCloseButton: Story = {
+export const WithHeight: Story = {
   args: {
     title: 'Spielstand',
     height: '60%',
-    titleAccessory: <IconButton icon={IconName.Close} label="Schließen" onPress={fn()} filled />,
     children: (
       <Text variant={TextVariant.Body} color="muted">
         Inhalt des Blatts

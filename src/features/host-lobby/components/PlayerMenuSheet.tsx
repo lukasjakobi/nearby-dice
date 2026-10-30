@@ -21,7 +21,6 @@ export function PlayerMenuSheet({ visible, title, onKick, onClose }: PlayerMenuS
         variant={ButtonVariant.TonalDanger}
         alignStart
       />
-      <Button label={t('common.close')} onPress={onClose} variant={ButtonVariant.Secondary} />
     </BottomSheet>
   );
 }

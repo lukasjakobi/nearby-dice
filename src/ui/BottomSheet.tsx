@@ -20,8 +20,6 @@ type BottomSheetProps = {
   visible: boolean;
   onClose: () => void;
   title?: string;
-  /** Element shown next to the title (e.g. a close button). */
-  titleAccessory?: ReactNode;
   children: ReactNode;
   height?: DimensionValue;
   centered?: boolean;
@@ -57,7 +55,6 @@ export function BottomSheet({
   visible,
   onClose,
   title,
-  titleAccessory,
   children,
   height,
   centered,
@@ -254,7 +251,6 @@ export function BottomSheet({
               >
                 {title}
               </Text>
-              {titleAccessory}
             </View>
           ) : null}
           {children}

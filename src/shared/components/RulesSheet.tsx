@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import type { PresetId } from '@/domain';
-import { Button, BottomSheet, Text, TextVariant, useTheme } from '@/ui';
+import { BottomSheet, Text, TextVariant, useTheme } from '@/ui';
 
 import { rulesSummary } from '../view/rulesSummary';
 
@@ -38,7 +38,6 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
           </View>
         ))}
       </View>
-      <Button label={t('common.close')} onPress={onClose} style={{ marginTop: 12 }} />
     </BottomSheet>
   );
 }

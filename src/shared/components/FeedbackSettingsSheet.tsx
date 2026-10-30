@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, BottomSheet } from '@/ui';
+import { BottomSheet } from '@/ui';
 
 import { SwitchList } from './SwitchList';
 import type { SwitchKey, SwitchRow } from './SwitchList';
@@ -25,7 +25,6 @@ export function FeedbackSettingsSheet({
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('settings.title')}>
       <SwitchList rows={rows} onToggle={onToggle} onVolume={onVolume} />
-      <Button label={t('common.close')} onPress={onClose} style={{ marginTop: 12 }} />
     </BottomSheet>
   );
 }
