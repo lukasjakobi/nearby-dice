@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { Avatar, mix, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, CollapsibleCard, mix, Text, TextVariant, useTheme } from '@/ui';
 
 import type { CompareRow, RankRow } from '../view';
-import { CollapsibleCard } from './CollapsibleCard';
 
 /** Narrower columns as players are added, so six still fit on a phone. */
 const columnWidth = (columns: number) => (columns <= 3 ? 56 : columns === 4 ? 48 : 40);

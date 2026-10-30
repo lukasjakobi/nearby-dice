@@ -1,5 +1,4 @@
 export { AwardsCard } from './AwardsCard';
-export { CollapsibleCard } from './CollapsibleCard';
 export { HistoryCard } from './HistoryCard';
 export { RankingList } from './RankingList';
 export { RankingPart } from './RankingPart';

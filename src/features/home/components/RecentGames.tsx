@@ -1,7 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { Avatar, Card, Font, fontFamily, Icon, IconName, Text, TextVariant, useTheme } from '@/ui';
+import {
+  Avatar,
+  Card,
+  Font,
+  fontFamily,
+  Icon,
+  IconName,
+  Section,
+  Text,
+  TextVariant,
+  useTheme,
+} from '@/ui';
 
 import type { RecentRow } from '../hooks';
 
@@ -10,10 +21,7 @@ export function RecentGames({ rows }: { rows: RecentRow[] }) {
   const { colors } = useTheme();
 
   return (
-    <View style={{ gap: 10 }}>
-      <Text variant={TextVariant.SectionTitle} accessibilityRole="header">
-        {t('home.recentTitle')}
-      </Text>
+    <Section title={t('home.recentTitle')}>
       {rows.length === 0 ? (
         <Card dashed radius={16} padding={16}>
           <Text variant={TextVariant.Body} size={14} color="muted">
@@ -55,6 +63,6 @@ export function RecentGames({ rows }: { rows: RecentRow[] }) {
           </Pressable>
         ))
       )}
-    </View>
+    </Section>
   );
 }

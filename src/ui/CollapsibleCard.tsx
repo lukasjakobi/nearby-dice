@@ -2,14 +2,17 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { FadeIn, Icon, IconName, Text, TextVariant, useTheme } from '@/ui';
+import { FadeIn } from './FadeIn';
+import { Icon, IconName } from './icons/Icon';
+import { Text, TextVariant } from './Text';
+import { useTheme } from './theme/ThemeProvider';
 
-type CollapsibleCardProps = { title: string; children: ReactNode };
+type CollapsibleCardProps = { title: string; children: ReactNode; initiallyOpen?: boolean };
 
 /** A card that shows only its title until it is opened. */
-export function CollapsibleCard({ title, children }: CollapsibleCardProps) {
+export function CollapsibleCard({ title, children, initiallyOpen = false }: CollapsibleCardProps) {
   const { colors } = useTheme();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initiallyOpen);
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>

@@ -13,11 +13,12 @@ import {
   Header,
   IconName,
   Screen,
+  Section,
   Text,
   TextVariant,
 } from '@/ui';
 
-import { NearbyPermissionCard, ProfileCard, SettingsSection } from './components';
+import { NearbyPermissionCard, ProfileCard } from './components';
 import { useSettingsScreen } from './hooks';
 
 const THEMES = [ThemeMode.System, ThemeMode.Light, ThemeMode.Dark];
@@ -54,7 +55,7 @@ export function SettingsScreen() {
           />
         ) : null}
 
-        <SettingsSection title={t('settings.appearance')}>
+        <Section title={t('settings.appearance')}>
           <Choice
             label={t('settings.appearance')}
             options={themeOptions}
@@ -62,9 +63,9 @@ export function SettingsScreen() {
             onChange={settings.setThemeMode}
             style={ChoiceStyle.Track}
           />
-        </SettingsSection>
+        </Section>
 
-        <SettingsSection title={t('settings.language')}>
+        <Section title={t('settings.language')}>
           <Choice
             label={t('settings.language')}
             options={languageOptions}
@@ -72,24 +73,24 @@ export function SettingsScreen() {
             onChange={settings.setLanguageMode}
             style={ChoiceStyle.Track}
           />
-        </SettingsSection>
+        </Section>
 
-        <SettingsSection title={t('settings.game')}>
+        <Section title={t('settings.game')}>
           <SwitchList
             rows={switches}
             onToggle={settings.toggle}
             onVolume={screen.feedbackSwitches.setVolume}
           />
-        </SettingsSection>
+        </Section>
 
-        <SettingsSection title={t('settings.connection')}>
+        <Section title={t('settings.connection')}>
           <NearbyPermissionCard
             granted={screen.permissionGranted}
             onOpenSettings={screen.openSystemSettings}
           />
-        </SettingsSection>
+        </Section>
 
-        <SettingsSection title={t('settings.data')}>
+        <Section title={t('settings.data')}>
           <Button
             label={t('settings.resetStats')}
             onPress={screen.askReset}
@@ -109,7 +110,7 @@ export function SettingsScreen() {
               </Text>
             </FadeIn>
           ) : null}
-        </SettingsSection>
+        </Section>
 
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}

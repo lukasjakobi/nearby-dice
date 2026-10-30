@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
-import { Dialog, IconName, Screen, Text, TextVariant } from '@/ui';
+import { Dialog, IconName, Screen, Section, Text, TextVariant } from '@/ui';
 
-import { useHome } from '../hooks';
+import type { Home } from '../hooks';
 import { ActionTile } from './ActionTile';
 import { HomeHeader } from './HomeHeader';
 import { NewPlayerCard } from './NewPlayerCard';
@@ -16,9 +16,8 @@ import { TrainingTile } from './TrainingTile';
 import { WarmUpDice } from './WarmUpDice';
 
 /** Start screen body: header, greeting, play tiles, stats and recent games. */
-export function HomeContent() {
+export function HomeContent({ home }: { home: Home }) {
   const { t } = useTranslation();
-  const home = useHome();
   const { resume } = home;
 
   return (
@@ -68,13 +67,10 @@ export function HomeContent() {
           <NewPlayerCard onCreate={home.createProfile} />
         )}
 
-        <View style={{ gap: 10 }}>
-          <Text variant={TextVariant.SectionTitle} accessibilityRole="header">
-            {t('home.statsTitle')}
-          </Text>
+        <Section title={t('home.statsTitle')}>
           <StatsModeChips chips={home.modeChips} />
           <StatsRow stats={home.stats} />
-        </View>
+        </Section>
         <RecentGames rows={home.recent} />
       </ScrollView>
 

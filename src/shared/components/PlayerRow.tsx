@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { TFunction } from '@/i18n';
-import { Avatar, IconButton, IconName, Spinner, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, IconButton, IconName, Spinner, Tag, Text, TextVariant, useTheme } from '@/ui';
 import type { ColorToken } from '@/ui';
 
 import type { AvatarView } from '../view/avatar';
@@ -21,10 +21,10 @@ export enum RowStatus {
 function tagLook(
   t: TFunction,
   tag: PlayerTag,
-): { label: string; background: ColorToken; text: ColorToken } {
+): { label: string; background: ColorToken; color: ColorToken } {
   const looks: Record<PlayerTag, ReturnType<typeof tagLook>> = {
-    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'accent', text: 'onAccent' },
-    [PlayerTag.You]: { label: t('common.youTag'), background: 'surface2', text: 'ink' },
+    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'accent', color: 'onAccent' },
+    [PlayerTag.You]: { label: t('common.youTag'), background: 'surface2', color: 'ink' },
   };
 
   return looks[tag];
@@ -84,25 +84,9 @@ export function PlayerRow({ row, onMenu, menuLabel }: PlayerRowProps) {
       <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Text variant={TextVariant.BodyStrong}>{row.name}</Text>
-          {row.tags.map((tag) => {
-            const look = tagLook(t, tag);
-
-            return (
-              <View
-                key={tag}
-                style={{
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 999,
-                  backgroundColor: colors[look.background],
-                }}
-              >
-                <Text size={11} weight={600} color={look.text}>
-                  {look.label}
-                </Text>
-              </View>
-            );
-          })}
+          {row.tags.map((tag) => (
+            <Tag key={tag} {...tagLook(t, tag)} />
+          ))}
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           {status.busy ? <Spinner color={colors[status.color]} size={14} strokeWidth={3} /> : null}
