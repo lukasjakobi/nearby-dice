@@ -38,7 +38,7 @@ src/
   domain/     Pure game rules: scoring, engine, presets, option values. No React, no I/O.
   store/      Data kept on the phone: profile, statistics, last 10 games, settings, interrupted session.
   i18n/       i18next setup and all app text in locales/de.json and locales/en.json.
-  ui/         Design system: theme tokens, Text, Button, Footer, Dialog, BottomSheet, DieFace, icons …
+  ui/         Design system: theme tokens, Text, Button, Chip, Section, Dialog, BottomSheet, DieFace …
   lib/        Tiny generic helpers (typed emitter, timers, ids).
   test/       Fixtures, render helpers and a bot player for tests.
 modules/
@@ -63,7 +63,8 @@ features/<name>/
   <Name>Screen.tsx    composition only (`SessionLayout`, `AppShell` for the two layout features)
   hooks/              state, effects and actions; the screen's main hook is its view model
   view/               pure builders (snapshot → display-ready props), unit-tested; only where needed
-  components/         one component per file
+  components/         one component per file, each with a `<Name>.stories.tsx` beside it;
+                      `fixtures.ts` holds data several of those stories share
   __tests__/          Jest only runs tests in here
 ```
 
@@ -121,6 +122,12 @@ Tests live in `__tests__/` folders as `*.test.ts(x)`; Jest skips test files anyw
 behaviour is tested with real host and guest sessions over an in-memory network with fake timers.
 Reuse the fixtures and render helpers in `src/test/` and the bot player in `src/dev/`. What each
 layer covers is listed under [technical design → Testing](docs/technical-design.md#testing).
+
+Every component has a story next to it (`Button.stories.tsx` beside `Button.tsx`). Run
+`npm run storybook` to see them at `http://localhost:6006`, in light and dark and in both languages.
+A new component gets a story, and a new visual state gets one too; build the props with the view
+builders and `src/test/fixtures.ts` rather than by hand where you can. See
+[technical design → Storybook](docs/technical-design.md#storybook).
 
 Browser smoke flows live in `e2e/` and run with `npm run e2e`; run them when a change touches
 screens, sessions or the transport. See

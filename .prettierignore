@@ -4,3 +4,4 @@ android
 .expo
 coverage
 package-lock.json
+storybook-static

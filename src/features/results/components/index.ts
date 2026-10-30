@@ -1,7 +1,6 @@
 export { AwardTile } from './AwardTile';
 export { AwardTiles } from './AwardTiles';
 export { BarLegend } from './BarLegend';
-export { CollapsibleCard } from './CollapsibleCard';
 export { HistoryCard } from './HistoryCard';
 export { RematchVoteChip } from './RematchVoteChip';
 export { ResultChip } from './ResultChip';

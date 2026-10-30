@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Text, TextVariant } from '@/ui';
+import { Section, Text, TextVariant } from '@/ui';
 
 import { FreeSeatRow } from './FreeSeatRow';
 import type { FreeSeatRowProps } from './FreeSeatRow';
@@ -22,17 +22,15 @@ export function PlayersSection({ rows, maxPlayers, freeSeat, onPlayerMenu }: Pla
   const { t } = useTranslation();
 
   return (
-    <View style={{ gap: 14 }}>
-      <View
-        style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}
-      >
-        <Text variant={TextVariant.SectionTitle} accessibilityRole="header">
-          {t('lobby.playersTitle')}
-        </Text>
+    <Section
+      title={t('lobby.playersTitle')}
+      gap={14}
+      trailing={
         <Text variant={TextVariant.Body} size={14} color="muted" accessibilityLiveRegion="polite">
           {t('lobby.playerCount', { n: rows.length, max: maxPlayers })}
         </Text>
-      </View>
+      }
+    >
       <View style={{ gap: 10 }}>
         {rows.map((row) => (
           <PlayerRow
@@ -48,6 +46,6 @@ export function PlayersSection({ rows, maxPlayers, freeSeat, onPlayerMenu }: Pla
         ))}
         {freeSeat ? <FreeSeatRow {...freeSeat} /> : null}
       </View>
-    </View>
+    </Section>
   );
 }

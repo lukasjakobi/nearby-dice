@@ -70,6 +70,23 @@ export function finishedGame(players: PlayerInfo[], rules: Rules = DEFAULT_RULES
   return state;
 }
 
+/** A game in which the bots have entered `turns` fields so far, the host starting. */
+export function playedGame(
+  players: PlayerInfo[],
+  turns: number,
+  rules: Rules = DEFAULT_RULES,
+): GameState {
+  let state = game(players, rules);
+  let scored = 0;
+  while (scored < turns && !state.finished) {
+    const action = botMove(state, state.turn.playerId)!;
+    if (action.type === ActionType.Score) scored += 1;
+    state = play(state, action);
+  }
+
+  return state;
+}
+
 /** The players as a saved game remembers them. */
 export function namedPlayers(players: PlayerInfo[]): NamedPlayer[] {
   return players.map(({ id, name, color }) => ({ id, name, color }));

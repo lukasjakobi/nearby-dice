@@ -94,3 +94,4 @@ expo-env.d.ts
 /.screenshots/
 /test-results/
 /playwright-report/
+/storybook-static/

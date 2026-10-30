@@ -3,8 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { HistoryItem } from '@/shared';
 import type { HistoryRow } from '@/shared';
-
-import { CollapsibleCard } from './CollapsibleCard';
+import { CollapsibleCard } from '@/ui';
 
 /** "Verlauf" of a saved game: every entry, newest first, collapsed until asked for. */
 export function HistoryCard({ rows }: { rows: HistoryRow[] }) {

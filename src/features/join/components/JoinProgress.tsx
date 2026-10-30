@@ -2,15 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { JoinStep } from '@/session';
-import { Font, Icon, IconName, Spinner, Text, fontFamily, useTheme } from '@/ui';
+import { Font, StepList, StepState, Text, fontFamily, useTheme } from '@/ui';
 
 const STEPS = [JoinStep.Search, JoinStep.Secure, JoinStep.Join];
-
-enum StepState {
-  Done = 'done',
-  Active = 'active',
-  Upcoming = 'upcoming',
-}
 
 /** The code in a pulsing tile and the three join steps with their progress. */
 export function JoinProgress({ code, step }: { code: string; step: JoinStep }) {
@@ -52,47 +46,13 @@ export function JoinProgress({ code, step }: { code: string; step: JoinStep }) {
           </Text>
         </View>
       </View>
-      <View style={{ alignSelf: 'stretch', gap: 14 }} accessibilityLiveRegion="polite">
-        {STEPS.map((s, i) => {
-          const state = stateOf(i);
-
-          return (
-            <View key={s} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 14,
-                  borderWidth: 2,
-                  borderColor: state === StepState.Upcoming ? colors.line : colors.primary,
-                  backgroundColor: state === StepState.Done ? colors.primary : 'transparent',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {state === StepState.Done ? (
-                  <Icon
-                    name={IconName.Check}
-                    color={colors.onPrimary}
-                    size={16}
-                    strokeWidth={3.2}
-                  />
-                ) : null}
-                {state === StepState.Active ? (
-                  <Spinner color={colors.primary} size={14} strokeWidth={3.2} />
-                ) : null}
-              </View>
-              <Text
-                size={16}
-                weight={state === StepState.Active ? 600 : 500}
-                color={state === StepState.Upcoming ? 'muted' : 'ink'}
-              >
-                {t(`labels.joinStep.${s}`)}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
+      <StepList
+        steps={STEPS.map((s, i) => ({
+          key: s,
+          label: t(`labels.joinStep.${s}`),
+          state: stateOf(i),
+        }))}
+      />
     </View>
   );
 }

@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import type { ScrollViewInstance } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
-import { Icon, IconName, Text, useTheme } from '@/ui';
+import { Chip, IconName, useTheme } from '@/ui';
 
 /** Hidden content smaller than this does not count as "more below". */
 const EDGE = 8;
@@ -53,18 +53,11 @@ export function ScorecardScroll({ children }: { children: ReactNode }) {
             </Defs>
             <Rect width="100%" height="100%" fill="url(#scorecard-fade)" />
           </Svg>
-          <Pressable
+          <Chip
+            label={t('game.moreFields')}
             onPress={() => scroll.current?.scrollToEnd({ animated: true })}
-            accessibilityRole="button"
-            accessibilityLabel={t('game.moreFields')}
-            hitSlop={8}
-            style={[styles.chip, { backgroundColor: colors.surface, borderColor: colors.line }]}
-          >
-            <Text size={13} weight={600}>
-              {t('game.moreFields')}
-            </Text>
-            <Icon name={IconName.ChevronDown} color={colors.ink} size={16} />
-          </Pressable>
+            trailing={IconName.ChevronDown}
+          />
         </View>
       ) : null}
     </View>
@@ -83,15 +76,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingBottom: 8,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingLeft: 14,
-    paddingRight: 10,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1,
   },
 });

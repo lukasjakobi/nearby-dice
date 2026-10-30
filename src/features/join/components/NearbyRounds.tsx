@@ -7,6 +7,7 @@ import {
   IconButton,
   IconName,
   SIZE,
+  Skeleton,
   Spinner,
   Text,
   TextVariant,
@@ -51,17 +52,8 @@ export function NearbyRounds({ rounds, scanning, onJoin, onRefresh, error }: Nea
       <ScrollView contentContainerStyle={{ flexGrow: 1, gap: 8 }}>
         {scanning && rounds.length === 0 ? (
           <View accessibilityState={{ busy: true }} style={{ gap: 8 }}>
-            {[0, 1].map((i) => (
-              <View
-                key={i}
-                style={{
-                  height: 64,
-                  borderRadius: 16,
-                  backgroundColor: colors.surface2,
-                  opacity: 0.7,
-                }}
-              />
-            ))}
+            <Skeleton height={64} />
+            <Skeleton height={64} />
           </View>
         ) : null}
         {!scanning && rounds.length === 0 ? (

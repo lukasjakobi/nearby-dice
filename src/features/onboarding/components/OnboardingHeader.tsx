@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { IconButton, IconName, Text, TextVariant, useTheme } from '@/ui';
+import { IconButton, IconName, PageDots, Text, TextVariant } from '@/ui';
 
 import { OnboardingSlide } from '../hooks';
 
@@ -24,7 +24,6 @@ export function OnboardingHeader({
   onSkip,
 }: OnboardingHeaderProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
 
   return (
     <View
@@ -43,23 +42,11 @@ export function OnboardingHeader({
           <IconButton icon={IconName.Back} label={t('common.back')} onPress={onBack} />
         ) : null}
       </View>
-      <View
-        style={{ flexDirection: 'row', gap: 8 }}
-        accessible
-        accessibilityLabel={t('onboarding.step', { n: slide + 1 })}
-      >
-        {slides.map((s) => (
-          <View
-            key={s}
-            style={{
-              width: s === slide ? 28 : 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: s === slide ? colors.primary : colors.line,
-            }}
-          />
-        ))}
-      </View>
+      <PageDots
+        count={slides.length}
+        current={slides.indexOf(slide)}
+        label={t('onboarding.step', { n: slide + 1 })}
+      />
       <View style={{ width: 96, alignItems: 'flex-end' }}>
         {canSkip ? (
           <Pressable

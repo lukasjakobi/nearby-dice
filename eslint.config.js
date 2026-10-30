@@ -135,6 +135,6 @@ module.exports = defineConfig([
     rules: { '@typescript-eslint/no-floating-promises': 'error' },
   },
   {
-    ignores: ['dist/*', 'ios/*', 'android/*', 'coverage/*'],
+    ignores: ['dist/*', 'ios/*', 'android/*', 'coverage/*', 'storybook-static/*'],
   },
 ]);

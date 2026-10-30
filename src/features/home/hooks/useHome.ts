@@ -64,6 +64,9 @@ function recentRow(t: TFunction, saved: SavedGame): RecentRow {
   };
 }
 
+/** Everything the start screen shows and does; `HomeContent` renders it. */
+export type Home = ReturnType<typeof useHome>;
+
 export function useHome() {
   const { t } = useTranslation();
   const profile = useProfileStore((s) => s.profile);
