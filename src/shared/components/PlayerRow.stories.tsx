@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { fn } from 'storybook/test';
 
 import { PlayerColor } from '@/domain';
-import { i18n } from '@/i18n';
 import { PLAYER_COLOR_HEX } from '@/ui';
 
 import { PlayerRow, PlayerTag, RowStatus } from './PlayerRow';
@@ -51,7 +50,4 @@ export const Reconnecting: Story = {
 /** The host lobby shows a ⋯ menu on guests' rows. */
 export const WithMenu: Story = {
   args: { onMenu: fn() },
-  render: (args) => (
-    <PlayerRow {...args} menuLabel={i18n.t('lobby.playerActions', { name: 'Antonia' })} />
-  ),
 };

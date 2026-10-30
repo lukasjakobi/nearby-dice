@@ -11,7 +11,6 @@ const meta: Meta<typeof FadeIn> = {
   title: 'UI/Motion/FadeIn',
   component: FadeIn,
   args: {
-    delayMs: 0,
     children: (
       <Card>
         <Text>Profil gespeichert.</Text>
@@ -39,5 +38,3 @@ type Story = StoryObj<typeof FadeIn>;
 
 /** 8 pt up and in over 250 ms. */
 export const Default: Story = {};
-
-export const Delayed: Story = { args: { delayMs: 600 } };

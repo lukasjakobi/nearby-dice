@@ -7,12 +7,12 @@ import { Icon, IconName } from './icons/Icon';
 import { Text, TextVariant } from './Text';
 import { useTheme } from './theme/ThemeProvider';
 
-type CollapsibleCardProps = { title: string; children: ReactNode; initiallyOpen?: boolean };
+type CollapsibleCardProps = { title: string; children: ReactNode };
 
 /** A card that shows only its title until it is opened. */
-export function CollapsibleCard({ title, children, initiallyOpen = false }: CollapsibleCardProps) {
+export function CollapsibleCard({ title, children }: CollapsibleCardProps) {
   const { colors } = useTheme();
-  const [open, setOpen] = useState(initiallyOpen);
+  const [open, setOpen] = useState(false);
 
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>

@@ -54,11 +54,10 @@ type PlayerRowProps = {
   row: PlayerRowView;
   /** Shows the ⋯ button (host lobby, non-host rows). */
   onMenu?: () => void;
-  menuLabel?: string;
 };
 
 /** A lobby row: avatar, name with tags, connection status. */
-export function PlayerRow({ row, onMenu, menuLabel }: PlayerRowProps) {
+export function PlayerRow({ row, onMenu }: PlayerRowProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const status = statusLook(t, row.status);
@@ -98,7 +97,7 @@ export function PlayerRow({ row, onMenu, menuLabel }: PlayerRowProps) {
       {onMenu ? (
         <IconButton
           icon={IconName.More}
-          label={menuLabel ?? ''}
+          label={t('lobby.playerActions', { name: row.name })}
           onPress={onMenu}
           color="muted"
           size={44}

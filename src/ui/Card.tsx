@@ -11,7 +11,6 @@ type CardProps = {
   /** Border colour token; dashed for empty slots. */
   border?: ColorToken;
   dashed?: boolean;
-  background?: ColorToken | 'transparent';
   padding?: number;
   radius?: number;
   style?: StyleProp<ViewStyle>;
@@ -21,7 +20,6 @@ export function Card({
   children,
   border = 'line',
   dashed = false,
-  background = 'surface',
   padding = 14,
   radius = RADIUS.card,
   style,
@@ -32,7 +30,7 @@ export function Card({
     <View
       style={[
         {
-          backgroundColor: background === 'transparent' ? 'transparent' : colors[background],
+          backgroundColor: colors.surface,
           borderColor: colors[border],
           borderWidth: dashed ? 1.5 : 1,
           borderStyle: dashed ? 'dashed' : 'solid',

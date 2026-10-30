@@ -6,7 +6,7 @@ import { Skeleton } from './Skeleton';
 const meta: Meta<typeof Skeleton> = {
   title: 'UI/Display/Skeleton',
   component: Skeleton,
-  args: { height: 64, radius: 16 },
+  args: { height: 64 },
 };
 
 export default meta;
