@@ -12,7 +12,7 @@ const meta: Meta<typeof ScoreTable> = {
   component: ScoreTable,
   decorators: [
     (Story) => (
-      <View style={{ height: 620 }}>
+      <View style={{ maxHeight: 620 }}>
         <Story />
       </View>
     ),
