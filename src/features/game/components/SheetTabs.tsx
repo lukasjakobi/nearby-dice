@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { RADIUS, SIZE, Text, TextVariant, useTheme } from '@/ui';
+import { RADIUS, Text, TextVariant, useTheme } from '@/ui';
 
 import type { SheetView } from '../view';
 
@@ -19,7 +19,11 @@ export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
   const disabled = !sheet.tabsEnabled;
 
   return (
-    <View accessibilityRole="radiogroup" accessibilityLabel={sheet.title} style={styles.row}>
+    <View
+      accessibilityRole="radiogroup"
+      accessibilityLabel={sheet.title}
+      style={[styles.track, { backgroundColor: colors.surface2 }]}
+    >
       {tabs.map((label, index) => {
         const selected = index === sheet.selectedTab;
         const marked = sheet.turnTab?.index === index;
@@ -32,11 +36,12 @@ export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
             accessibilityRole="radio"
             accessibilityLabel={marked ? `${label}, ${sheet.turnTab!.label}` : label}
             accessibilityState={{ checked: selected, disabled }}
-            style={[styles.tab, { backgroundColor: selected ? colors.primary : colors.surface2 }]}
+            style={[styles.tab, selected && { backgroundColor: colors.primary }]}
           >
             <Text
               variant={TextVariant.Label}
-              size={14}
+              size={13}
+              weight={600}
               color={selected ? 'onPrimary' : disabled ? 'muted' : 'ink'}
               align="center"
             >
@@ -45,10 +50,7 @@ export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
             {marked ? (
               <View
                 testID="sheet-tab-marker"
-                style={[
-                  styles.marker,
-                  { backgroundColor: sheet.owner.color, borderColor: colors.surface },
-                ]}
+                style={[styles.marker, { backgroundColor: sheet.owner.color }]}
               />
             ) : null}
           </Pressable>
@@ -59,22 +61,22 @@ export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 8 },
+  track: {
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    padding: 3,
+    gap: 2,
+    borderRadius: RADIUS.pill,
+  },
   tab: {
     flex: 1,
-    minHeight: SIZE.touch,
-    paddingHorizontal: 6,
-    borderRadius: RADIUS.chip,
+    height: 30,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 8,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 5,
   },
-  marker: {
-    position: 'absolute',
-    top: 6,
-    right: 8,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2,
-  },
+  marker: { width: 6, height: 6, borderRadius: 3 },
 });
