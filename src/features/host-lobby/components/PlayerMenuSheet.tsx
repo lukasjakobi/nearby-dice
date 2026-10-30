@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonVariant, Sheet } from '@/ui';
+import { Button, ButtonVariant, BottomSheet } from '@/ui';
 
 type PlayerMenuSheetProps = {
   visible: boolean;
@@ -14,7 +14,7 @@ export function PlayerMenuSheet({ visible, title, onKick, onClose }: PlayerMenuS
   const { t } = useTranslation();
 
   return (
-    <Sheet visible={visible} onClose={onClose} title={title}>
+    <BottomSheet visible={visible} onClose={onClose} title={title}>
       <Button
         label={t('lobby.kickAction')}
         onPress={onKick}
@@ -22,6 +22,6 @@ export function PlayerMenuSheet({ visible, title, onKick, onClose }: PlayerMenuS
         alignStart
       />
       <Button label={t('common.close')} onPress={onClose} variant={ButtonVariant.Secondary} />
-    </Sheet>
+    </BottomSheet>
   );
 }

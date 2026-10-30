@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView, View, useWindowDimensions } from 'react-native';
 
 import { RadioState } from '@/net';
-import { Button, ButtonVariant, Sheet, Text, TextVariant } from '@/ui';
+import { Button, ButtonVariant, BottomSheet, Text, TextVariant } from '@/ui';
 
 export type PermissionSheetState =
   | { variant: 'primer' }
@@ -50,7 +50,7 @@ export function PermissionSheet({
         : t('permission.openSettings');
 
   return (
-    <Sheet visible onClose={onClose} title={content.title}>
+    <BottomSheet visible onClose={onClose} title={content.title}>
       <ScrollView
         style={{ flexGrow: 0, maxHeight: height * 0.65 }}
         contentContainerStyle={{ gap: 12 }}
@@ -78,6 +78,6 @@ export function PermissionSheet({
           />
         </View>
       </ScrollView>
-    </Sheet>
+    </BottomSheet>
   );
 }

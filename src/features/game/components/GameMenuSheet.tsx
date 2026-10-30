@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonVariant, Sheet } from '@/ui';
+import { Button, ButtonVariant, BottomSheet } from '@/ui';
 import { SwitchList } from '@/shared';
 import type { SwitchKey, SwitchRow } from '@/shared';
 
@@ -26,10 +26,10 @@ export function GameMenuSheet({
   const { t } = useTranslation();
 
   return (
-    <Sheet visible={visible} onClose={onContinue} title={t('game.menu')}>
+    <BottomSheet visible={visible} onClose={onContinue} title={t('game.menu')}>
       <SwitchList rows={switches} onToggle={onToggle} onVolume={onVolume} />
       <Button label={t('game.continue')} onPress={onContinue} style={{ marginTop: 12 }} />
       <Button label={leaveLabel} onPress={onLeave} variant={ButtonVariant.TonalDanger} />
-    </Sheet>
+    </BottomSheet>
   );
 }

@@ -98,7 +98,7 @@ src/
   i18n/                       i18next setup, locales/de.json + en.json, format (names, times)
   ui/                         theme/ (tokens, typography, ThemeProvider), Text, Button, IconButton,
                               Screen, Header, Card, TextField, Switch, Choice, Footer, Avatar,
-                              Spinner, Banner, StatusView, Dialog, Sheet, Toast, DieFace, Logo, icons
+                              Spinner, Banner, StatusView, Dialog, BottomSheet, Toast, DieFace, Logo, icons
   features/<screen|layout>/   index.ts barrel, Screen (or Layout), hooks/, view/, components/,
                               __tests__/
   shared/                     components/ (PlayerRow, PlayersSection, PresetGrid, PresetRow, PresetSheet, RulesSheet …),
