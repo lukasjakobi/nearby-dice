@@ -6,7 +6,7 @@ import { Text } from './Text';
 const meta: Meta<typeof Banner> = {
   title: 'UI/Feedback/Banner',
   component: Banner,
-  args: { message: 'Verbindung unterbrochen', busy: true },
+  args: { message: 'Verbindung unterbrochen' },
 };
 
 export default meta;
@@ -21,5 +21,3 @@ export const Reconnecting: Story = {
     ),
   },
 };
-
-export const Still: Story = { args: { message: 'Antonia ist nicht erreichbar', busy: false } };

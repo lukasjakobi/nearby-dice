@@ -6,7 +6,6 @@ import type { SheetView } from '../view';
 
 type SheetTabsProps = {
   sheet: SheetView;
-  tabs: string[];
   onSelect: (index: number) => void;
 };
 
@@ -14,7 +13,7 @@ type SheetTabsProps = {
  * "×1 ×2 ×3": on my turn I switch sheets; on someone else's turn the tabs only show
  * which sheet they have open, marked with a dot in their colour.
  */
-export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
+export function SheetTabs({ sheet, onSelect }: SheetTabsProps) {
   const { colors } = useTheme();
   const disabled = !sheet.tabsEnabled;
 
@@ -24,7 +23,7 @@ export function SheetTabs({ sheet, tabs, onSelect }: SheetTabsProps) {
       accessibilityLabel={sheet.title}
       style={[styles.track, { backgroundColor: colors.surface2 }]}
     >
-      {tabs.map((label, index) => {
+      {sheet.tabs?.map((label, index) => {
         const selected = index === sheet.selectedTab;
         const marked = sheet.turnTab?.index === index;
 

@@ -26,7 +26,7 @@ export const MyTurn: Story = {
   render: (args) => {
     const s = sheet({});
 
-    return <SheetTabs {...args} sheet={s} tabs={s.tabs!} />;
+    return <SheetTabs {...args} sheet={s} />;
   },
 };
 
@@ -36,6 +36,6 @@ export const FollowingTurn: Story = {
     const s = sheet({ me: ANTONIA, local: { sheetIndex: 0 } });
     const marked = { ...s, selectedTab: 0, turnTab: { index: 1, label: s.tabs![1] } };
 
-    return <SheetTabs {...args} sheet={marked} tabs={s.tabs!} />;
+    return <SheetTabs {...args} sheet={marked} />;
   },
 };
