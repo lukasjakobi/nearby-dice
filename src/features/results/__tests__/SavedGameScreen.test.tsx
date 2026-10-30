@@ -30,7 +30,8 @@ test('a saved game shows the ranking, every field and the history', async () => 
   const top = ranking(SAVED.game)[0]!;
   expect(screen.getAllByText(String(top.total)).length).toBeGreaterThan(0);
 
-  await fireEvent.press(screen.getByText('Alle Felder im Vergleich'));
+  expect(screen.getByText('Endstand')).toBeTruthy();
+  expect(screen.getByText('Alle Felder im Vergleich')).toBeTruthy();
   expect(screen.getByText('Feld')).toBeTruthy();
 
   await fireEvent.press(screen.getByText('Verlauf'));

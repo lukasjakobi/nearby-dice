@@ -1,6 +1,6 @@
 /**
  * Everything the results screen shows about the finished game. Each card has its own
- * builder: `rankingView` (ranking and headline), `awardsView`, `compareView`.
+ * builder: `rankingView` (ranking and headline), `standingsView`, `awardsView`, `compareView`.
  */
 import type { GameState, NamedPlayer } from '@/domain';
 import type { TFunction } from '@/i18n';
@@ -11,9 +11,13 @@ import { buildCompare } from './compareView';
 import type { CompareRow } from './compareView';
 import { buildRanking } from './rankingView';
 import type { RankRow } from './rankingView';
+import { buildStandings } from './standingsView';
+import type { StandingsView } from './standingsView';
 
 export type ResultsView = {
   rows: RankRow[];
+  /** "Endstand": the rows with their gap, chips and bar. */
+  standings: StandingsView;
   awards: Award[];
   /** "Alle Felder im Vergleich": one column per player, in ranking order. */
   compare: CompareRow[];
@@ -29,6 +33,7 @@ export function buildResults(
 
   return {
     rows: ranked.map(({ row }) => row),
+    standings: buildStandings(t, ranked, game.rules),
     awards: buildAwards(t, ranked, game.rules),
     compare: buildCompare(t, ranked, game.rules),
   };
