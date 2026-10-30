@@ -14,8 +14,10 @@ export type Palette = {
   surface2: string;
   ink: string;
   muted: string;
-  /** Borders, tracks. */
+  /** Decorative borders, dividers, tracks. */
   line: string;
+  /** Outline of an input, switch, icon button or slider that must stay visible: 3:1 against surface. */
+  control: string;
   primary: string;
   onPrimary: string;
   /** Roll button, held-die ring, focus ring. */
@@ -45,13 +47,14 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     ink: '#15191C',
     muted: '#5B656B',
     line: '#D5DBDE',
-    primary: '#0B7A65',
+    control: '#737D83',
+    primary: '#076356',
     onPrimary: '#FFFFFF',
-    accent: '#FF9E7A',
-    onAccent: '#3A1405',
+    accent: '#D9623F',
+    onAccent: '#2B0E03',
     danger: '#B3261E',
     onDanger: '#FFFFFF',
-    ok: '#0B7A65',
+    ok: '#076356',
     felt: '#1F302D',
     scrim: 'rgba(16,18,20,0.5)',
   },
@@ -62,6 +65,7 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     ink: '#ECEFF1',
     muted: '#9AA3A9',
     line: '#2F353A',
+    control: '#737C82',
     primary: '#4FE3C1',
     onPrimary: '#032820',
     accent: '#FF9E7A',

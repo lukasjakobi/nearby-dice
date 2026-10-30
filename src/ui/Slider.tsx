@@ -74,7 +74,7 @@ export function Slider({ value, onChange, label, step = 0.1 }: SliderProps) {
             marginHorizontal: KNOB / 2,
             height: TRACK,
             borderRadius: TRACK / 2,
-            backgroundColor: colors.line,
+            backgroundColor: colors.control,
             overflow: 'hidden',
           }}
         >

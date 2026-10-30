@@ -32,7 +32,7 @@ export function CodeInput({
               height: 92,
               borderRadius: 20,
               borderWidth: 2.5,
-              borderColor: i === active ? colors.primary : colors.line,
+              borderColor: i === active ? colors.primary : colors.control,
               backgroundColor: colors.surface,
               alignItems: 'center',
               justifyContent: 'center',
