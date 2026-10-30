@@ -59,7 +59,7 @@ test('the upper bonus × factor', () => {
 
 test('the best move is the highest raw entry, as written on the card', () => {
   const best = results().awards.find((a) => a.kind === AwardKind.BestMove)!;
-  expect(best.text).toBe('Chance · 30');
+  expect(best).toMatchObject({ value: '30', sub: 'Chance' });
   expect(best.who.map((w) => w.id)).toEqual([LUKAS.id, ANTONIA.id]);
 });
 

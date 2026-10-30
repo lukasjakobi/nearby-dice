@@ -1,5 +1,5 @@
 /** A finished game for this folder's stories (Storybook only), through the real builders. */
-import { PlayerColor } from '@/domain';
+import { PlayerColor, turnsPerPlayer } from '@/domain';
 import type { TFunction } from '@/i18n';
 import { RematchVote } from '@/session';
 import { ANTONIA, JONAS, LUKAS, savedGame } from '@/test/fixtures';
@@ -13,6 +13,13 @@ const GAME = savedGame([LUKAS, ANTONIA, JONAS], LUKAS);
 
 /** What the results screen shows after the bots played a whole game. */
 export const finished = (t: TFunction): SavedGameView => buildSavedGame(t, GAME);
+
+/** "236 Punkte · 13 Runden" under the headline, as the results screen words it. */
+export const summary = (t: TFunction): string =>
+  t('results.summary', {
+    points: t('format.points', { count: finished(t).winners[0].points }),
+    count: turnsPerPlayer(GAME.game.rules),
+  });
 
 export const VOTES: VoteChip[] = [
   {

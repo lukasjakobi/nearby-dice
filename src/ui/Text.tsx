@@ -32,6 +32,8 @@ export function Text({
   return (
     <RNText
       maxFontSizeMultiplier={MAX_FONT_SCALE}
+      // As on phones; on web a text selection would also end a drag, such as a bottom sheet's.
+      selectable={false}
       style={[
         {
           fontFamily: fontFamily(base.font, weight ?? base.weight),

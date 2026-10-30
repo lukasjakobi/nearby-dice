@@ -2,15 +2,15 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
 
+import { BottomSheet } from './BottomSheet';
 import { Button, ButtonVariant } from './Button';
 import { IconButton } from './IconButton';
 import { IconName } from './icons/Icon';
-import { Sheet } from './Sheet';
 import { Text, TextVariant } from './Text';
 
-const meta: Meta<typeof Sheet> = {
-  title: 'UI/Feedback/Sheet',
-  component: Sheet,
+const meta: Meta<typeof BottomSheet> = {
+  title: 'UI/Feedback/BottomSheet',
+  component: BottomSheet,
   parameters: { screen: true },
   args: {
     visible: true,
@@ -31,7 +31,7 @@ const meta: Meta<typeof Sheet> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Sheet>;
+type Story = StoryObj<typeof BottomSheet>;
 
 export const WithTitle: Story = {};
 
@@ -48,7 +48,7 @@ export const WithCloseButton: Story = {
   },
 };
 
-/** Open and close it to see the spring and the fade. */
+/** Open it, then drag it down by the handle, flick it or tap the scrim to close it. */
 export const Toggle: Story = {
   render: function ToggleSheet(args) {
     const [visible, setVisible] = useState(false);
@@ -56,7 +56,7 @@ export const Toggle: Story = {
     return (
       <>
         <Button label="Sheet öffnen" onPress={() => setVisible(true)} />
-        <Sheet {...args} visible={visible} onClose={() => setVisible(false)} />
+        <BottomSheet {...args} visible={visible} onClose={() => setVisible(false)} />
       </>
     );
   },

@@ -28,7 +28,7 @@ export { Tag } from './Tag';
 export { StatusView, StatusTone } from './StatusView';
 export { Dialog } from './Dialog';
 export type { DialogAction } from './Dialog';
-export { Sheet } from './Sheet';
+export { BottomSheet } from './BottomSheet';
 export { DEFAULT_TOAST_OFFSET, ToastProvider, useToast } from './Toast';
 export { DieFace } from './DieFace';
 export { Logo } from './Logo';

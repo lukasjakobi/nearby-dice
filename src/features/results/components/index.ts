@@ -1,9 +1,14 @@
-export { AwardsCard } from './AwardsCard';
+export { AwardTile } from './AwardTile';
+export { AwardTiles } from './AwardTiles';
+export { BarLegend } from './BarLegend';
 export { HistoryCard } from './HistoryCard';
-export { RankingList } from './RankingList';
-export { RankingPart } from './RankingPart';
 export { RematchVoteChip } from './RematchVoteChip';
+export { ResultChip } from './ResultChip';
+export { ResultsCard } from './ResultsCard';
 export { ResultsFooter } from './ResultsFooter';
 export { ResultsHeader } from './ResultsHeader';
 export { ScoreComparison } from './ScoreComparison';
+export { StandingBar } from './StandingBar';
+export { StandingRow } from './StandingRow';
+export { StandingsCard } from './StandingsCard';
 export { TrainingFacts } from './TrainingFacts';

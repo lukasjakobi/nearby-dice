@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 
 import { i18n } from '@/i18n';
 
-import { finished } from './fixtures';
+import { finished, summary } from './fixtures';
 import { ResultsHeader } from './ResultsHeader';
 
 const meta: Meta<typeof ResultsHeader> = {
@@ -13,12 +13,27 @@ const meta: Meta<typeof ResultsHeader> = {
 export default meta;
 type Story = StoryObj<typeof ResultsHeader>;
 
+/** A saved game, opened from the start screen: no summary line. */
+export const SavedGame: Story = {
+  render: () => {
+    const view = finished(i18n.t);
+
+    return <ResultsHeader winners={view.winners} crown headline={view.headline} />;
+  },
+};
+
+/** Right after the game, with the summary line. */
 export const Winner: Story = {
   render: () => {
     const view = finished(i18n.t);
 
     return (
-      <ResultsHeader winners={view.winners} crown headline={view.headline} summary={view.summary} />
+      <ResultsHeader
+        winners={view.winners}
+        crown
+        headline={view.headline}
+        summary={summary(i18n.t)}
+      />
     );
   },
 };
@@ -30,7 +45,12 @@ export const Tie: Story = {
     const tied = view.rows.slice(0, 2);
 
     return (
-      <ResultsHeader winners={tied} crown headline={i18n.t('results.tie')} summary={view.summary} />
+      <ResultsHeader
+        winners={tied}
+        crown
+        headline={i18n.t('results.tie')}
+        summary={summary(i18n.t)}
+      />
     );
   },
 };

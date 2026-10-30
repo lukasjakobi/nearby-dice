@@ -38,7 +38,7 @@ src/
   domain/     Pure game rules: scoring, engine, presets, option values. No React, no I/O.
   store/      Data kept on the phone: profile, statistics, last 10 games, settings, interrupted session.
   i18n/       i18next setup and all app text in locales/de.json and locales/en.json.
-  ui/         Design system: theme tokens, Text, Button, Footer, Dialog, Sheet, DieFace, icons …
+  ui/         Design system: theme tokens, Text, Button, Footer, Dialog, BottomSheet, DieFace, icons …
   lib/        Tiny generic helpers (typed emitter, timers, ids).
   test/       Fixtures, render helpers and a bot player for tests.
 modules/
