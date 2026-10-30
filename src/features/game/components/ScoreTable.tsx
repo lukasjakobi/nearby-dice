@@ -39,7 +39,7 @@ export function ScoreTable({ board }: { board: ScoreboardView }) {
       bounces={false}
       onScroll={onScroll}
       scrollEventThrottle={16}
-      style={styles.fill}
+      style={styles.viewport}
       contentContainerStyle={styles.content}
     >
       <View style={[styles.table, { minWidth: LABEL_WIDTH + board.columns.length * columnWidth }]}>
@@ -62,7 +62,7 @@ export function ScoreTable({ board }: { board: ScoreboardView }) {
             </Text>
           ))}
         </View>
-        <ScrollView style={styles.fill}>
+        <ScrollView style={styles.viewport}>
           {board.rows.map((row) => (
             <ScoreTableRow
               key={row.key}
@@ -78,7 +78,8 @@ export function ScoreTable({ board }: { board: ScoreboardView }) {
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
+  // Preserve intrinsic content height in a sheet with maxHeight but no fixed height.
+  viewport: { flexGrow: 0, flexShrink: 1 },
   content: { flexGrow: 1 },
   table: { flexGrow: 1 },
   head: { flexDirection: 'row', alignItems: 'center', paddingTop: 4 },

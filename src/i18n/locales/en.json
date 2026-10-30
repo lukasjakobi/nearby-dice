@@ -183,7 +183,6 @@
   },
   "common": {
     "back": "Back",
-    "close": "Close",
     "cancel": "Cancel",
     "loading": "Loading",
     "hostTag": "Host",
