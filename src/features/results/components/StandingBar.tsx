@@ -1,14 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, useAnimatedValue, View } from 'react-native';
 
 import { mix, Text, useTheme } from '@/ui';
 
-import { BarPart } from '../view';
 import type { Standing } from '../view';
 import { BAR_COLORS } from './barColors';
 
 const OUTER = 10;
 const INNER = 4;
+const GAP = 2;
+/** About one 13 px tabular digit or sign. */
+const CHAR_WIDTH = 8;
+/** Room on either side of a label. */
+const LABEL_PADDING = 8;
+
+/** A label shows only where its share is wide enough; the shares keep their true widths. */
+const labelFits = (label: string, width: number) =>
+  width >= label.length * CHAR_WIDTH + LABEL_PADDING;
 
 type StandingBarProps = {
   row: Standing;
@@ -21,6 +29,7 @@ type StandingBarProps = {
 /** Upper block, bonus and the rest side by side, as long as the points against the winner's. */
 export function StandingBar({ row, background, index }: StandingBarProps) {
   const { colors, reduceMotion } = useTheme();
+  const [trackWidth, setTrackWidth] = useState(0);
   const progress = useAnimatedValue(reduceMotion ? 1 : 0);
   useEffect(() => {
     if (reduceMotion) {
@@ -38,12 +47,14 @@ export function StandingBar({ row, background, index }: StandingBarProps) {
     }).start();
   }, [index, progress, reduceMotion]);
   const last = row.segments.length - 1;
+  const shareWidth = trackWidth * (row.barWidth / 100) - GAP * last;
 
   return (
     <View
       accessible
       accessibilityRole="image"
       accessibilityLabel={row.barLabel}
+      onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
       style={[styles.track, { backgroundColor: mix(colors.ink, background, 0.07) }]}
     >
       <Animated.View
@@ -59,7 +70,6 @@ export function StandingBar({ row, background, index }: StandingBarProps) {
                 styles.segment,
                 {
                   flexGrow: segment.points,
-                  minWidth: segment.part === BarPart.Bonus ? 30 : 24,
                   backgroundColor: fill,
                   borderTopLeftRadius: i === 0 ? OUTER : INNER,
                   borderBottomLeftRadius: i === 0 ? OUTER : INNER,
@@ -68,9 +78,11 @@ export function StandingBar({ row, background, index }: StandingBarProps) {
                 },
               ]}
             >
-              <Text size={13} weight={600} color={{ raw: label }} numberOfLines={1}>
-                {segment.label}
-              </Text>
+              {labelFits(segment.label, (shareWidth * segment.points) / row.points) ? (
+                <Text size={13} weight={600} color={{ raw: label }} numberOfLines={1}>
+                  {segment.label}
+                </Text>
+              ) : null}
             </View>
           );
         })}
@@ -81,7 +93,15 @@ export function StandingBar({ row, background, index }: StandingBarProps) {
 
 const styles = StyleSheet.create({
   track: { height: 26, borderRadius: OUTER },
-  bar: { flexDirection: 'row', gap: 2, height: 26, transformOrigin: 'left' },
+  // Clipped, so the gaps between tiny shares never push the bar past its length.
+  bar: {
+    flexDirection: 'row',
+    gap: GAP,
+    height: 26,
+    borderRadius: OUTER,
+    overflow: 'hidden',
+    transformOrigin: 'left',
+  },
   segment: {
     flexShrink: 1,
     flexBasis: 0,
