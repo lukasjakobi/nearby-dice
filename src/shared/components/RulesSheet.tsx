@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import type { PresetId } from '@/domain';
 import { BottomSheet, Text, TextVariant, useTheme } from '@/ui';
@@ -15,7 +15,7 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('lobby.rulesTitle')}>
-      <View>
+      <ScrollView style={{ flexGrow: 0, flexShrink: 1 }}>
         {rulesSummary(t, preset).map((line) => (
           <View
             key={line.label}
@@ -37,7 +37,7 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
             </Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
     </BottomSheet>
   );
 }
