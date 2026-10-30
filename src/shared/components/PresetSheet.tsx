@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import { PRESET_ORDER } from '@/domain';
 import type { PresetId } from '@/domain';
-import { Icon, IconName, Sheet, Text, TextVariant, useTheme } from '@/ui';
+import { Icon, IconName, BottomSheet, Text, TextVariant, useTheme } from '@/ui';
 
 import { PRESET_ICON } from './presetIcons';
 
@@ -29,7 +29,7 @@ export function PresetSheet({
   const { colors } = useTheme();
 
   return (
-    <Sheet visible={visible} onClose={onClose}>
+    <BottomSheet visible={visible} onClose={onClose}>
       <View accessibilityRole="radiogroup" accessibilityLabel={t('hostSetup.styleLabel')}>
         {presets.map((id) => {
           const selected = id === value;
@@ -70,6 +70,6 @@ export function PresetSheet({
           );
         })}
       </View>
-    </Sheet>
+    </BottomSheet>
   );
 }

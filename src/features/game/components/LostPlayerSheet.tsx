@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonVariant, Sheet } from '@/ui';
+import { Button, ButtonVariant, BottomSheet } from '@/ui';
 
 type LostPlayerSheetProps = {
   name: string | null;
@@ -15,7 +15,7 @@ export function LostPlayerSheet({ name, canSkip, onWait, onSkip, onRemove }: Los
   const { t } = useTranslation();
 
   return (
-    <Sheet
+    <BottomSheet
       visible={name !== null}
       onClose={onWait}
       title={t('game.lostSheetTitle', { name: name ?? '' })}
@@ -29,6 +29,6 @@ export function LostPlayerSheet({ name, canSkip, onWait, onSkip, onRemove }: Los
         onPress={onRemove}
         variant={ButtonVariant.DangerOutline}
       />
-    </Sheet>
+    </BottomSheet>
   );
 }

@@ -6,7 +6,7 @@ import {
   ButtonVariant,
   Icon,
   IconName,
-  Sheet,
+  BottomSheet,
   Spinner,
   Text,
   TextVariant,
@@ -99,8 +99,8 @@ export function ResumeSheet({
   };
 
   return (
-    <Sheet visible={state !== ResumeState.Idle} onClose={onCancel} centered>
+    <BottomSheet visible={state !== ResumeState.Idle} onClose={onCancel} centered>
       {state !== ResumeState.Idle ? content[state] : null}
-    </Sheet>
+    </BottomSheet>
   );
 }

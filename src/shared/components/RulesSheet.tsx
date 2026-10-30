@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import type { PresetId } from '@/domain';
-import { Button, Sheet, Text, TextVariant, useTheme } from '@/ui';
+import { Button, BottomSheet, Text, TextVariant, useTheme } from '@/ui';
 
 import { rulesSummary } from '../view/rulesSummary';
 
@@ -14,7 +14,7 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
   const { colors } = useTheme();
 
   return (
-    <Sheet visible={visible} onClose={onClose} title={t('lobby.rulesTitle')}>
+    <BottomSheet visible={visible} onClose={onClose} title={t('lobby.rulesTitle')}>
       <View>
         {rulesSummary(t, preset).map((line) => (
           <View
@@ -39,6 +39,6 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
         ))}
       </View>
       <Button label={t('common.close')} onPress={onClose} style={{ marginTop: 12 }} />
-    </Sheet>
+    </BottomSheet>
   );
 }

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { HistoryItem } from '@/shared';
-import { Choice, IconButton, IconName, Sheet, Text, TextVariant } from '@/ui';
+import { Choice, IconButton, IconName, BottomSheet, Text, TextVariant } from '@/ui';
 
 import type { ScoreboardView } from '../view';
 import { ScoreTable } from './ScoreTable';
@@ -25,7 +25,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
   ];
 
   return (
-    <Sheet
+    <BottomSheet
       visible={visible}
       onClose={onClose}
       height="86%"
@@ -68,7 +68,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
           )}
         </ScrollView>
       ) : null}
-    </Sheet>
+    </BottomSheet>
   );
 }
 
