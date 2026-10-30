@@ -40,7 +40,7 @@ export function TextField({
   const input = useRef<TextInputInstance>(null);
   const [focused, setFocused] = useState(false);
   const message = error ?? help;
-  const borderColor = error ? colors.danger : focused ? colors.primary : colors.line;
+  const borderColor = error ? colors.danger : focused ? colors.primary : colors.control;
 
   return (
     <Pressable

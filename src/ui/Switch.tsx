@@ -21,7 +21,7 @@ export function Switch({ value, onChange, label }: SwitchProps) {
           width: 52,
           height: 30,
           borderRadius: 15,
-          backgroundColor: value ? colors.primary : colors.line,
+          backgroundColor: value ? colors.primary : colors.control,
         }}
       >
         <View

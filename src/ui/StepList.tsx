@@ -27,7 +27,7 @@ export function StepList({ steps }: { steps: Step[] }) {
               height: 28,
               borderRadius: 14,
               borderWidth: 2,
-              borderColor: step.state === StepState.Upcoming ? colors.line : colors.primary,
+              borderColor: step.state === StepState.Upcoming ? colors.control : colors.primary,
               backgroundColor: step.state === StepState.Done ? colors.primary : 'transparent',
               alignItems: 'center',
               justifyContent: 'center',

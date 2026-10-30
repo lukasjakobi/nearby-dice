@@ -49,7 +49,7 @@ export function IconButton({
           justifyContent: 'center',
           backgroundColor: filled ? colors.surface : 'transparent',
           borderWidth: filled ? 1 : 0,
-          borderColor: colors.line,
+          borderColor: colors.control,
           opacity: disabled ? 0.45 : pressed ? 0.7 : 1,
           transform: [{ scale: pressed && !disabled ? 0.92 : 1 }],
         },

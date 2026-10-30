@@ -23,7 +23,7 @@ export function PageDots({ count, current, label }: PageDotsProps) {
             width: i === current ? 28 : 8,
             height: 8,
             borderRadius: 4,
-            backgroundColor: i === current ? colors.primary : colors.line,
+            backgroundColor: i === current ? colors.primary : colors.control,
           }}
         />
       ))}
