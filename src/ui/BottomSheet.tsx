@@ -225,7 +225,16 @@ export function BottomSheet({
           />
           <View
             testID="bottom-sheet-handle"
-            style={{ alignSelf: 'stretch', alignItems: 'center', paddingTop: 10 }}
+            // Claim the grip immediately on phones, before native scrolling can take the touch.
+            // The rest of the sheet still waits for vertical movement so controls keep their taps.
+            {...dragHandlers}
+            onStartShouldSetResponder={() => visible}
+            style={{
+              alignSelf: 'stretch',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: 44,
+            }}
           >
             <View
               style={{
