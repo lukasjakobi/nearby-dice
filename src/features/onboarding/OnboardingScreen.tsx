@@ -6,8 +6,6 @@ import { Button, Screen } from '@/ui';
 import { CodeSlide, DiceSlide, OnboardingHeader, ProfileSlide } from './components';
 import { OnboardingSlide, useOnboarding } from './hooks';
 
-const SLIDES = [OnboardingSlide.Dice, OnboardingSlide.Code, OnboardingSlide.Profile];
-
 export function OnboardingScreen() {
   const { t } = useTranslation();
   const onboarding = useOnboarding();
@@ -15,14 +13,7 @@ export function OnboardingScreen() {
 
   return (
     <Screen keyboardAvoiding>
-      <OnboardingHeader
-        slide={slide}
-        slides={SLIDES}
-        canGoBack={onboarding.canGoBack}
-        canSkip={onboarding.canSkip}
-        onBack={onboarding.back}
-        onSkip={onboarding.skip}
-      />
+      <OnboardingHeader slide={slide} onBack={onboarding.back} onSkip={onboarding.skip} />
 
       <ScrollView
         key={slide}

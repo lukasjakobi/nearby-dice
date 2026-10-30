@@ -18,7 +18,6 @@ type TextFieldProps = {
   help?: string;
   /** "n/16" on the right of the help line. */
   showCounter?: boolean;
-  onBlur?: () => void;
 };
 
 /**
@@ -34,7 +33,6 @@ export function TextField({
   error,
   help,
   showCounter = false,
-  onBlur,
 }: TextFieldProps) {
   const { colors } = useTheme();
   const input = useRef<TextInputInstance>(null);
@@ -74,10 +72,7 @@ export function TextField({
           accessibilityHint={message ?? undefined}
           maxFontSizeMultiplier={MAX_FONT_SCALE}
           onFocus={() => setFocused(true)}
-          onBlur={() => {
-            setFocused(false);
-            onBlur?.();
-          }}
+          onBlur={() => setFocused(false)}
           style={{
             flex: 1,
             minWidth: 0,

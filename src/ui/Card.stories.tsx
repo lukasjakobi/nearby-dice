@@ -24,5 +24,3 @@ export const Default: Story = {};
 export const Dashed: Story = { args: { dashed: true, radius: 16, padding: 16 } };
 
 export const Danger: Story = { args: { border: 'danger', style: { borderWidth: 1.5 } } };
-
-export const Tonal: Story = { args: { background: 'surface2', border: 'surface2' } };
