@@ -52,7 +52,7 @@
     "preset": {
       "classic": {
         "title": "Classic",
-        "description": "The game-night classic: you decide where every roll lands, for 13 rounds."
+        "description": "The game-night classic: you decide where every roll lands, for 13\u00a0rounds."
       },
       "top-to-bottom": {
         "title": "Top to bottom",
@@ -60,7 +60,7 @@
       },
       "blitz": {
         "title": "Blitz",
-        "description": "Six rounds, 30 seconds a turn. Hesitate and you've already lost."
+        "description": "Six rounds, 30\u00a0seconds a turn. Hesitate and you've already lost."
       },
       "same-dice": {
         "title": "Same dice",
@@ -80,7 +80,7 @@
       },
       "lucky-number": {
         "title": "Lucky number",
-        "description": "Each round, luck draws a new number. Hit it exactly for 40 points."
+        "description": "Each round, luck draws a new number. Hit it exactly for 40\u00a0points."
       }
     },
     "secondsPerTurn": {
@@ -511,17 +511,20 @@
     "youWin": "You win!",
     "tie": "It’s a tie!",
     "you": "(You)",
+    "standings": "Final standings",
     "summary_one": "{{points}} · {{count}}\u00a0round",
     "summary_other": "{{points}} · {{count}}\u00a0rounds",
     "behind": "−{{n}}",
     "upper": "Upper",
     "bonus": "Bonus",
     "lower": "Lower",
+    "noBonus": "No bonus · {{sum}}/{{need}}",
     "awards": {
       "bestMove": "Best move",
-      "bonus": "Bonus +{{n}} reached",
+      "bonus": "Bonus reached",
       "zeros": "Most zeros",
-      "nobody": "Nobody",
+      "fields_one": "field",
+      "fields_other": "fields",
       "none": "None"
     },
     "compare": "All fields compared",

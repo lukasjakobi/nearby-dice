@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Avatar, mix, Text, TextVariant, useTheme } from '@/ui';
 
 import type { CompareRow, RankRow } from '../view';
-import { CollapsibleCard } from './CollapsibleCard';
+import { ResultsCard } from './ResultsCard';
 
 /** Narrower columns as players are added, so six still fit on a phone. */
 const columnWidth = (columns: number) => (columns <= 3 ? 56 : columns === 4 ? 48 : 40);
@@ -15,7 +15,7 @@ type ScoreComparisonProps = {
   rows: CompareRow[];
 };
 
-/** "Alle Felder im Vergleich": every field side by side, collapsed until asked for. */
+/** "Alle Felder im Vergleich": every field side by side. */
 export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -23,7 +23,7 @@ export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
   const cellWidth = Math.min(40, width - 6);
 
   return (
-    <CollapsibleCard title={t('results.compare')}>
+    <ResultsCard title={t('results.compare')}>
       <View style={[styles.row, styles.head, { borderTopColor: colors.line }]}>
         <Text variant={TextVariant.Body} size={13} color="muted" style={styles.flex}>
           {t('results.field')}
@@ -82,7 +82,7 @@ export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
           ))}
         </View>
       ))}
-    </CollapsibleCard>
+    </ResultsCard>
   );
 }
 
