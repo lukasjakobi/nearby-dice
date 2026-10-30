@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { HistoryItem } from '@/shared';
-import { Choice, IconButton, IconName, BottomSheet, Text, TextVariant } from '@/ui';
+import { Choice, BottomSheet, Text, TextVariant } from '@/ui';
 
 import type { ScoreboardView } from '../view';
 import { ScoreTable } from './ScoreTable';
@@ -25,21 +25,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
   ];
 
   return (
-    <BottomSheet
-      visible={visible}
-      onClose={onClose}
-      height="86%"
-      title={t('game.scoreboard')}
-      titleAccessory={
-        <IconButton
-          icon={IconName.Close}
-          label={t('common.close')}
-          onPress={onClose}
-          filled
-          size={44}
-        />
-      }
-    >
+    <BottomSheet visible={visible} onClose={onClose} title={t('game.scoreboard')}>
       <Choice label={t('game.scoreboard')} options={tabs} value={tab} onChange={setTab} />
       {board && tab === BoardTab.Table ? (
         <>
@@ -73,7 +59,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1 },
+  scroll: { flexGrow: 0, flexShrink: 1 },
   factors: { paddingHorizontal: 4, paddingTop: 2 },
   empty: { paddingVertical: 24 },
 });

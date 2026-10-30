@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
+import { View } from 'react-native';
 
 import {
   Button,
@@ -99,8 +100,10 @@ export function ResumeSheet({
   };
 
   return (
-    <BottomSheet visible={state !== ResumeState.Idle} onClose={onCancel} centered>
-      {state !== ResumeState.Idle ? content[state] : null}
+    <BottomSheet visible={state !== ResumeState.Idle} onClose={onCancel}>
+      <View style={{ alignItems: 'center', gap: 10 }}>
+        {state !== ResumeState.Idle ? content[state] : null}
+      </View>
     </BottomSheet>
   );
 }

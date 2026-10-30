@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import type { PresetId } from '@/domain';
-import { Button, BottomSheet, Text, TextVariant, useTheme } from '@/ui';
+import { BottomSheet, Text, TextVariant, useTheme } from '@/ui';
 
 import { rulesSummary } from '../view/rulesSummary';
 
@@ -15,7 +15,7 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('lobby.rulesTitle')}>
-      <View>
+      <ScrollView style={{ flexGrow: 0, flexShrink: 1 }}>
         {rulesSummary(t, preset).map((line) => (
           <View
             key={line.label}
@@ -37,8 +37,7 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
             </Text>
           </View>
         ))}
-      </View>
-      <Button label={t('common.close')} onPress={onClose} style={{ marginTop: 12 }} />
+      </ScrollView>
     </BottomSheet>
   );
 }

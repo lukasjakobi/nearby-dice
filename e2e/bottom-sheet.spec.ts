@@ -22,9 +22,10 @@ test('a sheet follows its grip, springs back and dismisses after a long drag', a
   await page.mouse.move(x, y + 450, { steps: 20 });
   await page.mouse.up();
   await expect(grip).toBeHidden();
-  // Reopening resets the drag, and the close control still works.
+  // Reopening resets the drag, and tapping the scrim dismisses the sheet.
   await page.getByRole('button', { name: 'Spielstand', exact: true }).click();
   await expect(grip).toBeVisible();
-  await page.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect.poll(async () => (await grip.boundingBox())!.y).toBeCloseTo(start.y, 0);
+  await page.mouse.click(x, start.y / 2);
   await expect(grip).toBeHidden();
 });
