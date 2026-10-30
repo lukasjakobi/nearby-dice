@@ -349,7 +349,7 @@ change.
   is copied first (see [Stored data](#stored-data)).
 
 "Zuletzt gespielt" on Start lists the kept games. Tapping one opens `saved-game?id=…`, which reuses
-the results view (ranking, awards, "Alle Felder im Vergleich") and adds "Verlauf".
+the results view ("Endstand", the highlight tiles, "Alle Felder im Vergleich") and adds "Verlauf".
 
 ## Permissions
 

@@ -1,4 +1,4 @@
-/** The awards card: highest move, upper bonus and most zeros. */
+/** The highlight tiles: highest move, upper bonus and most zeros. */
 import type { TFunction } from '@/i18n';
 import { categoriesFor, upperBonusPoints } from '@/domain';
 import type { Category, GamePlayer, Rules } from '@/domain';
@@ -15,8 +15,11 @@ export enum AwardKind {
 export type Award = {
   kind: AwardKind;
   label: string;
-  text: string;
-  who: (AvatarView & { id: string })[];
+  /** The big number: "50", "1/3" or "–". */
+  value: string;
+  /** What the number means: the field, the bonus points, "Felder". */
+  sub: string;
+  who: (AvatarView & { id: string; name: string })[];
 };
 
 type Entry = { category: Category; value: number };
@@ -38,8 +41,7 @@ const entries = (player: GamePlayer, rules: Rules): Entry[] =>
     }),
   );
 
-const avatarFor = (row: RankRow) => ({ id: row.id, ...row.avatar });
-const names = (rows: readonly RankRow[]) => rows.map((row) => row.name).join(', ');
+const avatarFor = (row: RankRow) => ({ id: row.id, name: row.name, ...row.avatar });
 
 /** Höchster Zug: the highest single entry; ties show everyone who wrote it. */
 function bestMoveAward(t: TFunction, ranked: readonly RankedPlayer[], rules: Rules): Award {
@@ -58,12 +60,13 @@ function bestMoveAward(t: TFunction, ranked: readonly RankedPlayer[], rules: Rul
   return {
     kind: AwardKind.BestMove,
     label: t('results.awards.bestMove'),
-    text:
+    value: bestValue === 0 ? '–' : String(bestValue),
+    sub:
       bestValue === 0
         ? t('results.awards.none')
         : categories.size === 1
-          ? `${t(`labels.category.${[...categories][0]}`)} · ${bestValue}`
-          : String(bestValue),
+          ? t(`labels.category.${[...categories][0]}`)
+          : '',
     who: bestValue === 0 ? [] : holders.map(({ row }) => avatarFor(row)),
   };
 }
@@ -73,8 +76,9 @@ function bonusAward(t: TFunction, ranked: readonly RankedPlayer[], rules: Rules)
 
   return {
     kind: AwardKind.Bonus,
-    label: t('results.awards.bonus', { n: upperBonusPoints(rules.ruleset) }),
-    text: rows.length ? names(rows) : t('results.awards.nobody'),
+    label: t('results.awards.bonus'),
+    value: `${rows.length}/${ranked.length}`,
+    sub: `+${t('format.points', { count: upperBonusPoints(rules.ruleset) })}`,
     who: rows.map(avatarFor),
   };
 }
@@ -91,7 +95,9 @@ function zerosAward(t: TFunction, ranked: readonly RankedPlayer[], rules: Rules)
   return {
     kind: AwardKind.Zeros,
     label: t('results.awards.zeros'),
-    text: rows.length ? `${names(rows)} · ${mostZeros}` : t('results.awards.none'),
+    value: mostZeros > 0 ? String(mostZeros) : '–',
+    sub:
+      mostZeros > 0 ? t('results.awards.fields', { count: mostZeros }) : t('results.awards.none'),
     who: rows.map(avatarFor),
   };
 }

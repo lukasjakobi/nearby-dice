@@ -52,7 +52,7 @@
     "preset": {
       "classic": {
         "title": "Klassisch",
-        "description": "Der Spieleabend-Klassiker: Du entscheidest, wohin jeder Wurf wandert, 13 Runden lang."
+        "description": "Der Spieleabend-Klassiker: Du entscheidest, wohin jeder Wurf wandert, 13\u00a0Runden lang."
       },
       "top-to-bottom": {
         "title": "Der Reihe nach",
@@ -60,7 +60,7 @@
       },
       "blitz": {
         "title": "Blitz",
-        "description": "Sechs Runden, 30 Sekunden pro Zug. Wer zögert, hat schon verloren."
+        "description": "Sechs Runden, 30\u00a0Sekunden pro Zug. Wer zögert, hat schon verloren."
       },
       "same-dice": {
         "title": "Gleiche Würfel",
@@ -80,7 +80,7 @@
       },
       "lucky-number": {
         "title": "Glückszahl",
-        "description": "Jede Runde lost das Glück eine neue Zahl aus. Triffst du sie genau, gibt's 40 Punkte."
+        "description": "Jede Runde lost das Glück eine neue Zahl aus. Triffst du sie genau, gibt's 40\u00a0Punkte."
       }
     },
     "secondsPerTurn": {
@@ -511,17 +511,20 @@
     "youWin": "Du gewinnst!",
     "tie": "Unentschieden!",
     "you": "(Du)",
+    "standings": "Endstand",
     "summary_one": "{{points}} · {{count}}\u00a0Runde",
     "summary_other": "{{points}} · {{count}}\u00a0Runden",
     "behind": "−{{n}}",
     "upper": "Oben",
     "bonus": "Bonus",
     "lower": "Unten",
+    "noBonus": "Kein Bonus · {{sum}}/{{need}}",
     "awards": {
       "bestMove": "Höchster Zug",
-      "bonus": "Bonus +{{n}} erreicht",
+      "bonus": "Bonus erreicht",
       "zeros": "Meiste Nullen",
-      "nobody": "Niemand",
+      "fields_one": "Feld",
+      "fields_other": "Felder",
       "none": "Keine"
     },
     "compare": "Alle Felder im Vergleich",

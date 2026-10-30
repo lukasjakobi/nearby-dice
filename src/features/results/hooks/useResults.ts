@@ -47,7 +47,7 @@ export function useResults() {
   const training = session.role === Role.Training;
   const newBest = training && trainingBestId === gameIdOf(snapshot);
 
-  const { rows, awards, compare } = useMemo(
+  const { rows, standings, awards, compare } = useMemo(
     () => buildResults(t, game, shown.players, shown.myId),
     [game, shown.myId, shown.players, t],
   );
@@ -98,13 +98,17 @@ export function useResults() {
   return {
     headline,
     winners,
-    summary: t('results.summary', {
-      points: t('format.points', { count: winners[0]?.points ?? 0 }),
-      count: turnsPerPlayer(game.rules),
-    }),
+    /** Training has no ranking, so its points go under the headline. */
+    summary: training
+      ? t('results.summary', {
+          points: t('format.points', { count: winners[0]?.points ?? 0 }),
+          count: turnsPerPlayer(game.rules),
+        })
+      : undefined,
     /** The crown marks a win, or a new best in Training. */
     crown: !training || newBest,
     rows,
+    standings,
     awards,
     compare,
     facts,

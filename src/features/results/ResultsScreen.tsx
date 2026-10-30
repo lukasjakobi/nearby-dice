@@ -5,11 +5,11 @@ import { PresetSheet } from '@/shared';
 import { Dialog, Screen } from '@/ui';
 
 import {
-  AwardsCard,
-  RankingList,
+  AwardTiles,
   ResultsFooter,
   ResultsHeader,
   ScoreComparison,
+  StandingsCard,
   TrainingFacts,
 } from './components';
 import { useResults } from './hooks';
@@ -31,8 +31,8 @@ export function ResultsScreen() {
           <TrainingFacts facts={results.facts} />
         ) : (
           <>
-            <RankingList rows={results.rows} />
-            <AwardsCard awards={results.awards} />
+            <StandingsCard standings={results.standings} />
+            <AwardTiles awards={results.awards} />
           </>
         )}
         <ScoreComparison columns={results.rows} rows={results.compare} />

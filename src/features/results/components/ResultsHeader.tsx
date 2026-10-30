@@ -21,10 +21,11 @@ type ResultsHeaderProps = {
   /** The crown marks a win, or a new best in Training. */
   crown: boolean;
   headline: string;
-  summary: string;
+  /** "236 Punkte · 13 Runden" in Training, where no ranking shows the points. */
+  summary?: string;
 };
 
-/** The winner's avatar with a crown, the headline and "236 Punkte · 13 Runden". */
+/** The winner's avatar with a crown and the headline. */
 export function ResultsHeader({ winners, crown, headline, summary }: ResultsHeaderProps) {
   const { colors } = useTheme();
 
@@ -38,7 +39,7 @@ export function ResultsHeader({ winners, crown, headline, summary }: ResultsHead
               style={[styles.ring, { borderColor: colors.accent }, i > 0 && styles.overlap]}
             >
               <View style={[styles.gap, { borderColor: colors.bg }]}>
-                <Avatar initial={winner.avatar.initial} color={winner.avatar.color} size={56} />
+                <Avatar initial={winner.avatar.initial} color={winner.avatar.color} size={60} />
               </View>
             </View>
           ))}
@@ -61,9 +62,11 @@ export function ResultsHeader({ winners, crown, headline, summary }: ResultsHead
         >
           {headline}
         </Text>
-        <Text variant={TextVariant.Body} size={14} color="muted">
-          {summary}
-        </Text>
+        {summary ? (
+          <Text variant={TextVariant.Body} size={14} color="muted">
+            {summary}
+          </Text>
+        ) : null}
       </View>
     </View>
   );

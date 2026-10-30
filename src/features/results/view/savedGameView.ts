@@ -1,6 +1,6 @@
 import { playedOn } from '@/i18n';
 import type { TFunction } from '@/i18n';
-import { matchPreset, turnsPerPlayer } from '@/domain';
+import { matchPreset } from '@/domain';
 import type { SavedGame } from '@/domain';
 import { historyRows } from '@/shared';
 import type { HistoryRow } from '@/shared';
@@ -16,7 +16,6 @@ export type SavedGameView = ResultsView & {
   when: string;
   winners: RankRow[];
   headline: string;
-  summary: string;
   history: HistoryRow[];
 };
 
@@ -34,10 +33,6 @@ export function buildSavedGame(t: TFunction, saved: SavedGame): SavedGameView {
     when: playedOn(t, saved.playedAt),
     winners,
     headline: winnerHeadline(t, results.rows),
-    summary: t('results.summary', {
-      points: t('format.points', { count: winners[0]?.points ?? 0 }),
-      count: turnsPerPlayer(game.rules),
-    }),
     history: historyRows(t, game, players),
   };
 }
