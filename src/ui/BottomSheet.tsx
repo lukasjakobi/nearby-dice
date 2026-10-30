@@ -9,7 +9,7 @@ import {
   useAnimatedValue,
   useWindowDimensions,
 } from 'react-native';
-import type { DimensionValue, GestureResponderEvent } from 'react-native';
+import type { GestureResponderEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text, TextVariant } from './Text';
@@ -21,8 +21,6 @@ type BottomSheetProps = {
   onClose: () => void;
   title?: string;
   children: ReactNode;
-  height?: DimensionValue;
-  centered?: boolean;
 };
 
 const CLOSE_MS = 180;
@@ -51,14 +49,7 @@ export function closesOnRelease(dy: number, vy: number, height: number): boolean
  * half its height or flicked down, it closes, otherwise it springs back. Tapping the scrim, Back
  * or the screen reader's escape gesture close it too.
  */
-export function BottomSheet({
-  visible,
-  onClose,
-  title,
-  children,
-  height,
-  centered,
-}: BottomSheetProps) {
+export function BottomSheet({ visible, onClose, title, children }: BottomSheetProps) {
   const { colors, reduceMotion } = useTheme();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -199,14 +190,13 @@ export function BottomSheet({
           pointerEvents={visible ? 'auto' : 'none'}
           style={{
             transform: [{ translateY }],
-            height,
+            maxHeight: windowHeight * 0.9,
             backgroundColor: colors.surface,
             borderTopLeftRadius: RADIUS.sheet,
             borderTopRightRadius: RADIUS.sheet,
             paddingHorizontal: 20,
             paddingBottom: 28 + insets.bottom,
             gap: 10,
-            alignItems: centered ? 'center' : undefined,
           }}
         >
           <View

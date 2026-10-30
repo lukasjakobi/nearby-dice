@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { useState } from 'react';
+import { ScrollView } from 'react-native';
 import { fn } from 'storybook/test';
 
 import { BottomSheet } from './BottomSheet';
@@ -32,14 +33,17 @@ type Story = StoryObj<typeof BottomSheet>;
 
 export const WithTitle: Story = {};
 
-export const WithHeight: Story = {
+export const LongContent: Story = {
   args: {
     title: 'Spielstand',
-    height: '60%',
     children: (
-      <Text variant={TextVariant.Body} color="muted">
-        Inhalt des Blatts
-      </Text>
+      <ScrollView style={{ flexGrow: 0 }}>
+        {Array.from({ length: 30 }, (_, index) => (
+          <Text key={index} variant={TextVariant.Body} color="muted">
+            Inhalt des Blatts
+          </Text>
+        ))}
+      </ScrollView>
     ),
   },
 };

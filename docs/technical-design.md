@@ -433,6 +433,13 @@ whole rounds across browser tabs without radios. How to use it:
   shadows and SVG can differ slightly from a phone. Phone-to-phone behaviour still needs devices
   ([Nearby communication](../PRODUCT.md#open-decisions)).
 
+### Bottom sheets
+
+**Confirmed:** bottom sheets fit their content up to 90% of the window height. The shared
+`BottomSheet` takes visibility, a dismissal callback, an optional title and content; content owns
+its alignment and scrolling. Sheets dismiss by dragging down, tapping the scrim, Back or the
+screen reader's escape gesture, without a dedicated close button.
+
 ### Storybook
 
 **Confirmed:** every component in `ui/`, `shared/` and `features/*/components/` has a

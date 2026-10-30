@@ -25,7 +25,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
   ];
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} height="86%" title={t('game.scoreboard')}>
+    <BottomSheet visible={visible} onClose={onClose} title={t('game.scoreboard')}>
       <Choice label={t('game.scoreboard')} options={tabs} value={tab} onChange={setTab} />
       {board && tab === BoardTab.Table ? (
         <>
@@ -59,7 +59,7 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1 },
+  scroll: { flexGrow: 0, flexShrink: 1 },
   factors: { paddingHorizontal: 4, paddingTop: 2 },
   empty: { paddingVertical: 24 },
 });
