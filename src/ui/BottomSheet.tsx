@@ -202,8 +202,6 @@ export function BottomSheet({
           pointerEvents={visible ? 'auto' : 'none'}
           style={{
             transform: [{ translateY }],
-            // On web a text selection would end the drag; text in the sheet is not selectable on phones either.
-            userSelect: 'none',
             height,
             backgroundColor: colors.surface,
             borderTopLeftRadius: RADIUS.sheet,
