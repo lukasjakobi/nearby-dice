@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Font, Icon, IconName, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
-import type { Palette } from '@/ui';
+import type { ColorToken, Palette } from '@/ui';
 
 import { CellState } from '../view';
 import type { CellView } from '../view';
@@ -12,10 +12,10 @@ type CellLook = {
   border: string;
   dashed: boolean;
   iconOpacity: number;
-  label: string;
+  label: ColorToken;
   labelWeight: 400 | 600;
   valueBackground: string;
-  value: string;
+  value: ColorToken;
   valueWeight: 400 | 600;
   check: boolean;
 };
@@ -27,10 +27,10 @@ const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
     border: 'transparent',
     dashed: false,
     iconOpacity: 0.5,
-    label: c.muted,
+    label: 'muted',
     labelWeight: 400,
     valueBackground: 'transparent',
-    value: c.ink,
+    value: 'ink',
     valueWeight: 600,
     check: true,
   }),
@@ -39,10 +39,10 @@ const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
     border: mix(c.primary, c.line, 0.4),
     dashed: false,
     iconOpacity: 1,
-    label: c.ink,
+    label: 'ink',
     labelWeight: 600,
     valueBackground: mix(c.primary, c.surface, 0.14),
-    value: c.primary,
+    value: 'primary',
     valueWeight: 600,
     check: false,
   }),
@@ -51,10 +51,10 @@ const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
     border: mix(c.danger, c.line, 0.55),
     dashed: false,
     iconOpacity: 1,
-    label: c.ink,
+    label: 'ink',
     labelWeight: 600,
     valueBackground: mix(c.danger, c.surface, 0.16),
-    value: c.danger,
+    value: 'danger',
     valueWeight: 600,
     check: false,
   }),
@@ -63,10 +63,10 @@ const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
     border: c.line,
     dashed: true,
     iconOpacity: 0.6,
-    label: c.muted,
+    label: 'muted',
     labelWeight: 400,
     valueBackground: 'transparent',
-    value: c.muted,
+    value: 'muted',
     valueWeight: 400,
     check: false,
   }),
@@ -75,15 +75,13 @@ const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
 type ScoreCellProps = {
   cell: CellView;
   onPick: (cell: CellView) => void;
-  upper: boolean;
   selected: boolean;
 };
 
 /** One field of the scorecard: icon, name, hint and the (preview) points. */
-export function ScoreCell({ cell, onPick, upper, selected }: ScoreCellProps) {
+export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
   const { colors } = useTheme();
   const look = LOOKS[cell.state](colors);
-  const tile = upper ? styles.tileUpper : styles.tileLower;
   const background = selected ? mix(colors.primary, colors.surface, 0.18) : look.background;
   const border = selected ? colors.primary : look.border;
 
@@ -104,19 +102,24 @@ export function ScoreCell({ cell, onPick, upper, selected }: ScoreCellProps) {
         pressed && styles.cellPressed,
       ]}
     >
-      <View style={[tile, { backgroundColor: alpha(colors.ink, 0.08), opacity: look.iconOpacity }]}>
+      <View
+        style={[
+          styles.tile,
+          { backgroundColor: alpha(colors.ink, 0.08), opacity: look.iconOpacity },
+        ]}
+      >
         <CategoryIcon
           category={cell.category}
           face={cell.face}
           color={colors.ink}
-          size={upper ? 26 : 20}
+          size={cell.face !== null ? 26 : 20}
         />
       </View>
       <View style={styles.label}>
         <Text
           size={12.5}
           weight={look.labelWeight}
-          color={{ raw: look.label }}
+          color={look.label}
           numberOfLines={cell.hint ? 1 : undefined}
           adjustsFontSizeToFit={cell.hint !== null}
           minimumFontScale={0.8}
@@ -124,7 +127,7 @@ export function ScoreCell({ cell, onPick, upper, selected }: ScoreCellProps) {
           {cell.label}
         </Text>
         {cell.hint ? (
-          <Text size={10.5} color={{ raw: look.label }} numberOfLines={1} style={styles.hint}>
+          <Text size={10.5} color={look.label} numberOfLines={1} style={styles.hint}>
             {cell.hint}
           </Text>
         ) : null}
@@ -140,7 +143,7 @@ export function ScoreCell({ cell, onPick, upper, selected }: ScoreCellProps) {
       <View style={[styles.value, { backgroundColor: look.valueBackground }]}>
         <Text
           size={15}
-          color={{ raw: look.value }}
+          color={look.value}
           style={{ fontFamily: fontFamily(Font.Display, look.valueWeight) }}
         >
           {cell.value}
@@ -152,32 +155,25 @@ export function ScoreCell({ cell, onPick, upper, selected }: ScoreCellProps) {
 
 const styles = StyleSheet.create({
   cell: {
+    flexBasis: '48%',
+    flexGrow: 1,
+    height: 46,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    flex: 1,
-    minHeight: 38,
-    maxHeight: 46,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1.5,
   },
-  tileUpper: {
+  cellPressed: { transform: [{ scale: 0.97 }], opacity: 0.8 },
+  tile: {
     width: 30,
     height: 30,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tileLower: {
-    width: 28,
-    height: 28,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cellPressed: { transform: [{ scale: 0.97 }], opacity: 0.8 },
   label: { flex: 1, minWidth: 0 },
   hint: { opacity: 0.8 },
   value: {
