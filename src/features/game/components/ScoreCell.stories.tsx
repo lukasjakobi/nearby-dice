@@ -11,14 +11,13 @@ import type { Scene } from './fixtures';
 import { ScoreCell } from './ScoreCell';
 
 /** The first cell in `state` of a game in progress, upper block first. */
-function cellIn(
-  state: CellState,
-  scene: Scene = { dice: THREE_FIVES },
-): { cell: CellView; upper: boolean } {
+function cellIn(state: CellState, scene: Scene = { dice: THREE_FIVES }): { cell: CellView } {
   const { sheet } = gameScene(i18n.t, scene).view;
-  const upper = sheet.upper.find((c) => c.state === state);
 
-  return { cell: upper ?? sheet.lower.find((c) => c.state === state)!, upper: !!upper };
+  return {
+    cell: (sheet.upper.find((c) => c.state === state) ??
+      sheet.lower.find((c) => c.state === state))!,
+  };
 }
 
 const meta: Meta<typeof ScoreCell> = {
