@@ -29,7 +29,7 @@ const UNFURL_MS = 360;
 const NAME_DELAY_MS = 120;
 const NAME_MS = 240;
 /** The flag starts to fade this long after it appeared; a tap closes it sooner. */
-const FADE_OUT_AT_MS = 2860;
+const FADE_OUT_AT_MS = 1800;
 const FADE_OUT_MS = 300;
 const CLOSE_MS = 200;
 /** The wave starts at a third of its height and grows while the word spreads out. */
