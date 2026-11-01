@@ -28,6 +28,14 @@ test.each([
   );
 });
 
+test.each(PRESET_ORDER)('%s summary leaves out rules every preset shares', (preset) => {
+  const labels = rulesSummary(t, preset).map((line) => line.label);
+
+  // Labels are checked as literal text: the keys are gone, so a `t()` lookup would not catch a regression.
+  expect(labels).not.toContain('Rolls per turn');
+  expect(labels).not.toContain('Bonus from 63 points');
+});
+
 test.each(PRESET_ORDER)('%s summary has no joker or extra-Yatzy line', (preset) => {
   const labels = rulesSummary(t, preset).map((line) => line.label);
 
