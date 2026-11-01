@@ -67,7 +67,7 @@ export function HostLobbyScreen() {
         >
           {lobby.startHint}
         </Text>
-        <Button label={t('lobby.start')} onPress={lobby.askStart} disabled={!lobby.canStart} />
+        <Button label={t('lobby.start')} onPress={lobby.start} disabled={!lobby.canStart} />
       </Footer>
 
       <PlayerMenuSheet
@@ -91,14 +91,6 @@ export function HostLobbyScreen() {
         onClose={lobby.closeSettings}
       />
 
-      <Dialog
-        visible={lobby.dialog === LobbyDialog.Start}
-        destructive={false}
-        title={t('lobby.startDialog.title', { n: lobby.count })}
-        body={t('lobby.startDialog.body')}
-        confirm={{ label: t('lobby.startDialog.confirm'), onPress: lobby.confirmStart }}
-        cancel={{ label: t('lobby.startDialog.cancel'), onPress: lobby.dismissDialog }}
-      />
       <Dialog
         visible={lobby.dialog === LobbyDialog.Close}
         title={t('lobby.closeDialog.title')}

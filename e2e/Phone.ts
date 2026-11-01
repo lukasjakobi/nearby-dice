@@ -33,7 +33,6 @@ export class Phone {
     await host.host();
     for (const guest of guests) await guest.join(host);
     await host.tap('Spiel starten');
-    await host.tap('Jetzt starten');
     for (const phone of phones) await phone.sees('Runde 1 von 13');
 
     return phones;

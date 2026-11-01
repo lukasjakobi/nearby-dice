@@ -354,12 +354,6 @@
     "startHintReady": "Es kann losgehen.",
     "start": "Spiel starten",
     "closeLabel": "Lobby schließen",
-    "startDialog": {
-      "title": "Spiel mit {{n}}\u00a0Spielern starten?",
-      "body": "Danach werden die Regeln festgelegt und neue Mitspieler können nur noch wieder verbinden, nicht neu beitreten.",
-      "confirm": "Jetzt starten",
-      "cancel": "Noch warten"
-    },
     "closeDialog": {
       "title": "Lobby schließen?",
       "body": "Alle verbundenen Mitspieler werden getrennt und sehen, dass die Runde beendet wurde.",

@@ -13,22 +13,10 @@ const meta: Meta<typeof Dialog> = {
     body: 'Die anderen spielen ohne dich weiter.',
     confirm: { label: 'Verlassen', onPress: fn() },
     cancel: { label: 'Weiterspielen', onPress: fn() },
-    destructive: true,
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof Dialog>;
 
-export const Destructive: Story = {};
-
-/** "Jetzt starten" confirms in primary. */
-export const Confirm: Story = {
-  args: {
-    title: 'Jetzt starten?',
-    body: 'Antonia ist noch nicht wieder verbunden.',
-    confirm: { label: 'Jetzt starten', onPress: fn() },
-    cancel: { label: 'Warten', onPress: fn() },
-    destructive: false,
-  },
-};
+export const Default: Story = {};
