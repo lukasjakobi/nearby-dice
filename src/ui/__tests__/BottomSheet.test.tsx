@@ -46,3 +46,23 @@ test('the grip claims a touch immediately and a long drag closes the sheet', asy
   });
   expect(onClose).toHaveBeenCalledTimes(1);
 });
+
+test('a fast flick closes a short drag, even when it is all one touch sample', async () => {
+  const onClose = jest.fn();
+  await renderScreen(
+    <BottomSheet visible onClose={onClose} title="Regeln">
+      <Text>Inhalt</Text>
+    </BottomSheet>,
+  );
+  const grip = screen.getByTestId('bottom-sheet-handle');
+  const event = (pageY: number, timestamp: number) => ({
+    nativeEvent: { pageX: 100, pageY, timestamp },
+  });
+  // 40pt in 16ms is 2.5pt/ms: the drag crosses the slop and grants the sheet in one sample.
+  await act(() => {
+    grip.props.onStartShouldSetResponderCapture(event(100, 0));
+    grip.props.onResponderGrant(event(140, 16));
+    grip.props.onResponderRelease(event(140, 24));
+  });
+  expect(onClose).toHaveBeenCalledTimes(1);
+});

@@ -306,13 +306,6 @@ hand it to `setActiveSession` (after join's short success pause, or on "Zurück 
 back, cancelling or leaving the screen abandons the attempt: a session that arrives later is closed
 (advertising stopped, link disconnected) and never becomes active or navigates.
 
-## Playing-screen layout
-
-**Confirmed:** the scorecard places the upper block first and the lower block beneath it.
-Each block lays out its fields in two columns; the upper bonus stays with the number fields.
-The scorecard scrolls when it exceeds the available height. The full-width dice tray and its
-roll or score controls remain at the bottom of the screen.
-
 ## Stored data
 
 **Confirmed:** the profile, settings, statistics and interrupted session are zustand stores in
@@ -358,7 +351,7 @@ change.
   is copied first (see [Stored data](#stored-data)).
 
 "Zuletzt gespielt" on Start lists the kept games. Tapping one opens `saved-game?id=…`, which reuses
-the results view ("Endstand", the highlight tiles, "Alle Felder im Vergleich") and adds "Verlauf".
+the results view (“Endstand”, "Alle Felder im Vergleich") and adds "Verlauf".
 
 ## Permissions
 
