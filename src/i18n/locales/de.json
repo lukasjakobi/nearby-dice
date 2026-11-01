@@ -512,14 +512,6 @@
     "bonus": "Bonus",
     "lower": "Unten",
     "noBonus": "Kein Bonus · {{sum}}/{{need}}",
-    "awards": {
-      "bestMove": "Höchster Zug",
-      "bonus": "Bonus erreicht",
-      "zeros": "Meiste Nullen",
-      "fields_one": "Feld",
-      "fields_other": "Felder",
-      "none": "Keine"
-    },
     "compare": "Alle Felder im Vergleich",
     "field": "Feld",
     "rematch": "Revanche",

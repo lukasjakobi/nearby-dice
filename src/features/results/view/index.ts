@@ -4,8 +4,6 @@ export { signed, winnerHeadline } from './rankingView';
 export type { RankRow } from './rankingView';
 export { BarPart } from './standingsView';
 export type { BarSegment, Standing, StandingsView } from './standingsView';
-export { AwardKind } from './awardsView';
-export type { Award } from './awardsView';
 export type { CompareCell, CompareRow } from './compareView';
 export { buildSavedGame } from './savedGameView';
 export type { SavedGameView } from './savedGameView';
