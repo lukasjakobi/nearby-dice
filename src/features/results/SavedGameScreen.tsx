@@ -4,13 +4,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { RedirectTo, Route } from '@/shared';
 import { Header, IconName, Screen, Text, TextVariant } from '@/ui';
 
-import {
-  AwardTiles,
-  HistoryCard,
-  ResultsHeader,
-  ScoreComparison,
-  StandingsCard,
-} from './components';
+import { HistoryCard, ResultsHeader, ScoreComparison, StandingsCard } from './components';
 import { useSavedGame } from './hooks';
 
 /** A finished game opened again from "Zuletzt gespielt". */
@@ -31,7 +25,6 @@ export function SavedGameScreen() {
         </Text>
         <ResultsHeader winners={view.winners} crown headline={view.headline} />
         <StandingsCard standings={view.standings} />
-        <AwardTiles awards={view.awards} />
         <ScoreComparison columns={view.rows} rows={view.compare} />
         <HistoryCard rows={view.history} />
       </ScrollView>
