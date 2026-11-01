@@ -67,11 +67,28 @@ export function BottomSheet({ visible, onClose, title, children }: BottomSheetPr
     else Animated.spring(drag, { ...SPRING, toValue: 0 }).start();
   };
 
+  // Smooths the finger's speed over the touch. Starts at the touch-down point, so the sample that
+  // grants the sheet still counts: a fast flick often crosses the slop in a single sample.
+  const track = (event: GestureResponderEvent) => {
+    const { pageY, timestamp } = event.nativeEvent;
+    const g = gesture.current;
+    if (timestamp > g.lastT) g.vy = 0.3 * g.vy + (0.7 * (pageY - g.lastY)) / (timestamp - g.lastT);
+    g.lastY = pageY;
+    g.lastT = timestamp;
+    const dy = pageY - g.startY;
+    drag.setValue(dy > 0 ? dy : dy * OVERDRAG);
+  };
+
   const dragHandlers = {
     // Notes where every touch (or mouse press, on web) begins without taking it from the buttons.
     onStartShouldSetResponderCapture: (event: GestureResponderEvent) => {
-      gesture.current.startX = event.nativeEvent.pageX;
-      gesture.current.startY = event.nativeEvent.pageY;
+      Object.assign(gesture.current, {
+        startX: event.nativeEvent.pageX,
+        startY: event.nativeEvent.pageY,
+        lastY: event.nativeEvent.pageY,
+        lastT: event.nativeEvent.timestamp,
+        vy: 0,
+      });
 
       return false;
     },
@@ -87,23 +104,9 @@ export function BottomSheet({ visible, onClose, title, children }: BottomSheetPr
     onResponderTerminationRequest: () => false,
     onResponderGrant: (event: GestureResponderEvent) => {
       drag.stopAnimation();
-      Object.assign(gesture.current, {
-        lastY: event.nativeEvent.pageY,
-        lastT: event.nativeEvent.timestamp,
-        vy: 0,
-      });
+      track(event);
     },
-    onResponderMove: (event: GestureResponderEvent) => {
-      const { pageY, timestamp } = event.nativeEvent;
-      const g = gesture.current;
-      // Smoothed, so one uneven touch sample neither makes nor spoils a flick.
-      if (timestamp > g.lastT)
-        g.vy = 0.3 * g.vy + (0.7 * (pageY - g.lastY)) / (timestamp - g.lastT);
-      g.lastY = pageY;
-      g.lastT = timestamp;
-      const dy = pageY - g.startY;
-      drag.setValue(dy > 0 ? dy : dy * OVERDRAG);
-    },
+    onResponderMove: track,
     onResponderRelease: (event: GestureResponderEvent) => {
       const g = gesture.current;
       // A finger that stopped before lifting is not a flick.
