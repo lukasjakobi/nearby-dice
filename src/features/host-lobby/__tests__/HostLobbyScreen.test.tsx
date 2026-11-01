@@ -20,13 +20,12 @@ test('alone: waiting row and start disabled', async () => {
   expect(screen.getByText('Mindestens 2 Spieler nötig.')).toBeTruthy();
 });
 
-test('two players: start asks for confirmation', async () => {
+test('two players: start begins the game right away', async () => {
   const snap = lobby([LUKAS, ANTONIA]);
   const session = fakeSession(snap);
   await renderScreen(<HostLobbyScreen />, { session, snapshot: snap });
   expect(screen.getByText('Es kann losgehen.')).toBeTruthy();
   await fireEvent.press(screen.getByText('Spiel starten'));
-  await fireEvent.press(screen.getByText('Jetzt starten'));
   expect((session as unknown as { start: jest.Mock }).start).toHaveBeenCalled();
 });
 

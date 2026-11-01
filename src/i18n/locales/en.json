@@ -354,12 +354,6 @@
     "startHintReady": "Ready to go.",
     "start": "Start game",
     "closeLabel": "Close lobby",
-    "startDialog": {
-      "title": "Start the game with {{n}}\u00a0players?",
-      "body": "After that, the rules are fixed and players can only reconnect, not join as new players.",
-      "confirm": "Start now",
-      "cancel": "Keep waiting"
-    },
     "closeDialog": {
       "title": "Close lobby?",
       "body": "All connected players are disconnected and see that the round has ended.",
