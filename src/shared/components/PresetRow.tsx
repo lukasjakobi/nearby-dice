@@ -45,7 +45,14 @@ export function PresetRow({ preset, onPress, compact = false }: PresetRowProps) 
         {t('hostSetup.styleLabel')}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, gap: 4 }}>
-        <Text variant={TextVariant.Body} size={size} weight={600} numberOfLines={1}>
+        {/* Native text doesn't shrink by default; without it a long mode pushes the chevron out. */}
+        <Text
+          variant={TextVariant.Body}
+          size={size}
+          weight={600}
+          numberOfLines={1}
+          style={{ flexShrink: 1 }}
+        >
           {title}
         </Text>
         {onPress ? (
