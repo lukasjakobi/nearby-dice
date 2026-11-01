@@ -3,60 +3,55 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { FadeIn } from './FadeIn';
-import { Text, TextVariant } from './Text';
-import { useTheme } from './theme/ThemeProvider';
+import { ToastBanner } from './ToastBanner';
 
 const TOAST_MS = 3200;
-/** Distance from the bottom edge when no screen asks for another. */
-export const DEFAULT_TOAST_OFFSET = 110;
 
 type ToastApi = {
   show: (message: string) => void;
-  /** Distance from the bottom edge, so toasts float above action bars. */
-  setOffset: (offset: number) => void;
 };
 
-const ToastContext = createContext<ToastApi>({ show: () => {}, setOffset: () => {} });
+type ToastState = { id: number; text: string; visible: boolean };
 
+const ToastContext = createContext<ToastApi>({ show: () => {} });
+
+/** Shows one toast at a time, just below the status bar, so no screen's action bar covers it. */
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [message, setMessage] = useState<{ id: number; text: string } | null>(null);
-  const [offset, setOffset] = useState(DEFAULT_TOAST_OFFSET);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = useCallback((text: string) => {
     if (timer.current) clearTimeout(timer.current);
-    setMessage({ id: Date.now(), text });
-    timer.current = setTimeout(() => setMessage(null), TOAST_MS);
+    setToast({ id: Date.now(), text, visible: true });
+    timer.current = setTimeout(
+      () => setToast((current) => current && { ...current, visible: false }),
+      TOAST_MS,
+    );
   }, []);
-  const api = useMemo(() => ({ show, setOffset }), [show]);
+  const removeToast = useCallback(() => setToast(null), []);
+  const api = useMemo(() => ({ show }), [show]);
 
   return (
     <ToastContext.Provider value={api}>
       {children}
-      {message ? (
+      {toast ? (
         <View
           pointerEvents="none"
-          style={{ position: 'absolute', left: 20, right: 20, bottom: offset + insets.bottom }}
+          style={{
+            position: 'absolute',
+            top: insets.top + 8,
+            left: 16,
+            right: 16,
+            alignItems: 'center',
+          }}
         >
-          <FadeIn key={message.id}>
-            <View
-              accessibilityRole="alert"
-              accessibilityLiveRegion="polite"
-              style={{
-                backgroundColor: colors.ink,
-                borderRadius: 14,
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-              }}
-            >
-              <Text variant={TextVariant.Body} size={14} color="bg">
-                {message.text}
-              </Text>
-            </View>
-          </FadeIn>
+          <ToastBanner
+            key={toast.id}
+            message={toast.text}
+            visible={toast.visible}
+            onExited={removeToast}
+          />
         </View>
       ) : null}
     </ToastContext.Provider>

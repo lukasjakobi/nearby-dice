@@ -1,18 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import {
-  DEFAULT_TOAST_OFFSET,
-  Banner,
-  Dialog,
-  Header,
-  IconName,
-  Screen,
-  Text,
-  TextVariant,
-  useToast,
-} from '@/ui';
+import { Banner, Dialog, Header, IconName, Screen, Text, TextVariant } from '@/ui';
 import {
   Countdown,
   FeedbackSettingsSheet,
@@ -28,12 +17,6 @@ import { GuestLobbyView, useGuestLobby } from './hooks';
 export function GuestLobbyScreen() {
   const { t } = useTranslation();
   const lobby = useGuestLobby();
-  const { setOffset } = useToast();
-  useEffect(() => {
-    setOffset(112);
-
-    return () => setOffset(DEFAULT_TOAST_OFFSET);
-  }, [setOffset]);
 
   if (lobby.view === GuestLobbyView.Countdown) {
     return (
