@@ -47,7 +47,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 
 ## Done means
 
-- `npm run check` passes (typecheck, lint, format check, tests). CI runs the same before building the APK.
+- `npm run check` passes (name check, typecheck, lint, format check, tests). CI runs the same before building the APK.
 - A change to screens, `session` or `net` also passes `npm run e2e` and was looked at with
   `npm run web:shot` (browser-testing skill).
 - A new or changed component has a story that renders (`npm run storybook:build`).
