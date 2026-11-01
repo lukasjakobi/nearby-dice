@@ -101,7 +101,7 @@ function sceneStory(scene: Scene = {}, timer = false): Story {
 }
 
 export const MyTurn: Story = sceneStory({ dice: THREE_FIVES });
-/** Review at 360 × 640: the lower block follows the upper block, above the original dice tray. */
+/** Review at 360 × 640: both blocks side by side, above the dice tray. */
 export const CompactPhone: Story = {
   ...sceneStory({ preset: PresetId.ClassicXl, dice: THREE_FIVES }),
   globals: { viewport: { value: 'small', isRotated: false } },
