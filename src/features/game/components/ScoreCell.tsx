@@ -155,12 +155,12 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
 
 const styles = StyleSheet.create({
   cell: {
-    flexBasis: '48%',
-    flexGrow: 1,
-    height: 46,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    flex: 1,
+    minHeight: 38,
+    maxHeight: 46,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,

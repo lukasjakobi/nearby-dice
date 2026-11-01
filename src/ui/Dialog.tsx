@@ -13,15 +13,13 @@ type DialogProps = {
   body: string;
   confirm: DialogAction;
   cancel: DialogAction;
-  /** Destructive confirms are red (most dialogs); "Jetzt starten" is primary. */
-  destructive?: boolean;
 };
 
 /**
- * Modal alert dialog: title, one-sentence consequence, confirm first, cancel last.
+ * Modal alert dialog: title, one-sentence consequence, red confirm first, cancel last.
  * Back (Android) equals cancel.
  */
-export function Dialog({ visible, title, body, confirm, cancel, destructive = true }: DialogProps) {
+export function Dialog({ visible, title, body, confirm, cancel }: DialogProps) {
   const { colors, reduceMotion } = useTheme();
 
   return (
@@ -58,7 +56,7 @@ export function Dialog({ visible, title, body, confirm, cancel, destructive = tr
             <Button
               label={confirm.label}
               onPress={confirm.onPress}
-              variant={destructive ? ButtonVariant.Danger : ButtonVariant.Primary}
+              variant={ButtonVariant.Danger}
             />
             <Button
               label={cancel.label}

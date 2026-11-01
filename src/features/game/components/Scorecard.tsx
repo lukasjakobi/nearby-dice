@@ -15,7 +15,11 @@ type ScorecardProps = {
   onSelectSheet: (index: number) => void;
 };
 
-/** Upper block first, then the lower block; each section keeps its fields in two columns. */
+/**
+ * Two columns: "Oberer Block" with the bonus progress, "Unterer Block" with illustrations.
+ * Fills the height it is given: rows shrink from 46 to 38 so Yatzy's nine lower fields
+ * fit without scrolling; only below that does the card overflow its scroll view.
+ */
 export function Scorecard({ sheet, dimmed, onPick, onSelectSheet }: ScorecardProps) {
   const { t } = useTranslation();
   const blocks = [
@@ -26,12 +30,12 @@ export function Scorecard({ sheet, dimmed, onPick, onSelectSheet }: ScorecardPro
   return (
     <View style={[styles.card, { opacity: dimmed ? 0.5 : 1 }]}>
       {sheet.tabs ? <SheetTabs sheet={sheet} onSelect={onSelectSheet} /> : null}
-      {blocks.map(({ title, cells, bonus }) => (
-        <View key={title} style={styles.section}>
-          <Text size={13} weight={600} color="muted" style={styles.blockTitle}>
-            {title.toUpperCase()}
-          </Text>
-          <View style={styles.fields}>
+      <View style={styles.columns}>
+        {blocks.map(({ title, cells, bonus }) => (
+          <View key={title} style={styles.column}>
+            <Text size={13} weight={600} color="muted" style={styles.blockTitle}>
+              {title.toUpperCase()}
+            </Text>
             {cells.map((cell) => (
               <ScoreCell
                 key={cell.category}
@@ -40,17 +44,17 @@ export function Scorecard({ sheet, dimmed, onPick, onSelectSheet }: ScorecardPro
                 selected={cell.category === sheet.focused}
               />
             ))}
+            {bonus ? <BonusProgress bonus={bonus} /> : null}
           </View>
-          {bonus ? <BonusProgress bonus={bonus} /> : null}
-        </View>
-      ))}
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flex: 1, gap: 12 },
-  section: { gap: 6 },
-  fields: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  card: { flex: 1, gap: 6 },
+  columns: { flex: 1, flexDirection: 'row', gap: 8 },
+  column: { flex: 1, gap: 6 },
   blockTitle: { paddingHorizontal: 4, paddingVertical: 2, letterSpacing: 0.5 },
 });

@@ -5,7 +5,6 @@ import { PresetSheet } from '@/shared';
 import { Dialog, Screen } from '@/ui';
 
 import {
-  AwardTiles,
   ResultsFooter,
   ResultsHeader,
   ScoreComparison,
@@ -32,7 +31,6 @@ export function ResultsScreen() {
         ) : (
           <>
             <StandingsCard standings={results.standings} />
-            <AwardTiles awards={results.awards} />
           </>
         )}
         <ScoreComparison columns={results.rows} rows={results.compare} />

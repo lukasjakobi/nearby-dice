@@ -9,7 +9,6 @@ import { lobbyRows, useBackAction, useFeedbackSwitches } from '@/shared';
 
 export enum LobbyDialog {
   None = 'none',
-  Start = 'start',
   Close = 'close',
   Kick = 'kick',
 }
@@ -39,7 +38,6 @@ export function useHostLobby() {
     title: shared.roundName,
     code: shared.code,
     rows,
-    count: rows.length,
     maxPlayers: shared.maxPlayers,
     freeSeat:
       rows.length < shared.maxPlayers
@@ -92,11 +90,7 @@ export function useHostLobby() {
       setKickId(null);
       setDialog(LobbyDialog.None);
     },
-    askStart: () => setDialog(LobbyDialog.Start),
-    confirmStart: () => {
-      setDialog(LobbyDialog.None);
-      session.start();
-    },
+    start: () => session.start(),
     askClose: () => setDialog(LobbyDialog.Close),
     confirmClose: () => {
       setDialog(LobbyDialog.None);
