@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="assets/feature-graphic.png" alt="Nearby Dice feature graphic" width="100%">
+</p>
+
+<p align="center">
   <img src="assets/logo.svg" alt="Nearby Dice logo" width="120" height="120">
 </p>
 
