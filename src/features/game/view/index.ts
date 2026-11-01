@@ -9,6 +9,6 @@ export type { ControlView, DieView, RollsView } from './controlView';
 export { BannerKind } from './statusView';
 export type { BannerView, PillView } from './statusView';
 export { buildScoreboard } from './scoreboardView';
-export type { BoardRow, PlayerBoard, ScoreboardView } from './scoreboardView';
+export type { PlayerBoard, ScoreboardView } from './scoreboardView';
 export { buildYatzyFlag } from './yatzyFlagView';
 export type { YatzyFlagView } from './yatzyFlagView';

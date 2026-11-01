@@ -51,23 +51,35 @@ function filled(): GameState {
 
 const board = (state: GameState) => buildScoreboard(t, snapshot({ game: state }))!;
 const lukas = (state: GameState) => board(state).players.find((p) => p.id === LUKAS.id)!;
-const row = (state: GameState, key: string) =>
-  [...lukas(state).upper, ...lukas(state).lower].find((r) => r.key === key)!;
+/** The value of one field on each of Lukas's sheets. */
+const values = (state: GameState, category: Category) =>
+  lukas(state).sheets.map(
+    (sheet) => [...sheet.upper, ...sheet.lower].find((cell) => cell.category === category)!.value,
+  );
 
 test('raw field values per sheet; open fields stay "–", strikes stay 0', () => {
-  expect(row(filled(), Category.FullHouse).value).toBe('25 · 25 · 0');
-  expect(row(filled(), Category.Sixes).value).toBe('– · 18 · –');
+  expect(values(filled(), Category.FullHouse)).toEqual(['25', '25', '0']);
+  expect(values(filled(), Category.Sixes)).toEqual(['–', '18', '–']);
 });
 
 test('earned upper bonus and progress towards 63 are raw', () => {
   const state = filled();
   const sheets = state.players.find((p) => p.id === LUKAS.id)!.sheets;
   sheets[0] = { ...sheets[0], fields: { ...sheets[0].fields, [Category.Ones]: 2 } };
-  expect(row(state, 'bonus').value).toBe('2 / 63 · 35 · 0 / 63');
+  expect(lukas(state).sheets.map((sheet) => sheet.bonus!.progress)).toEqual([
+    '2 / 63',
+    '63 / 63',
+    '0 / 63',
+  ]);
+  expect(lukas(state).sheets.map((sheet) => sheet.bonus!.reached)).toEqual([false, true, false]);
 });
 
 test('extra Yatzy bonus is raw', () => {
-  expect(row(filled(), 'yatzy-bonus').value).toBe('50 · 50 · 50');
+  expect(lukas(filled()).yatzyBonus).toEqual([
+    'Yatzy-Bonus +50',
+    'Yatzy-Bonus +50',
+    'Yatzy-Bonus +50',
+  ]);
 });
 
 test('the total is the weighted player total', () => {

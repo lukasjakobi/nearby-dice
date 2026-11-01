@@ -1,10 +1,11 @@
 /**
- * "Spielstand": one player's sheet at a time, picked from the player pills; six players
- * wrap onto more lines instead of scrolling sideways.
+ * "Spielstand": the standings as tiles, and below them the picked player's scorecard as
+ * the game screen shows it, with only their entries.
  */
 import { fireEvent, screen } from '@testing-library/react-native';
 
 import { PRESETS, PresetId } from '@/domain/rules';
+import type { Rules } from '@/domain/rules';
 import { PlayerColor } from '@/domain/player';
 import type { PlayerInfo } from '@/session/types';
 import { ANTONIA, JONAS, LUKAS, game, snapshot } from '@/test/fixtures';
@@ -29,34 +30,36 @@ const SIX = [
   guest('Emil', PlayerColor.Yellow),
 ];
 
-async function showBoard(players: PlayerInfo[], rules?: (typeof PRESETS)[PresetId]) {
-  const state = game(players, rules);
-  const board = buildScoreboard(t, snapshot({ players, game: state }))!;
+async function showBoard(players: PlayerInfo[], rules?: Rules) {
+  const board = buildScoreboard(t, snapshot({ players, game: game(players, rules) }))!;
   await renderScreen(<ScoreboardSheet visible board={board} onClose={() => {}} />);
 }
 
-test('opens on my own sheet', async () => {
+const tile = (name: string, checked?: boolean) =>
+  screen.getByRole('radio', { name: new RegExp(`^\\d+\\. ${name},`), checked });
+
+test('opens on my own scorecard', async () => {
   await showBoard([ANTONIA, LUKAS]);
-  expect(screen.getByRole('radio', { name: 'Lukas', checked: true })).toBeTruthy();
-  expect(screen.getByText('Kleine Straße')).toBeTruthy();
-  expect(screen.getByText('Gesamt')).toBeTruthy();
+  expect(tile('Lukas', true)).toBeTruthy();
+  expect(screen.getByLabelText('Kleine Straße, noch offen')).toBeTruthy();
 });
 
-test('picking another player shows that player’s sheet', async () => {
+test('picking another player shows their scorecard', async () => {
   await showBoard([LUKAS, ANTONIA]);
-  await fireEvent.press(screen.getByRole('radio', { name: 'Antonia' }));
-  expect(screen.getByRole('radio', { name: 'Antonia', checked: true })).toBeTruthy();
-  expect(screen.queryByRole('radio', { name: 'Lukas', checked: true })).toBeNull();
+  await fireEvent.press(tile('Antonia'));
+  expect(tile('Antonia', true)).toBeTruthy();
+  expect(tile('Lukas', false)).toBeTruthy();
 });
 
-test('six players each get a pill and the table no longer scrolls sideways', async () => {
+test('six players each get a tile', async () => {
   await showBoard(SIX);
   for (const { name } of SIX) {
-    expect(screen.getByRole('radio', { name })).toBeTruthy();
+    expect(tile(name)).toBeTruthy();
   }
 });
 
-test('with three sheets the factors head the sheet', async () => {
+test('with three sheets the scorecard switches between them', async () => {
   await showBoard([LUKAS, ANTONIA], PRESETS[PresetId.Triple]);
-  expect(screen.getByText('×1 · ×2 · ×3')).toBeTruthy();
+  await fireEvent.press(screen.getByRole('radio', { name: '×2' }));
+  expect(screen.getByRole('radio', { name: '×2', checked: true })).toBeTruthy();
 });

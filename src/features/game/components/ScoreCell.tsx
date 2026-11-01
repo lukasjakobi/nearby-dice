@@ -84,6 +84,9 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
   const look = LOOKS[cell.state](colors);
   const background = selected ? mix(colors.primary, colors.surface, 0.18) : look.background;
   const border = selected ? colors.primary : look.border;
+  // "Kleine Straße" wraps at its space; a single word like "Dreierpasch" shrinks instead of
+  // breaking in the middle, and so does a name with a hint below it.
+  const singleLine = cell.hint !== null || !cell.label.includes(' ');
 
   return (
     <Pressable
@@ -120,8 +123,8 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
           size={12.5}
           weight={look.labelWeight}
           color={look.label}
-          numberOfLines={cell.hint ? 1 : undefined}
-          adjustsFontSizeToFit={cell.hint !== null}
+          numberOfLines={singleLine ? 1 : 2}
+          adjustsFontSizeToFit={singleLine}
           minimumFontScale={0.8}
         >
           {cell.label}
