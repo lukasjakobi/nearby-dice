@@ -5,33 +5,54 @@
 import type { TFunction } from '@/i18n';
 import {
   categoriesFor,
+  Category,
+  faceOf,
   gamePlayer,
   Link,
+  Rules,
   SHEET_FACTORS,
   totalOf,
   UPPER_BONUS_THRESHOLD,
-  upperBonus,
+  UPPER_CATEGORIES,
   upperBonusPoints,
+  upperBonus,
   upperSum,
   YATZY_BONUS,
 } from '@/domain';
-import type { Sheet } from '@/domain';
+import type { GameState, Sheet } from '@/domain';
 import { playerById } from '@/session';
-import type { SessionSnapshot } from '@/session';
-import { historyRows } from '@/shared';
+import type { PlayerInfo, SessionSnapshot } from '@/session';
+import { avatarOf, historyRows } from '@/shared';
 import type { HistoryRow } from '@/shared';
 
-export enum BoardRowKind {
-  Field = 'field',
-  Bonus = 'bonus',
-  Total = 'total',
-}
+import { bonusOf } from './sheetView';
+import type { BonusView } from './sheetView';
 
-export type BoardRow = { key: string; kind: BoardRowKind; label: string; cells: string[] };
+/** One line of a player's sheet: a field, or a bonus. `null` category: no icon. */
+export type BoardRow = {
+  key: string;
+  category: Category | null;
+  face: number | null;
+  label: string;
+  value: string;
+};
+
+/** One player's whole sheet, ready to show; the totals are already added up. */
+export type PlayerBoard = {
+  id: string;
+  name: string;
+  color: string;
+  /** This phone's own player: the one the sheet opens on. */
+  me: boolean;
+  upper: BoardRow[];
+  /** The upper bonus as a progress bar; only with a single sheet, otherwise a row. */
+  bonus: BonusView | null;
+  lower: BoardRow[];
+  total: string;
+};
 
 export type ScoreboardView = {
-  columns: string[];
-  rows: BoardRow[];
+  players: PlayerBoard[];
   /** "×1 · ×2 · ×3" when a player has several sheets, otherwise `null`. */
   sheetFactors: string | null;
   history: HistoryRow[];
@@ -47,56 +68,84 @@ const fieldText = (sheets: Sheet[], read: (sheet: Sheet) => number | null | unde
     })
     .join(' · ');
 
+function playerBoard(
+  t: TFunction,
+  rules: Rules,
+  game: GameState,
+  info: PlayerInfo,
+  sheets: Sheet[],
+  me: boolean,
+): PlayerBoard {
+  const fieldRow = (category: Category): BoardRow => ({
+    key: category,
+    category,
+    face: faceOf(category) ?? null,
+    label: t(`labels.category.${category}`),
+    value: fieldText(sheets, (sheet) => sheet.fields[category]),
+  });
+  const categories = categoriesFor(rules);
+  const upperCategories = categories.filter((category) => UPPER_CATEGORIES.includes(category));
+  const lowerCategories = categories.filter((category) => !UPPER_CATEGORIES.includes(category));
+  const single = sheets.length === 1;
+
+  const upperRows = upperCategories.map(fieldRow);
+  if (rules.upperBonus && !single) {
+    upperRows.push({
+      key: 'bonus',
+      category: null,
+      face: null,
+      label: t('game.bonus', { points: upperBonusPoints(rules.ruleset) }),
+      value: sheets
+        .map((sheet) => {
+          const points = upperBonus(sheet, rules);
+
+          return points > 0
+            ? String(points)
+            : t('game.bonusProgress', {
+                sum: upperSum(sheet),
+                threshold: UPPER_BONUS_THRESHOLD,
+              });
+        })
+        .join(' · '),
+    });
+  }
+
+  const lowerRows = lowerCategories.map(fieldRow);
+  if (sheets.some((sheet) => sheet.extraYatzys > 0)) {
+    lowerRows.push({
+      key: 'yatzy-bonus',
+      category: null,
+      face: null,
+      label: t('game.yatzyBonusRow'),
+      value: sheets.map((sheet) => String(sheet.extraYatzys * YATZY_BONUS)).join(' · '),
+    });
+  }
+
+  return {
+    id: info.id,
+    name: info.name,
+    color: avatarOf(info).color,
+    me,
+    upper: upperRows,
+    bonus: single ? bonusOf(t, rules, sheets[0]) : null,
+    lower: lowerRows,
+    total: String(totalOf(game, info.id)),
+  };
+}
+
 export function buildScoreboard(t: TFunction, snapshot: SessionSnapshot): ScoreboardView | null {
   const game = snapshot.shared.game;
   if (!game) return null;
   const { rules } = game;
   const players = game.turnOrder
     .map((id) => ({ info: playerById(snapshot, id)!, sheets: gamePlayer(game, id)!.sheets }))
-    .filter(({ info }) => info.link !== Link.Removed);
-
-  const rows: BoardRow[] = categoriesFor(rules).map((category) => ({
-    key: category,
-    kind: BoardRowKind.Field,
-    label: t(`labels.category.${category}`),
-    cells: players.map(({ sheets }) => fieldText(sheets, (s) => s.fields[category])),
-  }));
-  if (rules.upperBonus) {
-    rows.splice(6, 0, {
-      key: 'bonus',
-      kind: BoardRowKind.Bonus,
-      label: t('game.bonus', { points: upperBonusPoints(rules.ruleset) }),
-      cells: players.map(({ sheets }) =>
-        sheets
-          .map((s) =>
-            upperBonus(s, rules) > 0
-              ? String(upperBonus(s, rules))
-              : t('game.bonusProgress', { sum: upperSum(s), threshold: UPPER_BONUS_THRESHOLD }),
-          )
-          .join(' · '),
-      ),
-    });
-  }
-
-  rows.push({
-    key: 'yatzy-bonus',
-    kind: BoardRowKind.Bonus,
-    label: t('game.yatzyBonusRow'),
-    cells: players.map(({ sheets }) =>
-      sheets.map((s) => String(s.extraYatzys * YATZY_BONUS)).join(' · '),
-    ),
-  });
-
-  rows.push({
-    key: 'total',
-    kind: BoardRowKind.Total,
-    label: t('game.total'),
-    cells: players.map(({ info }) => String(totalOf(game, info.id))),
-  });
+    .filter(({ info }) => info.link !== Link.Removed)
+    .map(({ info, sheets }) =>
+      playerBoard(t, rules, game, info, sheets, info.id === snapshot.myId),
+    );
 
   return {
-    columns: players.map(({ info }) => info.name),
-    rows,
+    players,
     sheetFactors:
       rules.sheets > 1
         ? SHEET_FACTORS.slice(0, rules.sheets)

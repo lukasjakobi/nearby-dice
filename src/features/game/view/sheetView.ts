@@ -7,6 +7,7 @@ import {
   gamePlayer,
   lowerCategories,
   luckyNumberOf,
+  Rules,
   Ruleset,
   score,
   SHEET_FACTORS,
@@ -145,7 +146,7 @@ function blocksOf(
   return {
     upper: UPPER_CATEGORIES.map(cell),
     lower: lowerCategories(ctx.rules).map(cell),
-    bonus: bonusOf(t, ctx, sheet),
+    bonus: bonusOf(t, ctx.rules, sheet),
   };
 }
 
@@ -275,14 +276,14 @@ function cellView(
 }
 
 /** `null` when the rules switch the upper-block bonus off. */
-function bonusOf(t: TFunction, ctx: TurnContext, sheet: Sheet): BonusView | null {
-  if (!ctx.rules.upperBonus) return null;
+export function bonusOf(t: TFunction, rules: Rules, sheet: Sheet): BonusView | null {
+  if (!rules.upperBonus) return null;
   const upper = upperSum(sheet);
 
   return {
-    label: t('game.bonus', { points: upperBonusPoints(ctx.rules.ruleset) }),
+    label: t('game.bonus', { points: upperBonusPoints(rules.ruleset) }),
     progress: t('game.bonusProgress', { sum: upper, threshold: UPPER_BONUS_THRESHOLD }),
     fraction: Math.min(1, upper / UPPER_BONUS_THRESHOLD),
-    reached: upperBonus(sheet, ctx.rules) > 0,
+    reached: upperBonus(sheet, rules) > 0,
   };
 }

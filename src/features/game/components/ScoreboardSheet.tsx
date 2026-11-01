@@ -6,7 +6,8 @@ import { HistoryItem } from '@/shared';
 import { Choice, BottomSheet, Text, TextVariant } from '@/ui';
 
 import type { ScoreboardView } from '../view';
-import { ScoreTable } from './ScoreTable';
+import { PlayerPicker } from './PlayerPicker';
+import { PlayerSheet } from './PlayerSheet';
 
 enum BoardTab {
   Table = 'table',
@@ -15,32 +16,36 @@ enum BoardTab {
 
 type ScoreboardSheetProps = { visible: boolean; board: ScoreboardView | null; onClose: () => void };
 
-/** "Spielstand": every field of every player, plus the full history ("Verlauf"). */
+/** "Spielstand": one player's sheet at a time, plus the full history ("Verlauf"). */
 export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState(BoardTab.Table);
+  // The sheet opens on my own; picking another player keeps that choice while the sheet is open.
+  const [pickedId, setPickedId] = useState<string | null>(null);
   const tabs = [
     { value: BoardTab.Table, label: t('game.scoreboard') },
     { value: BoardTab.History, label: t('game.history') },
   ];
+  const player =
+    board?.players.find((p) => p.id === pickedId) ??
+    board?.players.find((p) => p.me) ??
+    board?.players[0] ??
+    null;
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('game.scoreboard')}>
       <Choice label={t('game.scoreboard')} options={tabs} value={tab} onChange={setTab} />
-      {board && tab === BoardTab.Table ? (
+      {board && player && tab === BoardTab.Table ? (
         <>
-          {board.sheetFactors ? (
-            <Text
-              variant={TextVariant.Caption}
-              color="muted"
-              align="right"
-              numberOfLines={1}
-              style={styles.factors}
-            >
-              {board.sheetFactors}
-            </Text>
-          ) : null}
-          <ScoreTable board={board} />
+          <PlayerPicker
+            label={t('game.players')}
+            players={board.players}
+            selected={player.id}
+            onSelect={setPickedId}
+          />
+          <ScrollView style={styles.scroll} contentContainerStyle={styles.table}>
+            <PlayerSheet player={player} factors={board.sheetFactors} />
+          </ScrollView>
         </>
       ) : null}
       {board && tab === BoardTab.History ? (
@@ -60,6 +65,6 @@ export function ScoreboardSheet({ visible, board, onClose }: ScoreboardSheetProp
 
 const styles = StyleSheet.create({
   scroll: { flexGrow: 0, flexShrink: 1 },
-  factors: { paddingHorizontal: 4, paddingTop: 2 },
+  table: { paddingBottom: 4 },
   empty: { paddingVertical: 24 },
 });
