@@ -7,6 +7,7 @@ import {
   gamePlayer,
   lowerCategories,
   luckyNumberOf,
+  Rules,
   Ruleset,
   score,
   SHEET_FACTORS,
@@ -16,7 +17,8 @@ import {
   upperBonusPoints,
   upperSum,
 } from '@/domain';
-import type { Sheet } from '@/domain';
+import type { Dice, GameState, Sheet } from '@/domain';
+import type { PlayerInfo } from '@/session';
 import { avatarOf } from '@/shared';
 import type { AvatarView } from '@/shared';
 
@@ -81,7 +83,7 @@ export function buildSheet(t: TFunction, ctx: TurnContext): SheetView {
   const { myTurn, turnPlayer } = ctx;
   const sheets = gamePlayer(ctx.game, ctx.turn.playerId)!.sheets;
   const selectedTab = sheetIndexOf(ctx, sheets.length);
-  const blocks = blocksOf(t, ctx, sheets[selectedTab], showsPreviews(ctx));
+  const blocks = blocksOf(t, ctx.game, sheets[selectedTab], previewOf(ctx));
 
   return {
     title: myTurn ? t('game.mySheet') : t('game.sheetOf', { name: turnPlayer.name }),
@@ -107,22 +109,31 @@ export function buildViewedSheet(
   ctx: TurnContext,
   viewed: NonNullable<TurnContext['viewed']>,
 ): SheetView {
-  const { player } = viewed;
-  const sheets = gamePlayer(ctx.game, player.id)!.sheets;
-  const selectedTab = Math.min(viewed.sheetIndex, sheets.length - 1);
+  const { player, sheetIndex } = viewed;
+
+  return buildEntriesSheet(t, ctx.game, player, sheetIndex, player.id === ctx.snapshot.myId);
+}
+
+/** Any player's sheet with only their entries; also what "Spielstand" shows. */
+export function buildEntriesSheet(
+  t: TFunction,
+  game: GameState,
+  player: PlayerInfo,
+  sheetIndex: number,
+  mine: boolean,
+): SheetView {
+  const sheets = gamePlayer(game, player.id)!.sheets;
+  const selectedTab = Math.min(sheetIndex, sheets.length - 1);
 
   return {
-    title:
-      player.id === ctx.snapshot.myId
-        ? t('game.mySheet')
-        : t('game.sheetOf', { name: player.name }),
+    title: mine ? t('game.mySheet') : t('game.sheetOf', { name: player.name }),
     owner: avatarOf(player),
     tabs: tabsOf(t, sheets.length),
     selectedTab,
     turnTab: null,
     tabsEnabled: true,
     focused: null,
-    ...blocksOf(t, ctx, sheets[selectedTab], false),
+    ...blocksOf(t, game, sheets[selectedTab], null),
   };
 }
 
@@ -133,19 +144,22 @@ function tabsOf(t: TFunction, sheetCount: number): string[] | null {
     : null;
 }
 
-/** Both blocks of one sheet and its bonus; `previews` shows what the dice on screen score. */
+/** The dice whose points open fields preview, and whether this phone may enter them. */
+type Preview = { dice: Dice; pickable: boolean };
+
+/** Both blocks of one sheet and its bonus; a `preview` shows what those dice score. */
 function blocksOf(
   t: TFunction,
-  ctx: TurnContext,
+  game: GameState,
   sheet: Sheet,
-  previews: boolean,
+  preview: Preview | null,
 ): Pick<SheetView, 'upper' | 'lower' | 'bonus'> {
-  const cell = (category: Category) => cellView(t, ctx, sheet, category, previews);
+  const cell = (category: Category) => cellView(t, game, sheet, category, preview);
 
   return {
     upper: UPPER_CATEGORIES.map(cell),
-    lower: lowerCategories(ctx.rules).map(cell),
-    bonus: bonusOf(t, ctx, sheet),
+    lower: lowerCategories(game.rules).map(cell),
+    bonus: bonusOf(t, game.rules, sheet),
   };
 }
 
@@ -170,6 +184,9 @@ function sheetIndexOf(ctx: TurnContext, sheetCount: number): number {
 const showsPreviews = (ctx: TurnContext) => ctx.local.shownRolled && ctx.turnPlayerHere && ctx.live;
 
 const canPick = (ctx: TurnContext) => showsPreviews(ctx) && ctx.myTurn && !ctx.local.rolling;
+
+const previewOf = (ctx: TurnContext): Preview | null =>
+  showsPreviews(ctx) ? { dice: ctx.local.shownDice, pickable: canPick(ctx) } : null;
 
 const isPreview = (cell: CellView) =>
   cell.state === CellState.Preview || cell.state === CellState.PreviewZero;
@@ -206,30 +223,24 @@ const HINT: Record<Ruleset, Partial<Record<Category, string>>> = {
 };
 
 /** An open "Glückszahl" field shows the sum to hit this round. */
-function cellHint(
-  t: TFunction,
-  ctx: TurnContext,
-  category: Category,
-  open: boolean,
-): string | null {
-  if (category !== Category.LuckyNumber) return HINT[ctx.rules.ruleset][category] ?? null;
-  const lucky = luckyNumberOf(ctx.game);
+function cellHint(t: TFunction, game: GameState, category: Category, open: boolean): string | null {
+  if (category !== Category.LuckyNumber) return HINT[game.rules.ruleset][category] ?? null;
+  const lucky = luckyNumberOf(game);
 
   return open && lucky !== null ? t('game.luckyNumberHint', { n: lucky }) : null;
 }
 
 function cellView(
   t: TFunction,
-  ctx: TurnContext,
+  game: GameState,
   sheet: Sheet,
   category: Category,
-  previews: boolean,
+  preview: Preview | null,
 ): CellView {
-  const { rules } = ctx;
-  const dice = ctx.local.shownDice;
+  const { rules } = game;
   const filled = sheet.fields[category];
   const open = filled === null || filled === undefined;
-  const hint = cellHint(t, ctx, category, open);
+  const hint = cellHint(t, game, category, open);
   const name = t(`labels.category.${category}`);
   const label = hint ? `${name} (${hint})` : name;
   const base = {
@@ -249,8 +260,7 @@ function cellView(
     };
   }
 
-  const allowed = previews && allowedCategories(dice, sheet, rules).includes(category);
-  if (!allowed) {
+  if (!preview || !allowedCategories(preview.dice, sheet, rules).includes(category)) {
     return {
       ...base,
       state: CellState.Open,
@@ -260,8 +270,8 @@ function cellView(
     };
   }
 
-  const points = score(dice, category, sheet, rules, luckyNumberOf(ctx.game));
-  const pickable = canPick(ctx);
+  const points = score(preview.dice, category, sheet, rules, luckyNumberOf(game));
+  const { pickable } = preview;
 
   return {
     ...base,
@@ -275,14 +285,14 @@ function cellView(
 }
 
 /** `null` when the rules switch the upper-block bonus off. */
-function bonusOf(t: TFunction, ctx: TurnContext, sheet: Sheet): BonusView | null {
-  if (!ctx.rules.upperBonus) return null;
+export function bonusOf(t: TFunction, rules: Rules, sheet: Sheet): BonusView | null {
+  if (!rules.upperBonus) return null;
   const upper = upperSum(sheet);
 
   return {
-    label: t('game.bonus', { points: upperBonusPoints(ctx.rules.ruleset) }),
+    label: t('game.bonus', { points: upperBonusPoints(rules.ruleset) }),
     progress: t('game.bonusProgress', { sum: upper, threshold: UPPER_BONUS_THRESHOLD }),
     fraction: Math.min(1, upper / UPPER_BONUS_THRESHOLD),
-    reached: upperBonus(sheet, ctx.rules) > 0,
+    reached: upperBonus(sheet, rules) > 0,
   };
 }

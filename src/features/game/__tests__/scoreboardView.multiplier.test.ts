@@ -50,25 +50,36 @@ function filled(): GameState {
 }
 
 const board = (state: GameState) => buildScoreboard(t, snapshot({ game: state }))!;
-const row = (state: GameState, key: string) => board(state).rows.find((r) => r.key === key)!;
+const lukas = (state: GameState) => board(state).players.find((p) => p.id === LUKAS.id)!;
+/** The value of one field on each of Lukas's sheets. */
+const values = (state: GameState, category: Category) =>
+  lukas(state).sheets.map(
+    (sheet) => [...sheet.upper, ...sheet.lower].find((cell) => cell.category === category)!.value,
+  );
 
 test('raw field values per sheet; open fields stay "–", strikes stay 0', () => {
-  expect(row(filled(), Category.FullHouse).cells).toEqual(['25 · 25 · 0', '– · – · –']);
-  expect(row(filled(), Category.Sixes).cells[0]).toBe('– · 18 · –');
+  expect(values(filled(), Category.FullHouse)).toEqual(['25', '25', '0']);
+  expect(values(filled(), Category.Sixes)).toEqual(['–', '18', '–']);
 });
 
 test('earned upper bonus and progress towards 63 are raw', () => {
   const state = filled();
-  const lukas = state.players.find((p) => p.id === LUKAS.id)!;
-  lukas.sheets[0] = {
-    ...lukas.sheets[0],
-    fields: { ...lukas.sheets[0].fields, [Category.Ones]: 2 },
-  };
-  expect(row(state, 'bonus').cells[0]).toBe('2 / 63 · 35 · 0 / 63');
+  const sheets = state.players.find((p) => p.id === LUKAS.id)!.sheets;
+  sheets[0] = { ...sheets[0], fields: { ...sheets[0].fields, [Category.Ones]: 2 } };
+  expect(lukas(state).sheets.map((sheet) => sheet.bonus!.progress)).toEqual([
+    '2 / 63',
+    '63 / 63',
+    '0 / 63',
+  ]);
+  expect(lukas(state).sheets.map((sheet) => sheet.bonus!.reached)).toEqual([false, true, false]);
 });
 
 test('extra Yatzy bonus is raw', () => {
-  expect(row(filled(), 'yatzy-bonus').cells[0]).toBe('50 · 50 · 50');
+  expect(lukas(filled()).yatzyBonus).toEqual([
+    'Yatzy-Bonus +50',
+    'Yatzy-Bonus +50',
+    'Yatzy-Bonus +50',
+  ]);
 });
 
 test('the total is the weighted player total', () => {
@@ -77,7 +88,7 @@ test('the total is the weighted player total', () => {
   // Sheet ×1: 25 + 50; sheet ×2: 63 + 35 + 25 + 50; sheet ×3: 0 + 50.
   const expected = 75 * 1 + 173 * 2 + 50 * 3;
   expect(playerTotal(sheets, rules)).toBe(expected);
-  expect(row(state, 'total').cells[0]).toBe(String(expected));
+  expect(lukas(state).total).toBe(String(expected));
 });
 
 test('history points are raw', () => {
