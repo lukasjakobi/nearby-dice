@@ -8,16 +8,19 @@ type PresetRowProps = {
   preset: PresetId;
   /** Opens the preset sheet; without it the row only shows the mode. */
   onPress?: () => void;
-  /** Centred and a size smaller, as in the results footer; otherwise label and mode sit apart. */
-  centered?: boolean;
+  /**
+   * A size smaller and only as wide as its text, as in the results footer; otherwise label and
+   * mode sit apart across the full width.
+   */
+  compact?: boolean;
 };
 
 /** "Spielstil  Klassisch ›": the current mode in the lobbies and on the results screen. */
-export function PresetRow({ preset, onPress, centered = false }: PresetRowProps) {
+export function PresetRow({ preset, onPress, compact = false }: PresetRowProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const title = t(`labels.preset.${preset}.title`);
-  const size = centered ? 15 : 16;
+  const size = compact ? 15 : 16;
 
   return (
     <Pressable
@@ -30,25 +33,26 @@ export function PresetRow({ preset, onPress, centered = false }: PresetRowProps)
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: centered ? 'center' : 'stretch',
-        justifyContent: centered ? 'center' : 'space-between',
-        gap: centered ? 6 : 8,
+        alignSelf: compact ? 'flex-start' : 'stretch',
+        justifyContent: compact ? 'flex-start' : 'space-between',
+        flexShrink: 1,
+        gap: compact ? 6 : 8,
         minHeight: 44,
-        paddingHorizontal: centered ? 12 : 4,
+        paddingHorizontal: compact ? 0 : 4,
       }}
     >
       <Text variant={TextVariant.Body} size={size} color="muted">
         {t('hostSetup.styleLabel')}
       </Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-        <Text variant={TextVariant.Body} size={size} weight={600}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, gap: 4 }}>
+        <Text variant={TextVariant.Body} size={size} weight={600} numberOfLines={1}>
           {title}
         </Text>
         {onPress ? (
           <Icon
             name={IconName.ChevronRight}
             color={colors.muted}
-            size={centered ? 16 : 18}
+            size={compact ? 16 : 18}
             strokeWidth={2.4}
           />
         ) : null}

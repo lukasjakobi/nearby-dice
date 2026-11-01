@@ -21,5 +21,5 @@ export const ReadOnly: Story = {};
 /** The host opens the preset sheet from here. */
 export const Changeable: Story = { args: { onPress: fn() } };
 
-/** Smaller and centred in the results footer. */
-export const Centered: Story = { args: { onPress: fn(), centered: true } };
+/** Smaller and only as wide as its text, beside the rematch votes in the results footer. */
+export const Compact: Story = { args: { onPress: fn(), compact: true } };

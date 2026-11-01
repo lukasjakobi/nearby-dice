@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import type { PresetId } from '@/domain';
 import { PresetRow } from '@/shared';
-import { Button, ButtonVariant, Footer, Spinner, Text, TextVariant, useTheme } from '@/ui';
+import { Button, ButtonVariant, Footer } from '@/ui';
 
 import { RematchAction } from '../hooks';
 import type { VoteChip } from '../hooks';
@@ -23,7 +23,10 @@ type ResultsFooterProps = {
   onLeave: () => void;
 };
 
-/** The bottom bar: the mode, everyone's rematch vote, this player's one action and the leave button. */
+/**
+ * The bottom bar, kept to two rows so the results above stay in view: the mode beside everyone's
+ * rematch vote, then the leave button beside this player's one action.
+ */
 export function ResultsFooter({
   preset,
   onChangePreset,
@@ -36,43 +39,50 @@ export function ResultsFooter({
   onLeave,
 }: ResultsFooterProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  // Leave and this player's action share the row equally.
+  const half = { height: 48, style: styles.half };
   const actions: Record<RematchAction, ReactNode> = {
-    [RematchAction.Vote]: <Button label={t('results.rematch')} onPress={onVote} />,
-    [RematchAction.Restart]: <Button label={t('results.training.again')} onPress={onRestart} />,
+    [RematchAction.Vote]: <Button {...half} label={t('results.rematch')} onPress={onVote} />,
+    [RematchAction.Restart]: (
+      <Button {...half} label={t('results.training.again')} onPress={onRestart} />
+    ),
+    // The badges show who is still deciding, so the long waiting text is only read out.
     [RematchAction.Waiting]: (
-      <View style={styles.waiting} accessibilityLiveRegion="polite">
-        <Spinner color={colors.primary} />
-        <Text variant={TextVariant.Body} size={16} weight={500}>
-          {waitingText}
-        </Text>
-      </View>
+      <Button
+        {...half}
+        label={t('results.rematch')}
+        onPress={onVote}
+        variant={ButtonVariant.Tonal}
+        loading
+        accessibilityHint={waitingText}
+      />
     ),
   };
 
   return (
-    <Footer style={{ paddingHorizontal: 16 }}>
-      <PresetRow preset={preset} onPress={onChangePreset} centered />
-      {votes.length > 0 ? (
-        <View style={styles.votes} accessibilityLiveRegion="polite">
-          {votes.map((chip) => (
-            <RematchVoteChip key={chip.id} chip={chip} />
-          ))}
-        </View>
-      ) : null}
-      {actions[action]}
-      <Button label={leaveLabel} onPress={onLeave} variant={ButtonVariant.Secondary} height={48} />
+    <Footer style={styles.footer}>
+      <View style={styles.info}>
+        <PresetRow preset={preset} onPress={onChangePreset} compact />
+        {votes.length > 0 ? (
+          <View style={styles.votes} accessibilityLiveRegion="polite">
+            {votes.map((chip) => (
+              <RematchVoteChip key={chip.id} chip={chip} />
+            ))}
+          </View>
+        ) : null}
+      </View>
+      <View style={styles.actions}>
+        <Button {...half} label={leaveLabel} onPress={onLeave} variant={ButtonVariant.Secondary} />
+        {actions[action]}
+      </View>
     </Footer>
   );
 }
 
 const styles = StyleSheet.create({
-  votes: { flexDirection: 'row', justifyContent: 'center', gap: 20 },
-  waiting: {
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
+  footer: { paddingHorizontal: 16, paddingTop: 8, gap: 8 },
+  info: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  votes: { flexDirection: 'row', gap: 2 },
+  actions: { flexDirection: 'row', gap: 10 },
+  half: { flex: 1, paddingHorizontal: 12 },
 });
