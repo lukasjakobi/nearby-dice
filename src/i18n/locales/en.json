@@ -518,14 +518,6 @@
     "bonus": "Bonus",
     "lower": "Lower",
     "noBonus": "No bonus · {{sum}}/{{need}}",
-    "awards": {
-      "bestMove": "Best move",
-      "bonus": "Bonus reached",
-      "zeros": "Most zeros",
-      "fields_one": "field",
-      "fields_other": "fields",
-      "none": "None"
-    },
     "compare": "All fields compared",
     "field": "Field",
     "rematch": "Rematch",

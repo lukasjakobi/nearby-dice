@@ -47,7 +47,7 @@ export function useResults() {
   const training = session.role === Role.Training;
   const newBest = training && trainingBestId === gameIdOf(snapshot);
 
-  const { rows, standings, awards, compare } = useMemo(
+  const { rows, standings, compare } = useMemo(
     () => buildResults(t, game, shown.players, shown.myId),
     [game, shown.myId, shown.players, t],
   );
@@ -109,7 +109,6 @@ export function useResults() {
     crown: !training || newBest,
     rows,
     standings,
-    awards,
     compare,
     facts,
     preset: shared.preset,

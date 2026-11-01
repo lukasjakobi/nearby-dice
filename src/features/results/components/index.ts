@@ -1,5 +1,3 @@
-export { AwardTile } from './AwardTile';
-export { AwardTiles } from './AwardTiles';
 export { BarLegend } from './BarLegend';
 export { HistoryCard } from './HistoryCard';
 export { RematchVoteChip } from './RematchVoteChip';

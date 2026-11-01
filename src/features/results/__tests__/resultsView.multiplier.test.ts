@@ -1,6 +1,6 @@
 /**
  * Triple mode on the results screen: per-player sums (fields, bonuses, totals) are
- * weighted by the sheet factors; the best move is a single entry and stays raw.
+ * weighted by the sheet factors.
  */
 import { Category } from '@/domain/enums';
 import { PRESETS, PresetId } from '@/domain/rules';
@@ -9,7 +9,7 @@ import type { GameState } from '@/domain/engine';
 import { LUKAS, ANTONIA, game } from '@/test/fixtures';
 import { t } from '@/test/i18n';
 
-import { AwardKind, buildResults } from '../view';
+import { buildResults } from '../view';
 
 const rules = PRESETS[PresetId.Triple];
 
@@ -55,12 +55,6 @@ test('per-field comparison × the factor of the sheet the field is on', () => {
 test('the upper bonus × factor', () => {
   expect(compareRow('Bonus').cells[0].value).toBe('+70');
   expect(results().rows[0]).toMatchObject({ upper: 126, bonus: 70 });
-});
-
-test('the best move is the highest raw entry, as written on the card', () => {
-  const best = results().awards.find((a) => a.kind === AwardKind.BestMove)!;
-  expect(best).toMatchObject({ value: '30', sub: 'Chance' });
-  expect(best.who.map((w) => w.id)).toEqual([LUKAS.id, ANTONIA.id]);
 });
 
 test('totals are the weighted player total and add up, nothing multiplied twice', () => {
