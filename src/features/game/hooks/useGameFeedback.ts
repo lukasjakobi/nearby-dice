@@ -5,7 +5,7 @@ import { Category, HistoryKind, lastEntry, sameTurn } from '@/domain';
 import type { Focus, Turn } from '@/domain';
 import { playerById } from '@/session';
 import type { SessionSnapshot } from '@/session';
-import { DEFAULT_TOAST_OFFSET, useToast } from '@/ui';
+import { useToast } from '@/ui';
 import { useFeedback } from '@/shared';
 import type { Feedback } from '@/shared';
 
@@ -81,12 +81,4 @@ export function useGameFeedback(snapshot: SessionSnapshot) {
     else if (entry.category === Category.Yatzy) entryFeedback.yatzy();
     else entryFeedback.score();
   }, [game, snapshot, toast, feedback, watching, t]);
-
-  // Toasts sit above the action bar while the game is on screen.
-  const { setOffset } = toast;
-  useEffect(() => {
-    setOffset(220);
-
-    return () => setOffset(DEFAULT_TOAST_OFFSET);
-  }, [setOffset]);
 }

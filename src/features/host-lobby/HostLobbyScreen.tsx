@@ -1,19 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 
-import {
-  DEFAULT_TOAST_OFFSET,
-  Button,
-  Dialog,
-  Footer,
-  Header,
-  IconName,
-  Screen,
-  Text,
-  TextVariant,
-  useToast,
-} from '@/ui';
+import { Button, Dialog, Footer, Header, IconName, Screen, Text, TextVariant } from '@/ui';
 import {
   FeedbackSettingsSheet,
   LobbyHeaderActions,
@@ -29,12 +17,6 @@ import { LobbyDialog, useHostLobby } from './hooks';
 export function HostLobbyScreen() {
   const { t } = useTranslation();
   const lobby = useHostLobby();
-  const { setOffset } = useToast();
-  useEffect(() => {
-    setOffset(150);
-
-    return () => setOffset(DEFAULT_TOAST_OFFSET);
-  }, [setOffset]);
 
   return (
     <Screen>

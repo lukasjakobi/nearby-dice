@@ -29,7 +29,7 @@ export { StatusView, StatusTone } from './StatusView';
 export { Dialog } from './Dialog';
 export type { DialogAction } from './Dialog';
 export { BottomSheet } from './BottomSheet';
-export { DEFAULT_TOAST_OFFSET, ToastProvider, useToast } from './Toast';
+export { ToastProvider, useToast } from './Toast';
 export { DieFace } from './DieFace';
 export { Logo } from './Logo';
 export { Bob } from './Bob';

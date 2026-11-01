@@ -19,5 +19,5 @@ const meta: Meta<typeof ShowToast> = {
 
 export default meta;
 
-/** Press the button; the toast shows for 3.2 s above the bottom edge. */
+/** Press the button; the toast drops in below the status bar and shows for 3.2 s. */
 export const Default: StoryObj<typeof ShowToast> = {};
