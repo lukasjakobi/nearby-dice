@@ -565,6 +565,18 @@
       "body": "Wins, best score and recent rounds are deleted. You can’t undo this.",
       "confirm": "Reset"
     },
+    "app": "App",
+    "update": {
+      "check": "Check for updates",
+      "checking": "Checking …",
+      "upToDate": "You’re on the latest version.",
+      "available": "Version {{version}} available",
+      "install": "Download and install",
+      "downloading": "Downloading … {{percent}}%",
+      "checkFailed": "Couldn’t check for updates. Are you online?",
+      "downloadFailed": "Download failed.",
+      "retry": "Try again"
+    },
     "version": "Version"
   }
 }

@@ -390,6 +390,43 @@ requests access and "Später" cancels. A denied request shows "Berechtigung fehl
 öffnen". If Bluetooth or Location Services are off, a sheet opens the matching settings, and when the
 app returns to the foreground it checks again and carries on once everything is ready.
 
+## App updates
+
+**Confirmed, not yet tried on a device:** release builds on Android show an "App" card in Settings
+with the installed version and "Nach Updates suchen". The scope is in
+[PRODUCT.md](../PRODUCT.md#capabilities-and-constraints).
+
+1. The check asks GitHub's API for the latest release
+   (`api.github.com/repos/<owner>/<name>/releases/latest`). That endpoint skips drafts and
+   pre-releases, and works without a token for up to 60 requests per hour per IP. It's the only
+   time the app goes online.
+
+   `app.config.js` sets the repository at build time as `extra.releaseRepository`: CI builds use
+   the repository they run in (`GITHUB_REPOSITORY`), so a fork's builds update from the fork, and
+   local builds use `repository` in `package.json`. Installed apps keep the repository they were
+   built with. A renamed repository still works because GitHub redirects it; after a move to
+   another account, players have to install the new APK by hand once.
+
+   The release counts as newer when its `vMAJOR.MINOR.PATCH` tag is higher than the installed
+   version, and only if it has an `.apk` asset.
+
+2. "Herunterladen und installieren" downloads that APK into the app's cache (`expo-file-system`)
+   and shows the progress.
+3. The app opens Android's installer with `ACTION_VIEW` on the file's `content://` URI
+   (`expo-intent-launcher`), which needs `REQUEST_INSTALL_PACKAGES` in `app.json`. The first time,
+   Android asks the player to allow installs from Nearby Dice. Each update then has to be confirmed
+   in the system dialog; Android doesn't allow silent installs. If the player cancels, the card
+   offers the install again.
+
+The update installs over the old app only when both are signed with the same release key (see
+[CONTRIBUTING, Releases](../CONTRIBUTING.md#releases)). iOS can't install apps from outside the App
+Store, and the `.dev` debug variant has its own package id, so neither shows the card; they keep
+the plain version row. `src/features/settings/hooks/appUpdater.ts` holds the calls to GitHub and
+Android, and `view/updateView.ts` decides what the card shows in each state.
+
+Google Play restricts `REQUEST_INSTALL_PACKAGES`. A Play release would drop this flow in favour of
+Play's own in-app updates (**Open**, decided with a store release).
+
 ## Testing
 
 The tests run real host and guest sessions over an in-memory network, so they cover the game and

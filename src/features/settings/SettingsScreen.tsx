@@ -18,7 +18,7 @@ import {
   TextVariant,
 } from '@/ui';
 
-import { NearbyPermissionCard, ProfileCard } from './components';
+import { NearbyPermissionCard, ProfileCard, UpdateCard } from './components';
 import { useSettingsScreen } from './hooks';
 
 const THEMES = [ThemeMode.System, ThemeMode.Light, ThemeMode.Dark];
@@ -112,16 +112,26 @@ export function SettingsScreen() {
           ) : null}
         </Section>
 
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}
-        >
-          <Text variant={TextVariant.Body} size={14} color="muted">
-            {t('settings.version')}
-          </Text>
-          <Text variant={TextVariant.Body} size={14} color="muted">
-            {screen.version}
-          </Text>
-        </View>
+        {screen.update ? (
+          <Section title={t('settings.app')}>
+            <UpdateCard
+              version={screen.version}
+              update={screen.update}
+              onAction={screen.runUpdate}
+            />
+          </Section>
+        ) : (
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4 }}
+          >
+            <Text variant={TextVariant.Body} size={14} color="muted">
+              {t('settings.version')}
+            </Text>
+            <Text variant={TextVariant.Body} size={14} color="muted">
+              {screen.version}
+            </Text>
+          </View>
+        )}
       </ScrollView>
       <Dialog
         visible={screen.resetOpen}

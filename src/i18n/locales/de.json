@@ -565,6 +565,18 @@
       "body": "Siege, Bestwert und letzte Runden werden gelöscht. Das kannst du nicht rückgängig machen.",
       "confirm": "Zurücksetzen"
     },
+    "app": "App",
+    "update": {
+      "check": "Nach Updates suchen",
+      "checking": "Suche …",
+      "upToDate": "Du hast die neueste Version.",
+      "available": "Version {{version}} verfügbar",
+      "install": "Herunterladen und installieren",
+      "downloading": "Wird geladen … {{percent}} %",
+      "checkFailed": "Prüfen fehlgeschlagen. Bist du online?",
+      "downloadFailed": "Download fehlgeschlagen.",
+      "retry": "Erneut versuchen"
+    },
     "version": "Version"
   }
 }

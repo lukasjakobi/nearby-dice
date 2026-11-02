@@ -167,6 +167,10 @@ to `main`. [`build.yml`](.github/workflows/build.yml) builds a signed Android re
 - **Test build:** Actions → Build → Run workflow (tag left empty); the APK is a downloadable workflow
   artifact.
 
+Installed apps find new releases through Settings: they read the latest release that isn't a draft
+or pre-release, and install its `.apk` asset ([App updates](docs/technical-design.md#app-updates)).
+So keep the APK attached, and mark a release as a pre-release if phones shouldn't get it yet.
+
 The tag sets the app version: [`app.config.js`](app.config.js) reads it from `NEARBY_DICE_VERSION`
 and derives the Android `versionCode` from it (1.2.3 becomes 10203), so tags must be
 `vMAJOR.MINOR.PATCH` with minor and patch below 100. Builds without a tag use the `package.json`

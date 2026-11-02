@@ -28,7 +28,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": ["android.permission.VIBRATE"],
+      "permissions": ["android.permission.VIBRATE", "android.permission.REQUEST_INSTALL_PACKAGES"],
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
