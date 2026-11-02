@@ -66,6 +66,10 @@ interruptions is still open.
 - Home, lobby, game, results and settings screens, including their waiting, error and recovery
   states.
 - A modern, uncluttered interface in light and dark themes.
+- **Updates on Android:** Settings can check for a newer release and install it inside the app,
+  after Android asks the player to confirm. The app never checks on its own and shows no update
+  popup; the Android app comes from GitHub releases, not a store. How it works:
+  [App updates](docs/technical-design.md#app-updates).
 
 The automated tests simulate whole sessions over an in-memory network, and browser smoke flows play
 rounds across tabs of a web build. They show that the game logic and the screens behave correctly,

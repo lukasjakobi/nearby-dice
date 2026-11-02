@@ -1,4 +1,4 @@
-const { version: packageVersion } = require('./package.json');
+const { version: packageVersion, repository } = require('./package.json');
 
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
 
@@ -25,13 +25,20 @@ function versionCode(version) {
   return major * 10000 + minor * 100 + patch;
 }
 
-// Adds the version to app.json, which holds the rest of the config.
+// The GitHub repository (`owner/name`) whose releases the app installs updates from. GitHub
+// Actions names the repository it builds in, so a fork's builds update from the fork.
+function releaseRepository() {
+  return process.env.GITHUB_REPOSITORY || repository;
+}
+
+// Adds the version and release repository to app.json, which holds the rest of the config.
 module.exports = ({ config }) => {
   const version = appVersion();
 
   return {
     ...config,
     version,
+    extra: { ...config.extra, releaseRepository: releaseRepository() },
     android: { ...config.android, versionCode: versionCode(version) },
     ios: { ...config.ios, buildNumber: version },
   };

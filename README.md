@@ -48,7 +48,8 @@ A round seats two to six players, and the app speaks German and English.
 ## 📲 Get the app
 
 Android users can download the latest APK from the
-[releases page](https://github.com/lukasjakobi/nearby-dice/releases/latest). An iOS release isn't
+[releases page](https://github.com/lukasjakobi/nearby-dice/releases/latest). Later versions can be
+installed from the app's settings, under **App**. An iOS release isn't
 available yet, but you can [build the app yourself](#-build-it-yourself).
 
 ## 🎲 How to play
