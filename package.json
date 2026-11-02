@@ -77,7 +77,8 @@
     "check:release-bundle": "node scripts/check-release-bundle.mjs",
     "sounds": "node scripts/generate-sounds.mjs",
     "icons": "node scripts/generate-icons.mjs",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "worktrees:clean": "node scripts/clean-worktrees.mjs"
   },
   "private": true,
   "jest": {
