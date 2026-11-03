@@ -1,6 +1,5 @@
 import { Stack, usePathname } from 'expo-router';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { EndReason, Role, setActiveSession, useSessionSnapshot } from '@/session';
 import type { AnySession } from '@/session';
@@ -13,21 +12,15 @@ import { SessionEndedView } from './SessionEndedView';
 
 /** Provides one live session, keeps the route in step with its phase, and handles its end. */
 export function ActiveSessionLayout({ session }: { session: AnySession }) {
-  const { t } = useTranslation();
   const snapshot = useSessionSnapshot(session);
   const pathname = usePathname();
   useSessionToasts(snapshot);
   useInterruptionRecord(session, snapshot);
   useKeepAwakeSetting();
 
-  const ending =
-    snapshot.ended && snapshot.ended !== EndReason.Left
-      ? {
-          title: t(`errors.sessionEnd.${snapshot.ended}.title`),
-          body: t(`errors.sessionEnd.${snapshot.ended}.body`),
-        }
-      : null;
-  const leaveNow = snapshot.ended !== null && (session.role !== Role.Guest || !ending);
+  const shownEnd =
+    session.role === Role.Guest && snapshot.ended !== EndReason.Left ? snapshot.ended : null;
+  const leaveNow = snapshot.ended !== null && !shownEnd;
 
   useEffect(() => {
     if (leaveNow) {
@@ -41,8 +34,8 @@ export function ActiveSessionLayout({ session }: { session: AnySession }) {
     if (!routes.some((route) => route === pathname)) navigate.replace(routes[0]);
   }, [snapshot, pathname, leaveNow]);
 
-  if (snapshot.ended && ending && session.role === Role.Guest) {
-    return <SessionEndedView title={ending.title} body={ending.body} />;
+  if (shownEnd) {
+    return <SessionEndedView reason={shownEnd} />;
   }
 
   return (
