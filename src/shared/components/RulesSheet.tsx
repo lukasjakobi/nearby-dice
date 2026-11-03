@@ -8,7 +8,7 @@ import { rulesSummary } from '../view/rulesSummary';
 
 type RulesSheetProps = { visible: boolean; preset: PresetId; onClose: () => void };
 
-/** "Regeln der Runde": every rule of the round, read-only. */
+/** "Regeln der Runde": what the preset is about, then every rule of the round, read-only. */
 export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -16,6 +16,13 @@ export function RulesSheet({ visible, preset, onClose }: RulesSheetProps) {
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('lobby.rulesTitle')}>
       <ScrollView style={{ flexGrow: 0, flexShrink: 1 }}>
+        <Text
+          variant={TextVariant.Body}
+          color="muted"
+          style={{ paddingHorizontal: 4, paddingBottom: 12 }}
+        >
+          {t(`labels.preset.${preset}.description`)}
+        </Text>
         {rulesSummary(t, preset).map((line) => (
           <View
             key={line.label}

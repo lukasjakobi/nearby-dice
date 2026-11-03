@@ -30,6 +30,7 @@ export function useHostSetup() {
   );
   const [nameTouched, setNameTouched] = useState(false);
   const [preset, setPreset] = useState(PresetId.Classic);
+  const [rulesOpen, setRulesOpen] = useState(false);
   const [openState, setOpenState] = useState(OpenState.Idle);
   const [error, setError] = useState<HostError | null>(null);
 
@@ -96,6 +97,9 @@ export function useHostSetup() {
       setOpenState(OpenState.Idle);
       setError(null);
     },
+    rulesOpen,
+    openRules: () => setRulesOpen(true),
+    closeRules: () => setRulesOpen(false),
     openState,
     error,
     open: () => void open(),

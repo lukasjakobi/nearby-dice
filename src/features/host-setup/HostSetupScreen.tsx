@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 import type { TFunction } from '@/i18n';
-import { PermissionSheet, PresetDescription, PresetGrid } from '@/shared';
+import { PermissionSheet, PresetGrid, RulesSheet } from '@/shared';
 import { ROUND_NAME_MAX_LENGTH } from '@/domain';
-import { Button, Footer, Header, IconName, Screen, Text, TextField, TextVariant } from '@/ui';
+import { Button, Footer, Header, IconName, Screen, TextField } from '@/ui';
 
 import { HostErrorCard } from './components';
 import { OpenState, useHostSetup } from './hooks';
@@ -49,11 +49,7 @@ export function HostSetupScreen() {
           error={setup.roundNameError}
         />
 
-        <View style={{ gap: 10 }}>
-          <Text variant={TextVariant.Label}>{t('hostSetup.styleLabel')}</Text>
-          <PresetGrid value={setup.preset} onChange={setup.choosePreset} />
-          <PresetDescription preset={setup.preset} />
-        </View>
+        <PresetGrid value={setup.preset} onChange={setup.choosePreset} onRules={setup.openRules} />
       </ScrollView>
 
       <Footer>
@@ -64,6 +60,7 @@ export function HostSetupScreen() {
           loading={setup.openState === OpenState.Opening}
         />
       </Footer>
+      <RulesSheet visible={setup.rulesOpen} preset={setup.preset} onClose={setup.closeRules} />
       {setup.permissionSheet ? <PermissionSheet {...setup.permissionSheet} /> : null}
     </Screen>
   );

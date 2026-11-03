@@ -54,6 +54,17 @@ test('an opened lobby becomes the active session', async () => {
   await view.unmount();
 });
 
+test('the rules sheet describes the chosen style', async () => {
+  const view = await renderScreen(<HostSetupScreen />);
+
+  await fireEvent.press(screen.getByLabelText(t('labels.preset.blitz.title')));
+  await fireEvent.press(screen.getByText(t('lobby.rulesButton')));
+
+  expect(screen.getByText(t('lobby.rulesTitle'))).toBeTruthy();
+  expect(screen.getByText(t('labels.preset.blitz.description'))).toBeTruthy();
+  await view.unmount();
+});
+
 test('going back during the collision scan stops opening the lobby', async () => {
   const view = await renderScreen(<HostSetupScreen />);
 

@@ -7,10 +7,14 @@ import { navigate, Route, useProfileOrGuest } from '@/shared';
 export function useTrainingSetup() {
   const profile = useProfileOrGuest();
   const [preset, setPreset] = useState(PresetId.Classic);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   return {
     preset,
     choosePreset: setPreset,
+    rulesOpen,
+    openRules: () => setRulesOpen(true),
+    closeRules: () => setRulesOpen(false),
     start: () => {
       setActiveSession(new TrainingSession({ profile, preset }));
       navigate.replace(Route.Game);

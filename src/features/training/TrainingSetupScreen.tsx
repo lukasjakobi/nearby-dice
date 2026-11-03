@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 import { TRAINING_PRESET_ORDER } from '@/domain';
-import { PresetDescription, PresetGrid } from '@/shared';
+import { PresetGrid, RulesSheet } from '@/shared';
 import { Button, Footer, Header, IconName, Screen, Text, TextVariant } from '@/ui';
 
 import { useTrainingSetup } from './hooks';
@@ -25,15 +25,12 @@ export function TrainingSetupScreen() {
           {t('training.intro')}
         </Text>
 
-        <View style={{ gap: 10 }}>
-          <Text variant={TextVariant.Label}>{t('hostSetup.styleLabel')}</Text>
-          <PresetGrid
-            value={setup.preset}
-            onChange={setup.choosePreset}
-            presets={TRAINING_PRESET_ORDER}
-          />
-          <PresetDescription preset={setup.preset} />
-        </View>
+        <PresetGrid
+          value={setup.preset}
+          onChange={setup.choosePreset}
+          presets={TRAINING_PRESET_ORDER}
+          onRules={setup.openRules}
+        />
 
         <Text variant={TextVariant.Caption} color="muted">
           {t('training.note')}
@@ -43,6 +40,7 @@ export function TrainingSetupScreen() {
       <Footer>
         <Button label={t('training.start')} onPress={setup.start} />
       </Footer>
+      <RulesSheet visible={setup.rulesOpen} preset={setup.preset} onClose={setup.closeRules} />
     </Screen>
   );
 }
