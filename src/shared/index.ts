@@ -10,7 +10,6 @@ export { LobbyHeaderActions } from './components/LobbyHeaderActions';
 export { PlayerRow, PlayerTag, RowStatus } from './components/PlayerRow';
 export type { PlayerRowView } from './components/PlayerRow';
 export { PlayersSection } from './components/PlayersSection';
-export { PresetDescription } from './components/PresetDescription';
 export { PresetGrid } from './components/PresetGrid';
 export { PresetRow } from './components/PresetRow';
 export { PresetSheet } from './components/PresetSheet';
