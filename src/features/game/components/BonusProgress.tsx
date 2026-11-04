@@ -4,6 +4,7 @@ import { Animated, Easing, StyleSheet, View, useAnimatedValue } from 'react-nati
 import { Icon, IconName, Pop, Text, alpha, useTheme } from '@/ui';
 
 import type { SheetView } from '../view';
+import { CELL_MAX_HEIGHT } from './ScoreCell';
 
 type BonusProgressProps = { bonus: NonNullable<SheetView['bonus']> };
 
@@ -74,7 +75,17 @@ export function BonusProgress({ bonus }: BonusProgressProps) {
 }
 
 const styles = StyleSheet.create({
-  bonus: { gap: 6, paddingVertical: 8, paddingHorizontal: 10, borderRadius: 12 },
+  // As tall as a field beside it, so both blocks end on the same line.
+  bonus: {
+    flex: 1,
+    minHeight: 38,
+    maxHeight: CELL_MAX_HEIGHT,
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+  },
   bonusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   title: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   track: { height: TRACK, borderRadius: TRACK / 2, overflow: 'hidden' },

@@ -93,6 +93,8 @@ export const FIXED = {
   timeLow: '#FF8A80',
   /** Badge for places below first in "Zuletzt gespielt". */
   silver: '#CFC6B0',
+  /** Soft shadow under a card that lifts off the screen: a field I can score. */
+  shadow: '#000000',
   /** Graphite, for the splash and launcher icon (outside any theme). */
   brand: '#101214',
 } as const;
@@ -127,6 +129,14 @@ export function mix(color: string, base: string, amount: number): string {
 
   return `#${[0, 1, 2].map((i) => channel(i).toString(16).padStart(2, '0')).join('')}`;
 }
+
+/** `color` darkened towards black by `amount` (0–1): the edge under a raised tile. */
+export function shade(color: string, amount: number): string {
+  return mix('#000000', color, amount);
+}
+
+/** How far raised tiles stand off the screen: their darker bottom edge, in points. */
+export const EDGE = 4;
 
 /** `color` with alpha, for #RRGGBB inputs. */
 export function alpha(color: string, opacity: number): string {

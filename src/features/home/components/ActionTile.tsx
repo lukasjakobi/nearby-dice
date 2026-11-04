@@ -1,6 +1,6 @@
 import { Pressable, View } from 'react-native';
 
-import { alpha, Font, fontFamily, Icon, IconName, Text, useTheme } from '@/ui';
+import { alpha, EDGE, Font, fontFamily, Icon, IconName, shade, Text, useTheme } from '@/ui';
 
 type ActionTileProps = { label: string; icon: IconName; onPress: () => void; primary: boolean };
 
@@ -21,10 +21,13 @@ export function ActionTile({ label, icon, onPress, primary }: ActionTileProps) {
         padding: 16,
         borderRadius: 24,
         backgroundColor: background,
+        // Stands on a darker edge and sinks into it when pressed, like every big button.
+        borderBottomWidth: pressed ? 2 : EDGE + 2,
+        borderBottomColor: shade(background, 0.28),
         justifyContent: 'flex-end',
         gap: 4,
         overflow: 'hidden',
-        transform: [{ translateY: pressed ? 1 : 0 }],
+        transform: [{ translateY: pressed ? EDGE : 0 }],
       })}
     >
       <View

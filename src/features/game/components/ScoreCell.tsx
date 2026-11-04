@@ -1,11 +1,14 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Font, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
+import { FIXED, Font, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
 import type { ColorToken, Palette } from '@/ui';
 
 import { CellState } from '../view';
 import type { CellView } from '../view';
 import { CategoryIcon } from './CategoryIcon';
+
+/** Rows grow to this so the two blocks fill the sheet down to the dice; the bonus row matches. */
+export const CELL_MAX_HEIGHT = 70;
 
 type CellLook = {
   background: string;
@@ -75,7 +78,7 @@ type ScoreCellProps = {
 export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
   const { colors } = useTheme();
   const look = LOOKS[cell.state](colors);
-  const background = selected ? mix(colors.primary, colors.surface, 0.16) : look.background;
+  const background = selected ? mix(colors.primary, colors.surface, 0.24) : look.background;
   const border = selected ? colors.primary : look.border;
   // Someone else's possible points: outlined, so a watcher doesn't read them as entered.
   const watched = cell.state === CellState.Preview && !cell.pickable;
@@ -98,7 +101,9 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
       accessibilityState={{ disabled: !cell.pickable, selected }}
       style={({ pressed }) => [
         styles.cell,
-        { backgroundColor: background, borderColor: border },
+        { backgroundColor: background, borderColor: border, borderWidth: selected ? 2 : 1.5 },
+        // What I can score lifts off the sheet a little; everything else lies flat.
+        cell.pickable && !selected && !pressed && styles.lifted,
         pressed && styles.cellPressed,
       ]}
     >
@@ -152,13 +157,20 @@ const styles = StyleSheet.create({
     gap: 6,
     flex: 1,
     minHeight: 38,
-    maxHeight: 62,
+    maxHeight: CELL_MAX_HEIGHT,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1.5,
   },
   cellPressed: { transform: [{ scale: 0.97 }], opacity: 0.8 },
+  lifted: {
+    shadowColor: FIXED.shadow,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
   tile: {
     width: 30,
     height: 30,

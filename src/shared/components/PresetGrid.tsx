@@ -6,6 +6,7 @@ import type { PresetId } from '@/domain';
 import {
   alpha,
   Chip,
+  EDGE,
   Icon,
   IconBadge,
   IconName,
@@ -77,6 +78,10 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
                       borderRadius: RADIUS.card,
                       borderWidth: 1.5,
                       borderColor: selected ? colors.primary : colors.line,
+                      // Unchosen tiles stand up to be tapped; the chosen one is pressed in.
+                      borderBottomWidth: selected ? 1.5 : EDGE,
+                      borderBottomColor: selected ? colors.primary : colors.line,
+                      transform: [{ translateY: selected ? EDGE - 1.5 : 0 }],
                       backgroundColor: selected ? colors.primary : colors.surface,
                       alignItems: 'center',
                       justifyContent: 'center',

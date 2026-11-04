@@ -1,10 +1,12 @@
 import { Pressable, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 
+import { Icon } from './icons/Icon';
+import type { IconName } from './icons/Icon';
 import { Spinner } from './Spinner';
 import { Text } from './Text';
 import { useTheme } from './theme/ThemeProvider';
-import { RADIUS, SIZE } from './theme/tokens';
+import { EDGE, RADIUS, SIZE, shade } from './theme/tokens';
 import type { Palette } from './theme/tokens';
 import { TextVariant } from './theme/typography';
 
@@ -56,6 +58,8 @@ export type ButtonProps = {
   label: string;
   onPress: () => void;
   variant?: ButtonVariant;
+  /** Before the label: the dice on the roll button. */
+  icon?: IconName;
   disabled?: boolean;
   /** Shows a spinner next to the label and disables the button. */
   loading?: boolean;
@@ -70,6 +74,7 @@ export function Button({
   label,
   onPress,
   variant = ButtonVariant.Primary,
+  icon,
   disabled = false,
   loading = false,
   alignStart = false,
@@ -80,6 +85,13 @@ export function Button({
   const { colors } = useTheme();
   const look = (disabled && !loading ? DISABLED : LOOKS[variant])(colors);
   const inactive = disabled || loading;
+  // Filled and outlined buttons stand on a darker edge and sink into it when pressed; quiet ones
+  // and disabled ones lie flat.
+  const edge = inactive
+    ? null
+    : look.background.startsWith('#')
+      ? shade(look.background, 0.28)
+      : (look.border ?? null);
 
   return (
     <Pressable
@@ -96,17 +108,23 @@ export function Button({
           backgroundColor: look.background,
           borderWidth: look.border ? 1.5 : 0,
           borderColor: look.border,
+          borderBottomWidth: edge ? (pressed ? 1.5 : EDGE) : look.border ? 1.5 : 0,
+          borderBottomColor: edge ?? look.border,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: alignStart ? 'flex-start' : 'center',
           gap: 8,
-          opacity: pressed && !inactive ? 0.85 : 1,
-          transform: [{ scale: pressed && !inactive ? 0.97 : 1 }],
+          opacity: pressed && !edge && !inactive ? 0.7 : 1,
+          transform: [{ translateY: pressed && edge ? EDGE - 1.5 : 0 }],
         },
         style,
       ]}
     >
-      {loading ? <Spinner color={look.text} size={22} /> : null}
+      {loading ? (
+        <Spinner color={look.text} size={22} />
+      ) : icon ? (
+        <Icon name={icon} color={look.text} size={22} strokeWidth={2.2} />
+      ) : null}
       <View style={{ flexShrink: 1 }}>
         <Text variant={TextVariant.BodyStrong} color={{ raw: look.text }} align="center">
           {label}
