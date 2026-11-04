@@ -78,21 +78,21 @@ test('the bar leaves out empty shares and is as long as the points against the w
   expect(antonia.barLabel).toBe('Antonia: 60 Punkte. Oben 3, Bonus 0, Unten 57');
 });
 
-test('the chips: Yatzy, and the missed bonus with its progress on a one-sheet game', () => {
+test('the legend leaves out a bonus nobody reached', () => {
+  const state = finished({
+    [LUKAS.id]: [{ [Category.Ones]: 3, [Category.Chance]: 22 }],
+    [ANTONIA.id]: [{ [Category.Chance]: 20 }],
+  });
+
+  expect(standings(state).legend).toEqual([BarPart.Upper, BarPart.Lower]);
+});
+
+test('the Yatzy chip marks whoever scored one', () => {
   const state = finished({
     [LUKAS.id]: [{ ...UPPER_63, [Category.Yatzy]: 50 }],
     [ANTONIA.id]: [{ [Category.Sixes]: 24 }],
   });
 
-  expect(row(state, LUKAS.id)).toMatchObject({ yatzy: true, noBonus: null });
-  expect(row(state, ANTONIA.id)).toMatchObject({ yatzy: false, noBonus: 'Kein Bonus · 24/63' });
-});
-
-test('no bonus chip when several sheets are summed', () => {
-  const state = finished(
-    { [LUKAS.id]: [{ [Category.Sixes]: 24 }, {}, {}], [ANTONIA.id]: [{}, {}, {}] },
-    PresetId.Triple,
-  );
-
-  expect(row(state, LUKAS.id).noBonus).toBeNull();
+  expect(row(state, LUKAS.id).yatzy).toBe(true);
+  expect(row(state, ANTONIA.id).yatzy).toBe(false);
 });

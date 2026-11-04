@@ -7,6 +7,8 @@ import { Text, TextVariant } from './Text';
 
 type HeaderProps = {
   title?: string;
+  /** A quiet line under the title: when a saved game was played. */
+  subtitle?: string;
   leading?: { icon: IconName; label: string; onPress: () => void };
   trailing?: ReactNode;
   variant?: TextVariant;
@@ -15,6 +17,7 @@ type HeaderProps = {
 /** Back/close button, title, optional action on the right. */
 export function Header({
   title,
+  subtitle,
   leading,
   trailing,
   variant = TextVariant.ScreenTitle,
@@ -43,6 +46,11 @@ export function Header({
         {title ? (
           <Text variant={variant} numberOfLines={1} accessibilityRole="header">
             {title}
+          </Text>
+        ) : null}
+        {subtitle ? (
+          <Text variant={TextVariant.Caption} color="muted" numberOfLines={1}>
+            {subtitle}
           </Text>
         ) : null}
       </View>

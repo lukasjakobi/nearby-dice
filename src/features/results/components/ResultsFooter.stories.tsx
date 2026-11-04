@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { View } from 'react-native';
 import { fn } from 'storybook/test';
 
-import { PresetId } from '@/domain';
 import { i18n } from '@/i18n';
 
 import { RematchAction } from '../hooks';
@@ -14,7 +13,6 @@ const meta: Meta<typeof ResultsFooter> = {
   component: ResultsFooter,
   parameters: { screen: true },
   args: {
-    preset: PresetId.Classic,
     action: RematchAction.Vote,
     votes: VOTES,
     onVote: fn(),
@@ -40,9 +38,8 @@ const labels = (leave: LeaveKey = 'results.endHost') => ({
   waitingText: i18n.t('results.waitingForOthers'),
 });
 
-/** The host can change the mode for the rematch. */
+/** Everyone's vote above the host's rematch button. */
 export const HostVoting: Story = {
-  args: { onChangePreset: fn() },
   render: (args) => <ResultsFooter {...args} {...labels()} />,
 };
 
@@ -54,6 +51,6 @@ export const GuestWaiting: Story = {
 
 /** Training: no votes, just play again. */
 export const Training: Story = {
-  args: { action: RematchAction.Restart, votes: [], onChangePreset: fn() },
+  args: { action: RematchAction.Restart, votes: [] },
   render: (args) => <ResultsFooter {...args} {...labels('results.training.home')} />,
 };

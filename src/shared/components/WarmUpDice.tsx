@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 
 import { rollDie } from '@/domain';
 import { DieFace } from '@/ui';
-import { FeltTray } from '@/shared';
+import { FeltTray } from './FeltTray';
 
 const TILTS = [-4, 3, -2, 4, -3];
 const SHAKE_MS = 320;

@@ -5,32 +5,23 @@ import { renderScreen } from '@/test/render';
 
 import { NearbyRounds } from '../components/NearbyRounds';
 
-test('searching shows the small title spinner and skeletons with a disabled refresh button', async () => {
+test('searching shows the radar and no way to refresh it by hand', async () => {
   await renderScreen(
-    <NearbyRounds rounds={[]} scanning onJoin={jest.fn()} onRefresh={jest.fn()} error={false} />,
+    <NearbyRounds rounds={[]} onJoin={jest.fn()} onRetry={jest.fn()} error={false} />,
   );
 
   expect(screen.getByRole('progressbar', { name: t('join.scanning') })).toBeTruthy();
   expect(screen.root?.queryAll((node) => node.props.refreshControl != null)).toHaveLength(0);
-  expect(screen.queryByText(t('join.nearbyEmpty'))).toBeNull();
   expect(screen.root?.queryAll((node) => node.props.accessibilityState?.busy)).toHaveLength(1);
-  expect(screen.getByLabelText(t('join.refresh'))).toBeDisabled();
+  expect(screen.queryByText(t('join.retry'))).toBeNull();
 });
 
-test('an empty search offers a manual refresh', async () => {
-  const onRefresh = jest.fn();
-  await renderScreen(
-    <NearbyRounds
-      rounds={[]}
-      scanning={false}
-      onJoin={jest.fn()}
-      onRefresh={onRefresh}
-      error={false}
-    />,
-  );
+test('a failed search replaces the radar with the error and a retry', async () => {
+  const onRetry = jest.fn();
+  await renderScreen(<NearbyRounds rounds={[]} onJoin={jest.fn()} onRetry={onRetry} error />);
 
-  expect(screen.getByText(t('join.nearbyEmpty'))).toBeTruthy();
-  expect(screen.queryByLabelText(t('join.scanning'))).toBeNull();
-  await fireEvent.press(screen.getByLabelText(t('join.refresh')));
-  expect(onRefresh).toHaveBeenCalledTimes(1);
+  expect(screen.getByText(t('join.scanFailed'))).toBeTruthy();
+  expect(screen.queryByRole('progressbar', { name: t('join.scanning') })).toBeNull();
+  await fireEvent.press(screen.getByText(t('join.retry')));
+  expect(onRetry).toHaveBeenCalledTimes(1);
 });

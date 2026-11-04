@@ -97,13 +97,13 @@ src/
                               (+ .web: per-tab data), profile, settings, stats, interrupted (zustand)
   i18n/                       i18next setup, locales/de.json + en.json, format (names, times)
   ui/                         theme/ (tokens, typography, ThemeProvider), Text, Button, IconButton,
-                              Chip, Screen, Header, Section, Card, CollapsibleCard, TextField,
-                              Switch, Slider, Choice, Footer, Avatar, Tag, Spinner, Skeleton,
-                              PageDots, StepList, Banner, StatusView, Dialog, BottomSheet, Toast,
-                              DieFace, Logo, icons
+                              Chip, Screen, Header, Section, Card, CollapsibleCard, ListGroup,
+                              ListRow, IconBadge, TextField, Switch, Slider, Choice, Footer,
+                              Avatar, Tag, Spinner, Skeleton, PageDots, StepList, Banner,
+                              StatusView, Dialog, BottomSheet, Toast, DieFace, Confetti, Logo, icons
   features/<screen|layout>/   index.ts barrel, Screen (or Layout), hooks/, view/, components/,
                               __tests__/
-  shared/                     components/ (PlayerRow, PlayersSection, PresetGrid, PresetRow, PresetSheet, RulesSheet …),
+  shared/                     components/ (LobbyHero, PlayerRow, PlayersSection, PresetGrid, PresetRow, PresetSheet, RulesSheet …),
                               hooks/ (useFeedback, useBackAction, useProfileForm …), navigation/
                               (navigate, Route enum), permissions/, view/ (rulesSummary, lobbyRows)
   lib/                        typed Emitter/Store, timers and delays, ids, harness (URL options)
@@ -454,8 +454,11 @@ whole rounds across browser tabs without radios. How to use it:
   and reloads, so resuming can be tested.
 - **Permission and radio states** follow `?permission=denied|blocked|unavailable` and
   `?radio=bluetooth-off|location-off`; without them the web transport reports granted and ready.
+- **The update card**, which only Android release builds have, shows in Settings frozen in one
+  `UpdateStatus` with `?update=available` (or `checking`, `upToDate`, `downloading` …).
 - **Scenarios** (`?scenario=`, `src/dev/`) build one screen's state: the phone on screen plus bots
-  in the same page, on a channel of their own, with storage that starts empty. The page reports
+  in the same page, on a channel of their own (or, for `join-nearby`, on the app's channel, so the
+  phone on screen finds their round), with storage that starts empty. The page reports
   `<html data-scenario="ready">` (or `failed`). `?seed=` changes the dice; the default seed makes
   every run roll the same.
 - **Dev builds only.** `app/_layout.tsx` requires `@/dev` behind `__DEV__`, so release bundles drop

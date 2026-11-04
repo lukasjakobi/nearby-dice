@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { Avatar, mix, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, CollapsibleCard, mix, Text, TextVariant, useTheme } from '@/ui';
 
 import type { CompareRow, RankRow } from '../view';
 import { ResultsCard } from './ResultsCard';
@@ -13,17 +13,19 @@ type ScoreComparisonProps = {
   /** One column per player, in ranking order. */
   columns: RankRow[];
   rows: CompareRow[];
+  /** Folded away under its title, so the standings above keep the screen. */
+  collapsed?: boolean;
 };
 
 /** "Alle Felder im Vergleich": every field side by side. */
-export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
+export function ScoreComparison({ columns, rows, collapsed = false }: ScoreComparisonProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const width = columnWidth(columns.length);
   const cellWidth = Math.min(40, width - 6);
 
-  return (
-    <ResultsCard title={t('results.compare')}>
+  const table = (
+    <>
       <View style={[styles.row, styles.head, { borderTopColor: colors.line }]}>
         <Text variant={TextVariant.Body} size={13} color="muted" style={styles.flex}>
           {t('results.field')}
@@ -68,12 +70,12 @@ export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
                 variant={TextVariant.Body}
                 size={14}
                 weight={cell.best ? 700 : 400}
-                color={cell.best ? 'ink' : 'muted'}
+                color={cell.best ? 'primary' : 'muted'}
                 align="center"
                 style={[
                   styles.value,
                   { minWidth: cellWidth },
-                  cell.best && { backgroundColor: mix(colors.primary, colors.surface, 0.16) },
+                  cell.best && { backgroundColor: mix(colors.primary, colors.surface, 0.2) },
                 ]}
               >
                 {cell.value}
@@ -82,7 +84,13 @@ export function ScoreComparison({ columns, rows }: ScoreComparisonProps) {
           ))}
         </View>
       ))}
-    </ResultsCard>
+    </>
+  );
+
+  return collapsed ? (
+    <CollapsibleCard title={t('results.compare')}>{table}</CollapsibleCard>
+  ) : (
+    <ResultsCard title={t('results.compare')}>{table}</ResultsCard>
   );
 }
 

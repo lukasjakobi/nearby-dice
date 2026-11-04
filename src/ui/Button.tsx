@@ -24,6 +24,10 @@ export enum ButtonVariant {
   Accent = 'accent',
   /** Small action inside the amber banner: "Optionen". */
   OnAccent = 'on-accent',
+  /** Text only, for a way out that should not compete: "Später", "Runde beenden". */
+  Quiet = 'quiet',
+  /** Text only in red, for a destructive action kept apart from the main one. */
+  QuietDanger = 'quiet-danger',
 }
 
 type Look = { background: string; text: string; border?: string };
@@ -41,7 +45,12 @@ const LOOKS: Record<ButtonVariant, (c: Palette) => Look> = {
   [ButtonVariant.TonalDanger]: (c) => ({ background: c.surface2, text: c.danger }),
   [ButtonVariant.Accent]: (c) => ({ background: c.accent, text: c.onAccent }),
   [ButtonVariant.OnAccent]: (c) => ({ background: c.onAccent, text: c.accent }),
+  [ButtonVariant.Quiet]: (c) => ({ background: 'transparent', text: c.muted }),
+  [ButtonVariant.QuietDanger]: (c) => ({ background: 'transparent', text: c.danger }),
 };
+
+/** Disabled buttons turn flat grey with readable text instead of fading out. */
+const DISABLED: (c: Palette) => Look = (c) => ({ background: c.surface2, text: c.muted });
 
 export type ButtonProps = {
   label: string;
@@ -69,7 +78,7 @@ export function Button({
   accessibilityHint,
 }: ButtonProps) {
   const { colors } = useTheme();
-  const look = LOOKS[variant](colors);
+  const look = (disabled && !loading ? DISABLED : LOOKS[variant])(colors);
   const inactive = disabled || loading;
 
   return (
@@ -91,7 +100,7 @@ export function Button({
           alignItems: 'center',
           justifyContent: alignStart ? 'flex-start' : 'center',
           gap: 8,
-          opacity: disabled ? 0.45 : pressed ? 0.85 : 1,
+          opacity: pressed && !inactive ? 0.85 : 1,
           transform: [{ scale: pressed && !inactive ? 0.97 : 1 }],
         },
         style,

@@ -27,7 +27,6 @@ export function StatsRow({ stats }: { stats: StatTile[] }) {
             borderWidth: 1.5,
             backgroundColor: mix(stat.tint, colors.surface, 0.2),
             borderColor: mix(stat.tint, colors.line, 0.55),
-            transform: [{ rotate: `${stat.tilt}deg` }],
           }}
         >
           <View

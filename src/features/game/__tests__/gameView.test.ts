@@ -4,6 +4,7 @@ import { DEFAULT_RULES, PRESETS, PresetId } from '@/domain/rules';
 import type { GameState } from '@/domain/engine';
 import type { Dice } from '@/domain/roll';
 import { t } from '@/test/i18n';
+import { PLAYER_COLOR_HEX } from '@/ui';
 import { ConnectionStatus, Role } from '@/session/types';
 import {
   JONAS,
@@ -133,6 +134,7 @@ describe("another player's turn", () => {
       kind: ControlKind.Waiting,
       text: 'Jonas ist dran',
       busy: true,
+      avatar: { initial: 'J', color: PLAYER_COLOR_HEX[JONAS.color] },
       rollsText: '2\u00a0Würfe übrig',
       rollsLabel: 'Jonas: 2\u00a0Würfe übrig',
       rollsLeft: 2,

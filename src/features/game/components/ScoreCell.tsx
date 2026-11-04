@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Font, Icon, IconName, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
+import { Font, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
 import type { ColorToken, Palette } from '@/ui';
 
 import { CellState } from '../view';
@@ -10,65 +10,58 @@ import { CategoryIcon } from './CategoryIcon';
 type CellLook = {
   background: string;
   border: string;
-  dashed: boolean;
   iconOpacity: number;
   label: ColorToken;
   labelWeight: 400 | 600;
   valueBackground: string;
   value: ColorToken;
   valueWeight: 400 | 600;
-  check: boolean;
 };
 
-/** The three cell states (plus the red zero preview), one look each. */
+/**
+ * One look per state. What can be scored this roll is a solid pill; a zero stays neutral, since
+ * striking a field is a choice, not a mistake; entered points sit quietly on a filled cell.
+ */
 const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
   [CellState.Filled]: (c) => ({
     background: c.surface2,
-    border: 'transparent',
-    dashed: false,
-    iconOpacity: 0.5,
+    border: c.surface2,
+    iconOpacity: 0.45,
     label: 'muted',
     labelWeight: 400,
     valueBackground: 'transparent',
     value: 'ink',
     valueWeight: 600,
-    check: true,
   }),
   [CellState.Preview]: (c) => ({
-    background: mix(c.primary, c.surface, 0.06),
-    border: mix(c.primary, c.line, 0.4),
-    dashed: false,
+    background: c.surface,
+    border: mix(c.primary, c.line, 0.45),
     iconOpacity: 1,
     label: 'ink',
     labelWeight: 600,
-    valueBackground: mix(c.primary, c.surface, 0.14),
-    value: 'primary',
+    valueBackground: c.primary,
+    value: 'onPrimary',
     valueWeight: 600,
-    check: false,
   }),
   [CellState.PreviewZero]: (c) => ({
-    background: mix(c.danger, c.surface, 0.08),
-    border: mix(c.danger, c.line, 0.55),
-    dashed: false,
-    iconOpacity: 1,
+    background: c.surface,
+    border: c.line,
+    iconOpacity: 0.8,
     label: 'ink',
-    labelWeight: 600,
-    valueBackground: mix(c.danger, c.surface, 0.16),
-    value: 'danger',
+    labelWeight: 400,
+    valueBackground: c.surface2,
+    value: 'muted',
     valueWeight: 600,
-    check: false,
   }),
   [CellState.Open]: (c) => ({
-    background: 'transparent',
+    background: c.surface,
     border: c.line,
-    dashed: true,
-    iconOpacity: 0.6,
-    label: 'muted',
+    iconOpacity: 0.7,
+    label: 'ink',
     labelWeight: 400,
     valueBackground: 'transparent',
     value: 'muted',
     valueWeight: 400,
-    check: false,
   }),
 };
 
@@ -82,8 +75,16 @@ type ScoreCellProps = {
 export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
   const { colors } = useTheme();
   const look = LOOKS[cell.state](colors);
-  const background = selected ? mix(colors.primary, colors.surface, 0.18) : look.background;
+  const background = selected ? mix(colors.primary, colors.surface, 0.16) : look.background;
   const border = selected ? colors.primary : look.border;
+  // Someone else's possible points: outlined, so a watcher doesn't read them as entered.
+  const watched = cell.state === CellState.Preview && !cell.pickable;
+  const valueBackground = selected
+    ? colors.primary
+    : watched
+      ? alpha(colors.primary, 0.14)
+      : look.valueBackground;
+  const valueColor = selected ? 'onPrimary' : watched ? 'primary' : look.value;
   // "Kleine Straße" wraps at its space; a single word like "Dreierpasch" shrinks instead of
   // breaking in the middle, and so does a name with a hint below it.
   const singleLine = cell.hint !== null || !cell.label.includes(' ');
@@ -97,11 +98,7 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
       accessibilityState={{ disabled: !cell.pickable, selected }}
       style={({ pressed }) => [
         styles.cell,
-        {
-          backgroundColor: background,
-          borderColor: border,
-          borderStyle: look.dashed ? 'dashed' : 'solid',
-        },
+        { backgroundColor: background, borderColor: border },
         pressed && styles.cellPressed,
       ]}
     >
@@ -135,18 +132,10 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
           </Text>
         ) : null}
       </View>
-      {look.check || selected ? (
-        <Icon
-          name={IconName.Check}
-          color={selected ? colors.primary : colors.ok}
-          size={14}
-          strokeWidth={3.2}
-        />
-      ) : null}
-      <View style={[styles.value, { backgroundColor: look.valueBackground }]}>
+      <View style={[styles.value, { backgroundColor: valueBackground }]}>
         <Text
           size={15}
-          color={look.value}
+          color={valueColor}
           style={{ fontFamily: fontFamily(Font.Display, look.valueWeight) }}
         >
           {cell.value}
@@ -163,7 +152,7 @@ const styles = StyleSheet.create({
     gap: 6,
     flex: 1,
     minHeight: 38,
-    maxHeight: 46,
+    maxHeight: 62,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -180,10 +169,10 @@ const styles = StyleSheet.create({
   label: { flex: 1, minWidth: 0 },
   hint: { opacity: 0.8 },
   value: {
-    minWidth: 26,
-    height: 24,
-    paddingHorizontal: 6,
-    borderRadius: 8,
+    minWidth: 30,
+    height: 26,
+    paddingHorizontal: 7,
+    borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -6,9 +6,10 @@ import {
   Countdown,
   FeedbackSettingsSheet,
   LobbyHeaderActions,
+  LobbyHero,
   PlayersSection,
-  PresetRow,
   RulesSheet,
+  WarmUpDice,
 } from '@/shared';
 
 import { ReconnectFailedView, WaitingForHostBar } from './components';
@@ -39,7 +40,7 @@ export function GuestLobbyScreen() {
       <Header
         title={lobby.title}
         leading={{ icon: IconName.Close, label: t('lobby.leaveLabel'), onPress: lobby.askLeave }}
-        trailing={<LobbyHeaderActions onSettings={lobby.openSettings} onRules={lobby.openRules} />}
+        trailing={<LobbyHeaderActions onSettings={lobby.openSettings} />}
       />
       {lobby.reconnecting ? (
         <View style={{ paddingHorizontal: 20, paddingTop: 4 }}>
@@ -57,21 +58,23 @@ export function GuestLobbyScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 20,
-          paddingTop: 16,
-          paddingBottom: 12,
-          gap: 14,
+          paddingTop: 8,
+          paddingBottom: 16,
+          gap: 22,
         }}
         style={{ opacity: lobby.reconnecting ? 0.5 : 1 }}
       >
-        <PresetRow preset={lobby.preset} />
+        <LobbyHero code={lobby.code} preset={lobby.preset} onRules={lobby.openRules} />
         <PlayersSection
           rows={lobby.rows}
           maxPlayers={lobby.maxPlayers}
           freeSeat={lobby.hasFreeSeat ? { title: t('lobby.freeSeat') } : null}
         />
+        {/* Something for the hands while the host gets everyone in. */}
+        <WarmUpDice />
       </ScrollView>
 
-      <WaitingForHostBar />
+      <WaitingForHostBar host={lobby.hostAvatar} />
 
       <RulesSheet visible={lobby.rulesOpen} preset={lobby.preset} onClose={lobby.closeRules} />
       <FeedbackSettingsSheet

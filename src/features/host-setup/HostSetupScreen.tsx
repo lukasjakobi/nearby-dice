@@ -41,6 +41,9 @@ export function HostSetupScreen() {
         }}
         keyboardShouldPersistTaps="handled"
       >
+        {/* The mode is the real decision; the name has a sensible default. */}
+        <PresetGrid value={setup.preset} onChange={setup.choosePreset} onRules={setup.openRules} />
+
         <TextField
           label={t('hostSetup.roundNameLabel')}
           value={setup.roundName}
@@ -48,8 +51,6 @@ export function HostSetupScreen() {
           maxLength={ROUND_NAME_MAX_LENGTH}
           error={setup.roundNameError}
         />
-
-        <PresetGrid value={setup.preset} onChange={setup.choosePreset} onRules={setup.openRules} />
       </ScrollView>
 
       <Footer>

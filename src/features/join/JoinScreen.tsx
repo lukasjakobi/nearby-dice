@@ -44,14 +44,15 @@ export function JoinScreen() {
     ),
     [JoinPhase.Entry]: (
       <>
-        <View style={{ flex: 1, gap: 28, paddingTop: 12 }}>
-          <Text variant={TextVariant.Hero}>{t('join.codeTitle')}</Text>
+        <View style={{ flex: 1, gap: 20, paddingTop: 12 }}>
+          <Text variant={TextVariant.DialogTitle} accessibilityRole="header">
+            {t('join.codeTitle')}
+          </Text>
           <CodeInput value={flow.code} onChange={flow.setCode} />
           <NearbyRounds
             rounds={flow.rounds}
-            scanning={flow.scanning}
             onJoin={flow.joinRound}
-            onRefresh={flow.refresh}
+            onRetry={flow.retrySearch}
             error={flow.scanError}
           />
         </View>

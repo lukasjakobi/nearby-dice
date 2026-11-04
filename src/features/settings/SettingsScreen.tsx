@@ -4,18 +4,20 @@ import { ScrollView, View } from 'react-native';
 import { LanguageMode, ThemeMode } from '@/store';
 import { SwitchList } from '@/shared';
 import {
-  Button,
-  ButtonVariant,
   Choice,
   ChoiceStyle,
   Dialog,
   FadeIn,
   Header,
+  IconBadge,
   IconName,
+  ListGroup,
+  ListRow,
   Screen,
   Section,
   Text,
   TextVariant,
+  useTheme,
 } from '@/ui';
 
 import { NearbyPermissionCard, ProfileCard, UpdateCard } from './components';
@@ -26,6 +28,7 @@ const LANGUAGES = [LanguageMode.System, LanguageMode.German, LanguageMode.Englis
 
 export function SettingsScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const screen = useSettingsScreen();
   const { settings } = screen;
   const themeOptions = THEMES.map((value) => ({ value, label: t(`labels.themeMode.${value}`) }));
@@ -55,6 +58,21 @@ export function SettingsScreen() {
           />
         ) : null}
 
+        <Section title={t('settings.game')}>
+          <SwitchList
+            rows={switches}
+            onToggle={settings.toggle}
+            onVolume={screen.feedbackSwitches.setVolume}
+          />
+        </Section>
+
+        <Section title={t('settings.connection')}>
+          <NearbyPermissionCard
+            granted={screen.permissionGranted}
+            onOpenSettings={screen.openSystemSettings}
+          />
+        </Section>
+
         <Section title={t('settings.appearance')}>
           <Choice
             label={t('settings.appearance')}
@@ -75,29 +93,15 @@ export function SettingsScreen() {
           />
         </Section>
 
-        <Section title={t('settings.game')}>
-          <SwitchList
-            rows={switches}
-            onToggle={settings.toggle}
-            onVolume={screen.feedbackSwitches.setVolume}
-          />
-        </Section>
-
-        <Section title={t('settings.connection')}>
-          <NearbyPermissionCard
-            granted={screen.permissionGranted}
-            onOpenSettings={screen.openSystemSettings}
-          />
-        </Section>
-
         <Section title={t('settings.data')}>
-          <Button
-            label={t('settings.resetStats')}
-            onPress={screen.askReset}
-            variant={ButtonVariant.DangerOutline}
-            alignStart
-            height={56}
-          />
+          <ListGroup>
+            <ListRow
+              title={t('settings.resetStats')}
+              titleColor="danger"
+              leading={<IconBadge icon={IconName.Trash} color={colors.danger} />}
+              onPress={screen.askReset}
+            />
+          </ListGroup>
           {screen.resetDone ? (
             <FadeIn>
               <Text

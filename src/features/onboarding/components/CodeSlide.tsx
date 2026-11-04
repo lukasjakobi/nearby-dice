@@ -1,12 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Font, fontFamily, Icon, IconName, Text, useTheme } from '@/ui';
+import { PlayerColor } from '@/domain';
+import { Font, fontFamily, Icon, IconName, PLAYER_COLOR_HEX, Text, useTheme } from '@/ui';
 import { RoundCodeBoxes } from '@/shared';
 
+import { RoleBadge } from './RoleBadge';
 import { SlideText } from './SlideText';
 
 const DEMO_CODE = '7K4M';
+/** Who shows the code and who types it: the host's card, a guest's field. */
+const HOST = { initial: 'L', color: PLAYER_COLOR_HEX[PlayerColor.Amber] };
+const GUEST = { initial: 'A', color: PLAYER_COLOR_HEX[PlayerColor.Sky] };
 
 export function CodeSlide() {
   const { t } = useTranslation();
@@ -29,6 +34,7 @@ export function CodeSlide() {
             {t('onboarding.roundCode').toUpperCase()}
           </Text>
           <RoundCodeBoxes code={DEMO_CODE} boxWidth={56} />
+          <RoleBadge {...HOST} />
         </View>
         <Icon name={IconName.ArrowDown} color={colors.muted} size={28} />
         <View
@@ -55,6 +61,7 @@ export function CodeSlide() {
               {char}
             </Text>
           ))}
+          <RoleBadge {...GUEST} />
         </View>
       </View>
       <SlideText

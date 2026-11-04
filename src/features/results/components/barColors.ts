@@ -7,5 +7,6 @@ import { BarPart } from '../view';
 export const BAR_COLORS: Record<BarPart, (c: Palette) => { fill: string; label: string }> = {
   [BarPart.Upper]: (c) => ({ fill: c.primary, label: c.onPrimary }),
   [BarPart.Bonus]: (c) => ({ fill: c.accent, label: c.onAccent }),
-  [BarPart.Lower]: (c) => ({ fill: mix(c.ink, c.surface2, 0.82), label: c.bg }),
+  // Quieter than the scores beside it: a mid grey in either theme.
+  [BarPart.Lower]: (c) => ({ fill: mix(c.ink, c.surface2, 0.55), label: c.bg }),
 };

@@ -6,7 +6,7 @@ import { LobbyHeaderActions } from './LobbyHeaderActions';
 const meta: Meta<typeof LobbyHeaderActions> = {
   title: 'Shared/Lobby/LobbyHeaderActions',
   component: LobbyHeaderActions,
-  args: { onSettings: fn(), onRules: fn() },
+  args: { onSettings: fn() },
 };
 
 export default meta;

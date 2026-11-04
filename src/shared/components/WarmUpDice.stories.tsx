@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { WarmUpDice } from './WarmUpDice';
 
 const meta: Meta<typeof WarmUpDice> = {
-  title: 'Features/Home/WarmUpDice',
+  title: 'Shared/Dice/WarmUpDice',
   component: WarmUpDice,
 };
 

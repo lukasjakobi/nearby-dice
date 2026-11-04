@@ -25,6 +25,12 @@ if (Platform.OS === 'web') {
     if (String(args[0]).includes('for a non-boolean attribute')) return;
     logError(...args);
   };
+
+  // A browser draws a focus ring around a focused text field; phones don't, and the field's own
+  // border already shows focus, so the screenshots would show a ring no player ever sees.
+  const style = document.createElement('style');
+  style.textContent = 'input:focus-visible { outline: none; }';
+  document.head.append(style);
 }
 
 function report(status: ScenarioStatus, detail?: string): void {

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, ButtonVariant, DieFace, FIXED, Spinner, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, Button, ButtonVariant, DieFace, FIXED, Text, TextVariant, useTheme } from '@/ui';
 
 import { ControlKind } from '../view';
 import type { ControlView, DieView } from '../view';
@@ -46,7 +46,11 @@ export function ActionBar({
       {/* With a field selected the dice straighten into a framed row: this is what gets
           scored, nothing is rolled again. */}
       <View
-        style={[styles.dice, locked && styles.diceLocked]}
+        style={[
+          styles.dice,
+          locked && styles.diceLocked,
+          control.kind === ControlKind.Waiting && styles.diceWatched,
+        ]}
         accessibilityRole="none"
         accessibilityLabel={locked ? t('game.diceLocked') : t('game.dice')}
       >
@@ -63,7 +67,7 @@ export function ActionBar({
           >
             <DieFace
               value={die.value}
-              size={58}
+              size={64}
               held={die.held && !die.locked}
               tilt={die.locked ? 0 : TILTS[i]}
               shakeKey={shakeKeys[i]}
@@ -111,7 +115,9 @@ export function ActionBar({
           <>
             <RollCounter rolls={control} />
             <View style={styles.waiting} accessibilityLiveRegion="polite">
-              {control.busy ? <Spinner color={FIXED.onFelt} size={20} /> : null}
+              <View style={[styles.turnAvatar, !control.busy && styles.turnAvatarAway]}>
+                <Avatar initial={control.avatar.initial} color={control.avatar.color} size={30} />
+              </View>
               <Text
                 variant={TextVariant.Body}
                 size={16}
@@ -155,6 +161,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   diceLocked: { borderColor: 'rgba(255,255,255,0.45)', backgroundColor: 'rgba(255,255,255,0.07)' },
+  // Someone else's dice: shown live, but plainly not mine to touch.
+  diceWatched: { opacity: 0.72 },
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -173,4 +181,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   waitingText: { flexShrink: 1 },
+  turnAvatar: { borderRadius: 999, borderWidth: 2, borderColor: FIXED.onFelt, padding: 1 },
+  turnAvatarAway: { opacity: 0.45 },
 });

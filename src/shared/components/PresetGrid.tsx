@@ -3,7 +3,18 @@ import { Pressable, View } from 'react-native';
 
 import { PRESET_ORDER } from '@/domain';
 import type { PresetId } from '@/domain';
-import { Chip, Icon, IconName, Text, TextVariant, useTheme } from '@/ui';
+import {
+  alpha,
+  Chip,
+  Icon,
+  IconBadge,
+  IconName,
+  RADIUS,
+  Section,
+  Text,
+  TextVariant,
+  useTheme,
+} from '@/ui';
 
 import { PRESET_ICON } from './presetIcons';
 
@@ -20,31 +31,27 @@ type PresetGridProps = {
   onChange: (id: PresetId) => void;
   /** Which presets to offer, in display order. */
   presets?: readonly PresetId[];
-  /** Opens the rules of the chosen preset, from the "Regeln" chip beside the label. */
+  /** Opens the rules of the chosen preset, from the "Regeln" chip on its card. */
   onRules: () => void;
 };
 
 /**
- * "Spielstil  ⓘ Regeln" over the presets as a dock of icon buttons, four per row, each named
- * underneath.
+ * "Spielstil": the presets as a dock of icon tiles, four per row, and below them a card that says
+ * what the chosen one is about, with its rules a tap away.
  */
 export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }: PresetGridProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   return (
-    <View style={{ gap: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text variant={TextVariant.Label}>{t('hostSetup.styleLabel')}</Text>
-        <Chip label={t('lobby.rulesButton')} leading={IconName.Info} onPress={onRules} />
-      </View>
+    <Section title={t('hostSetup.styleLabel')} gap={14}>
       <View
         accessibilityRole="radiogroup"
         accessibilityLabel={t('hostSetup.styleLabel')}
-        style={{ gap: 14 }}
+        style={{ gap: 12 }}
       >
         {rows(presets).map((row) => (
-          <View key={row.join()} style={{ flexDirection: 'row', gap: 4 }}>
+          <View key={row.join()} style={{ flexDirection: 'row', gap: 8 }}>
             {row.map((id) => {
               const selected = id === value;
               const title = t(`labels.preset.${id}.title`);
@@ -56,13 +63,18 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
                   accessibilityRole="radio"
                   accessibilityLabel={title}
                   accessibilityState={{ checked: selected }}
-                  style={{ flex: 1, alignItems: 'center', gap: 6 }}
+                  style={({ pressed }) => ({
+                    flex: 1,
+                    alignItems: 'center',
+                    gap: 6,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  })}
                 >
                   <View
                     style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 18,
+                      alignSelf: 'stretch',
+                      aspectRatio: 1.15,
+                      borderRadius: RADIUS.card,
                       borderWidth: 1.5,
                       borderColor: selected ? colors.primary : colors.line,
                       backgroundColor: selected ? colors.primary : colors.surface,
@@ -73,7 +85,7 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
                     <Icon
                       name={PRESET_ICON[id]}
                       color={selected ? colors.onPrimary : colors.ink}
-                      size={28}
+                      size={30}
                       strokeWidth={2}
                     />
                   </View>
@@ -81,7 +93,8 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
                     variant={TextVariant.Small}
                     weight={600}
                     align="center"
-                    color={selected ? 'primary' : 'muted'}
+                    color={selected ? 'ink' : 'muted'}
+                    numberOfLines={2}
                   >
                     {title}
                   </Text>
@@ -94,6 +107,37 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
           </View>
         ))}
       </View>
-    </View>
+
+      <View
+        accessibilityLiveRegion="polite"
+        style={{
+          flexDirection: 'row',
+          gap: 14,
+          padding: 16,
+          borderRadius: RADIUS.card,
+          borderWidth: 1.5,
+          // Tinted like the chosen tile, so the card reads as its explanation.
+          borderColor: alpha(colors.primary, 0.35),
+          backgroundColor: alpha(colors.primary, 0.08),
+        }}
+      >
+        <IconBadge
+          icon={PRESET_ICON[value]}
+          color={colors.primary}
+          onColor={colors.onPrimary}
+          solid
+          size={44}
+        />
+        <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+          <Text variant={TextVariant.CardTitle}>{t(`labels.preset.${value}.title`)}</Text>
+          <Text variant={TextVariant.Body} color="muted">
+            {t(`labels.preset.${value}.description`)}
+          </Text>
+          <View style={{ flexDirection: 'row', marginTop: 8 }}>
+            <Chip label={t('lobby.rulesButton')} leading={IconName.Info} onPress={onRules} />
+          </View>
+        </View>
+      </View>
+    </Section>
   );
 }

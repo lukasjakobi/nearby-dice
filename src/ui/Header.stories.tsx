@@ -41,3 +41,6 @@ export const WithAction: Story = {
     ),
   },
 };
+
+/** A saved game: the mode as the title, when it was played below. */
+export const WithSubtitle: Story = { args: { title: 'Klassisch', subtitle: 'Heute' } };

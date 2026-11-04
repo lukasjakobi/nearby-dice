@@ -32,6 +32,8 @@ export const Variants: Story = {
       <Button {...args} label="Zug überspringen" variant={ButtonVariant.Tonal} alignStart />
       <Button {...args} label="Aus der Lobby entfernen" variant={ButtonVariant.TonalDanger} />
       <Button {...args} label="Würfeln" variant={ButtonVariant.Accent} height={48} />
+      <Button {...args} label="Später" variant={ButtonVariant.Quiet} />
+      <Button {...args} label="Spiel für alle beenden" variant={ButtonVariant.QuietDanger} />
       <Banner
         message="Verbindung unterbrochen"
         trailing={

@@ -3,7 +3,10 @@
 //   npm run web:shot -- game-my-turn                 a scenario (see --list)
 //   npm run web:shot -- game-six-players --tap Spielstand
 //   npm run web:shot -- home --param radio=bluetooth-off --tap Beitreten
-//   options: --dark  --en  --size 390x844  --seed 7  --param key=value  --out .screenshots
+//   npm run web:shot -- settings --param update=available --show "Nach Updates suchen"
+//   npm run web:shot -- onboarding --tap Weiter --tap Weiter --type Mira
+//   options: --dark  --en  --size 390x844  --seed 7  --param key=value  --type text  --show text
+//            --out .screenshots
 //
 // Uses the dev server on WEB_URL (default http://localhost:8081) and starts one if none answers.
 import { spawn } from 'node:child_process';
@@ -31,6 +34,8 @@ const { values, positionals } = parseArgs({
     list: { type: 'boolean' },
     param: { type: 'string', multiple: true, default: [] },
     tap: { type: 'string', multiple: true, default: [] },
+    show: { type: 'string' },
+    type: { type: 'string' },
     dark: { type: 'boolean' },
     en: { type: 'boolean' },
     size: { type: 'string', default: '390x844' },
@@ -92,6 +97,22 @@ async function shoot(page, url) {
     await page.getByRole('button', { name, exact: true }).filter({ visible: true }).first().click();
     await page.waitForTimeout(SETTLE_MS);
   }
+  if (values.type) {
+    // Into the first visible text field, or wherever focus is (the join code takes it itself).
+    const field = page.getByRole('textbox').filter({ visible: true }).first();
+    if (await field.count()) await field.click();
+    await page.keyboard.type(values.type);
+    await page.waitForTimeout(SETTLE_MS);
+  }
+  if (values.show) {
+    // Scrolls a part below the fold into view, e.g. the update card at the end of Settings.
+    await page
+      .getByText(values.show, { exact: true })
+      .filter({ visible: true })
+      .first()
+      .scrollIntoViewIfNeeded();
+    await page.waitForTimeout(SETTLE_MS);
+  }
 
   return problems;
 }
@@ -115,7 +136,9 @@ async function main() {
   const name = [
     scenario,
     ...values.param.map((param) => param.replace('=', '-')),
-    ...values.tap.map((label) => label.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-')),
+    ...[...values.tap, values.type && `type-${values.type}`, values.show]
+      .filter(Boolean)
+      .map((label) => label.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-')),
     values.dark && 'dark',
     values.en && 'en',
   ]

@@ -34,12 +34,12 @@ export function RematchVoteChip({ chip }: { chip: VoteChip }) {
         { borderColor: colors.bg, opacity: chip.vote === RematchVote.No ? 0.4 : 1 },
       ]}
     >
-      <Avatar initial={chip.avatar.initial} color={chip.avatar.color} size={26} />
+      <Avatar initial={chip.avatar.initial} color={chip.avatar.color} size={34} />
       <View style={[styles.badge, { backgroundColor: badge.background, borderColor: colors.bg }]}>
         {badge.icon ? (
-          <Icon name={badge.icon} color={badge.color} size={9} strokeWidth={4} />
+          <Icon name={badge.icon} color={badge.color} size={10} strokeWidth={4} />
         ) : (
-          <Spinner color={badge.color} size={9} strokeWidth={4} />
+          <Spinner color={badge.color} size={10} strokeWidth={4} />
         )}
       </View>
     </View>
@@ -47,14 +47,14 @@ export function RematchVoteChip({ chip }: { chip: VoteChip }) {
 }
 
 const styles = StyleSheet.create({
-  ring: { alignSelf: 'flex-start', borderWidth: 2, borderRadius: 15 },
+  ring: { alignSelf: 'flex-start', borderWidth: 2, borderRadius: 19 },
   badge: {
     position: 'absolute',
     right: -4,
     bottom: -4,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',

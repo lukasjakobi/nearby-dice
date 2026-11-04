@@ -3,15 +3,31 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking } from 'react-native';
 
+import { HarnessParam, harnessParam } from '@/lib';
 import { PermissionStatus } from '@/net';
 import { useProfileStore, useSettingsStore, useStatsStore } from '@/store';
 import { avatarOf, navigate, ProfileMode, Route, useFeedbackSwitches } from '@/shared';
 
-import { buildUpdateView } from '../view';
+import { buildUpdateView, UpdateStatus } from '../view';
+import type { UpdateState } from '../view';
 
 import { updatesSupported } from './appUpdater';
 import { useAppUpdate } from './useAppUpdate';
 import { useNearbyPermission } from './useNearbyPermission';
+
+/** The release the frozen card names; any version newer than the installed one reads right. */
+const HARNESS_RELEASE = { version: '9.9.0', percent: 42 };
+
+/**
+ * The browser harness has no Android installer, so `?update=available` shows the card frozen in
+ * that state instead (docs/technical-design.md, Browser harness). Phones never have the option.
+ */
+function harnessUpdate(): UpdateState | null {
+  const status = Object.values(UpdateStatus).find((s) => s === harnessParam(HarnessParam.Update));
+
+  // Every state takes what it needs from the same release and ignores the rest.
+  return status ? ({ status, ...HARNESS_RELEASE } as UpdateState) : null;
+}
 
 export function useSettingsScreen() {
   const { t } = useTranslation();
@@ -24,6 +40,7 @@ export function useSettingsScreen() {
   const [resetDone, setResetDone] = useState(false);
   const version = Constants.expoConfig?.version;
   const appUpdate = useAppUpdate(version);
+  const updateState = harnessUpdate() ?? (updatesSupported ? appUpdate.state : null);
 
   return {
     profile: profile ? { name: profile.name, avatar: avatarOf(profile) } : null,
@@ -44,7 +61,7 @@ export function useSettingsScreen() {
       setResetDone(true);
     },
     version,
-    update: updatesSupported ? buildUpdateView(t, appUpdate.state) : null,
+    update: updateState ? buildUpdateView(t, updateState) : null,
     runUpdate: appUpdate.run,
     editProfile: () => navigate.push(Route.Profile, { mode: ProfileMode.Edit }),
     back: () => navigate.back(),

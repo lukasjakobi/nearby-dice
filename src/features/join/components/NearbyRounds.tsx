@@ -1,71 +1,53 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import {
-  Avatar,
-  FadeIn,
-  IconButton,
-  IconName,
-  SIZE,
-  Skeleton,
-  Spinner,
-  Text,
-  TextVariant,
-  useTheme,
-} from '@/ui';
+import { Avatar, Button, ButtonVariant, FadeIn, Text, TextVariant, useTheme } from '@/ui';
 
 import type { NearbyRoundView } from '../hooks';
+import { ScanPulse } from './ScanPulse';
 
 type NearbyRoundsProps = {
   rounds: NearbyRoundView[];
-  scanning: boolean;
   onJoin: (round: NearbyRoundView) => void;
-  onRefresh: () => void;
+  /** Restarts a search that failed. */
+  onRetry: () => void;
   error: boolean;
 };
 
-/** "In deiner Nähe": skeletons while scanning, rows as rounds appear, empty text at the end. */
-export function NearbyRounds({ rounds, scanning, onJoin, onRefresh, error }: NearbyRoundsProps) {
+/**
+ * "In deiner Nähe": a radar until rounds appear, then a row per round. The search runs as long as
+ * the screen is open, so the radar stays instead of an empty state; only an error replaces it,
+ * with a way to search again.
+ */
+export function NearbyRounds({ rounds, onJoin, onRetry, error }: NearbyRoundsProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   return (
     <View style={{ flex: 1, minHeight: 0, gap: 10 }}>
-      <View
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: SIZE.iconButton }}
-      >
-        <Text variant={TextVariant.CardTitle} accessibilityRole="header">
-          {t('join.nearbyTitle')}
-        </Text>
-        {scanning ? (
-          <Spinner color={colors.primary} size={16} strokeWidth={3} label={t('join.scanning')} />
-        ) : null}
-        <IconButton
-          icon={IconName.Refresh}
-          label={t('join.refresh')}
-          onPress={onRefresh}
-          disabled={scanning}
-          color="primary"
-          style={{ marginLeft: 'auto' }}
-        />
-      </View>
+      <Text variant={TextVariant.CardTitle} accessibilityRole="header">
+        {t('join.nearbyTitle')}
+      </Text>
       <ScrollView contentContainerStyle={{ flexGrow: 1, gap: 8 }}>
-        {scanning && rounds.length === 0 ? (
-          <View accessibilityState={{ busy: true }} style={{ gap: 8 }}>
-            <Skeleton height={64} />
-            <Skeleton height={64} />
+        {/* The search never ends while this screen is open, so there is no "nothing found". */}
+        {rounds.length === 0 && !error ? <ScanPulse label={t('join.scanning')} /> : null}
+        {rounds.length === 0 && error ? (
+          <View style={{ alignItems: 'center', gap: 12, paddingVertical: 20 }}>
+            <Text
+              variant={TextVariant.Body}
+              color="danger"
+              accessibilityRole="alert"
+              align="center"
+            >
+              {t('join.scanFailed')}
+            </Text>
+            <Button
+              label={t('join.retry')}
+              onPress={onRetry}
+              variant={ButtonVariant.Tonal}
+              height={44}
+            />
           </View>
-        ) : null}
-        {!scanning && rounds.length === 0 ? (
-          <Text
-            variant={TextVariant.Body}
-            color={error ? 'danger' : 'muted'}
-            accessibilityRole={error ? 'alert' : undefined}
-            align="center"
-            style={{ paddingVertical: 20 }}
-          >
-            {error ? t('join.scanFailed') : t('join.nearbyEmpty')}
-          </Text>
         ) : null}
         {rounds.map((round) => (
           <FadeIn key={round.endpointId}>

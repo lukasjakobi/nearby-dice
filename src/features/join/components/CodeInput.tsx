@@ -2,13 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { TextInput, View } from 'react-native';
 
 import { ROUND_CODE_LENGTH } from '@/net';
-import { Font, Text, fontFamily, useTheme } from '@/ui';
+import { FIXED, Font, Text, fontFamily, useTheme } from '@/ui';
 
 import { Caret } from './Caret';
 
+/** Typed characters land tipped, like the code's dice in the lobby. */
+const TILTS = [-4, 3, -2, 4];
+
 /**
  * Four large boxes driven by one hidden text field underneath (auto-uppercase,
- * paste fills all four). The active box has a primary border and a caret.
+ * paste fills all four). They are blank dice, as the code shows in the lobby; the active one has
+ * a primary ring and a caret.
  */
 export function CodeInput({
   value,
@@ -32,14 +36,20 @@ export function CodeInput({
               height: 92,
               borderRadius: 20,
               borderWidth: 2.5,
-              borderColor: i === active ? colors.primary : colors.control,
-              backgroundColor: colors.surface,
+              borderBottomWidth: 6,
+              borderColor: i === active ? colors.primary : FIXED.dieEdge,
+              backgroundColor: FIXED.dieFace,
               alignItems: 'center',
               justifyContent: 'center',
+              transform: [{ rotate: value[i] ? `${TILTS[i]}deg` : '0deg' }],
             }}
           >
             {value[i] ? (
-              <Text size={46} style={{ fontFamily: fontFamily(Font.Display, 700), lineHeight: 54 }}>
+              <Text
+                size={46}
+                color={{ raw: FIXED.diePip }}
+                style={{ fontFamily: fontFamily(Font.Display, 700), lineHeight: 54 }}
+              >
                 {value[i]}
               </Text>
             ) : i === value.length ? (

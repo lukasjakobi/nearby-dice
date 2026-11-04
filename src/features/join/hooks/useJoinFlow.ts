@@ -61,8 +61,7 @@ export function useJoinFlow() {
   const [code, setCode] = useState('');
   const [step, setStep] = useState(JoinStep.Search);
   const [error, setError] = useState(JoinError.NotFound);
-  const [refreshing, setRefreshing] = useState(false);
-  const refreshPending = useRef(false);
+  const retryPending = useRef(false);
   const abort = useRef<AbortController | null>(null);
   const mounted = useRef(true);
   const joining = useRef(false);
@@ -100,19 +99,18 @@ export function useJoinFlow() {
   const scanning = SCANNING_PHASES.has(phase);
   useEffect(() => (scanning ? scanner.acquire() : undefined), [scanning, scanner]);
 
-  const refresh = async () => {
-    if (phase !== JoinPhase.Entry || scan.scanning || refreshPending.current || joining.current)
+  /** After a failed search: checks the radios again, then restarts discovery. */
+  const retrySearch = async () => {
+    if (phase !== JoinPhase.Entry || scan.scanning || retryPending.current || joining.current)
       return;
-    refreshPending.current = true;
-    setRefreshing(true);
+    retryPending.current = true;
     try {
       const ready = await ensureReady();
       if (!mounted.current || joining.current) return;
       if (ready) scanner.refresh();
       else setPhase(JoinPhase.Access);
     } finally {
-      refreshPending.current = false;
-      if (mounted.current) setRefreshing(false);
+      retryPending.current = false;
     }
   };
 
@@ -191,7 +189,6 @@ export function useJoinFlow() {
     error,
     canRetry: CAN_RETRY[error],
     canJoin: code.length === ROUND_CODE_LENGTH,
-    scanning: scan.scanning || refreshing,
     scanError: scan.error !== null,
     rounds: scan.rounds.map(({ endpointId, advertisement: ad }): NearbyRoundView => ({
       endpointId,
@@ -206,7 +203,7 @@ export function useJoinFlow() {
     setCode: (input: string) => setCode(normalizeRoundCode(input)),
     permissionSheet: permission.sheet,
     recheck: () => void checkReadiness(),
-    refresh: () => void refresh(),
+    retrySearch: () => void retrySearch(),
     join: () => void join(code),
     joinRound: (round: NearbyRoundView) => {
       if (!round.full) void join(round.code);

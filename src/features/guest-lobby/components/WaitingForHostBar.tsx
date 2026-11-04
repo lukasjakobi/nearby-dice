@@ -1,10 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { Spinner, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, Spinner, Text, TextVariant, useTheme } from '@/ui';
+import type { AvatarView } from '@/shared';
 
-/** The bottom bar of the guest lobby: a spinner and "Warten auf den Gastgeber". */
-export function WaitingForHostBar() {
+/**
+ * The bottom bar of the guest lobby: the host's avatar ringed by a spinner, and "Warten auf den
+ * Gastgeber". Without a known host, the spinner alone.
+ */
+export function WaitingForHostBar({ host }: { host: AvatarView | null }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -25,7 +29,16 @@ export function WaitingForHostBar() {
         borderTopColor: colors.line,
       }}
     >
-      <Spinner color={colors.primary} size={20} />
+      {host ? (
+        <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ position: 'absolute' }}>
+            <Spinner color={colors.primary} size={40} strokeWidth={1.6} />
+          </View>
+          <Avatar initial={host.initial} color={host.color} size={30} />
+        </View>
+      ) : (
+        <Spinner color={colors.primary} size={20} />
+      )}
       <Text variant={TextVariant.Body} size={16} weight={500}>
         {t('lobby.waitingForHost')}
       </Text>

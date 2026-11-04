@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
+import { WarmUpDice } from '@/shared';
 import { Dialog, IconName, Screen, Section, Text, TextVariant } from '@/ui';
 
 import type { Home } from '../hooks';
@@ -13,7 +14,6 @@ import { ResumeSheet } from './ResumeSheet';
 import { StatsModeChips } from './StatsModeChips';
 import { StatsRow } from './StatsRow';
 import { TrainingTile } from './TrainingTile';
-import { WarmUpDice } from './WarmUpDice';
 
 /** Start screen body: header, greeting, play tiles, stats and recent games. */
 export function HomeContent({ home }: { home: Home }) {

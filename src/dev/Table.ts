@@ -18,14 +18,21 @@ const CHANNEL_PREFIX = 'nearbydice-scenario-';
 
 /**
  * The phones of one scenario. They all live in this page, on a channel of their own that other
- * tabs never hear. Bots play the other phones, and the one on screen too until the scenario has
+ * tabs never hear (or, in range, on the app's channel). Bots play the other phones, and the one on screen too until the scenario has
  * the state it wants.
  */
 export class Table {
-  private readonly channel = CHANNEL_PREFIX + randomId(6);
+  /** `undefined`: the app's own channel. */
+  private readonly channel: string | undefined;
   private readonly bots: BotPlayer[] = [];
 
-  constructor(private readonly rng: Rng) {}
+  /** `inRange` seats the bots where the phone on screen can find their rounds, as on Join. */
+  constructor(
+    private readonly rng: Rng,
+    { inRange = false }: { inRange?: boolean } = {},
+  ) {
+    this.channel = inRange ? undefined : CHANNEL_PREFIX + randomId(6);
+  }
 
   host(profile: Profile, preset = PresetId.Classic): Promise<HostSession> {
     return HostSession.open({
