@@ -4,6 +4,7 @@ import { fn } from 'storybook/test';
 
 import { Banner } from './Banner';
 import { Button, ButtonVariant } from './Button';
+import { IconName } from './icons/Icon';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Actions/Button',
@@ -31,7 +32,13 @@ export const Variants: Story = {
       <Button {...args} label="Profil zurücksetzen" variant={ButtonVariant.DangerOutline} />
       <Button {...args} label="Zug überspringen" variant={ButtonVariant.Tonal} alignStart />
       <Button {...args} label="Aus der Lobby entfernen" variant={ButtonVariant.TonalDanger} />
-      <Button {...args} label="Würfeln" variant={ButtonVariant.Accent} height={48} />
+      <Button
+        {...args}
+        label="Würfeln"
+        icon={IconName.Dice}
+        variant={ButtonVariant.Accent}
+        height={48}
+      />
       <Button {...args} label="Später" variant={ButtonVariant.Quiet} />
       <Button {...args} label="Spiel für alle beenden" variant={ButtonVariant.QuietDanger} />
       <Banner

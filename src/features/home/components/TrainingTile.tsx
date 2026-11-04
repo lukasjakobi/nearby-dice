@@ -1,7 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { alpha, FIXED, Font, fontFamily, Icon, IconName, Text, TextVariant, useTheme } from '@/ui';
+import {
+  alpha,
+  EDGE,
+  FIXED,
+  Font,
+  fontFamily,
+  Icon,
+  IconName,
+  Text,
+  TextVariant,
+  shade,
+  useTheme,
+} from '@/ui';
 
 /** "Training": a wide tile on the felt under the two big ones, for playing alone. */
 export function TrainingTile({ hint, onPress }: { hint: string; onPress: () => void }) {
@@ -22,7 +34,9 @@ export function TrainingTile({ hint, onPress }: { hint: string; onPress: () => v
         paddingHorizontal: 16,
         borderRadius: 20,
         backgroundColor: colors.felt,
-        transform: [{ translateY: pressed ? 1 : 0 }],
+        borderBottomWidth: pressed ? 1 : EDGE,
+        borderBottomColor: shade(colors.felt, 0.4),
+        transform: [{ translateY: pressed ? EDGE - 1 : 0 }],
       })}
     >
       <View

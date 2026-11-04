@@ -9,7 +9,6 @@ import {
   LobbyHero,
   PlayersSection,
   RulesSheet,
-  WarmUpDice,
 } from '@/shared';
 
 import { ReconnectFailedView, WaitingForHostBar } from './components';
@@ -70,8 +69,6 @@ export function GuestLobbyScreen() {
           maxPlayers={lobby.maxPlayers}
           freeSeat={lobby.hasFreeSeat ? { title: t('lobby.freeSeat') } : null}
         />
-        {/* Something for the hands while the host gets everyone in. */}
-        <WarmUpDice />
       </ScrollView>
 
       <WaitingForHostBar host={lobby.hostAvatar} />

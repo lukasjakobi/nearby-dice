@@ -2,7 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Avatar, Button, ButtonVariant, DieFace, FIXED, Text, TextVariant, useTheme } from '@/ui';
+import {
+  Avatar,
+  Button,
+  ButtonVariant,
+  DieFace,
+  FIXED,
+  IconName,
+  Text,
+  TextVariant,
+  useTheme,
+} from '@/ui';
 
 import { ControlKind } from '../view';
 import type { ControlView, DieView } from '../view';
@@ -105,8 +115,9 @@ export function ActionBar({
               disabled={!confirm && !control.canRoll && !control.rollBusy}
               loading={!!confirm?.sending}
               accessibilityHint={confirm ? `${confirm.label}: ${confirm.points}` : undefined}
+              icon={confirm ? IconName.Check : IconName.Dice}
               variant={ButtonVariant.Accent}
-              height={48}
+              height={52}
               style={styles.rollButton}
             />
           </>

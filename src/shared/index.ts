@@ -3,7 +3,6 @@ export { ColorPicker } from './components/ColorPicker';
 export { Countdown, countdownLabel } from './components/Countdown';
 export { FeedbackSettingsSheet } from './components/FeedbackSettingsSheet';
 export { FeltTray } from './components/FeltTray';
-export { WarmUpDice } from './components/WarmUpDice';
 export { FreeSeatRow } from './components/FreeSeatRow';
 export type { FreeSeatRowProps } from './components/FreeSeatRow';
 export { HistoryItem } from './components/HistoryItem';

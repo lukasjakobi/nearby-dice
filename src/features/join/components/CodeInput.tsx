@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { TextInput, View } from 'react-native';
 
 import { ROUND_CODE_LENGTH } from '@/net';
-import { FIXED, Font, Text, fontFamily, useTheme } from '@/ui';
+import { FIXED, Font, RADIUS, Text, fontFamily, useTheme } from '@/ui';
 
 import { Caret } from './Caret';
 
@@ -11,8 +11,8 @@ const TILTS = [-4, 3, -2, 4];
 
 /**
  * Four large boxes driven by one hidden text field underneath (auto-uppercase,
- * paste fills all four). They are blank dice, as the code shows in the lobby; the active one has
- * a primary ring and a caret.
+ * paste fills all four). They are blank dice on a green card, as the code shows in the lobby; the
+ * active one has an accent ring and a caret.
  */
 export function CodeInput({
   value,
@@ -26,18 +26,26 @@ export function CodeInput({
   const active = Math.min(value.length, ROUND_CODE_LENGTH - 1);
 
   return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12 }} accessible={false}>
+    <View
+      style={{
+        backgroundColor: colors.primary,
+        borderRadius: RADIUS.dialog,
+        paddingVertical: 18,
+        paddingHorizontal: 12,
+      }}
+    >
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }} accessible={false}>
         {Array.from({ length: ROUND_CODE_LENGTH }, (_, i) => (
           <View
             key={i}
             style={{
-              width: 72,
-              height: 92,
-              borderRadius: 20,
-              borderWidth: 2.5,
+              width: 66,
+              height: 80,
+              borderRadius: 18,
+              borderWidth: 3,
               borderBottomWidth: 6,
-              borderColor: i === active ? colors.primary : FIXED.dieEdge,
+              // The die being typed on glows in the accent; the rest wait blank.
+              borderColor: i === active ? colors.accent : FIXED.dieEdge,
               backgroundColor: FIXED.dieFace,
               alignItems: 'center',
               justifyContent: 'center',

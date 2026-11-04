@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Font, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
+import { FIXED, Font, Text, alpha, fontFamily, mix, useTheme } from '@/ui';
 import type { ColorToken, Palette } from '@/ui';
 
 import { CellState } from '../view';
@@ -99,6 +99,8 @@ export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
       style={({ pressed }) => [
         styles.cell,
         { backgroundColor: background, borderColor: border },
+        // What I can score lifts off the sheet a little; everything else lies flat.
+        cell.pickable && !selected && !pressed && styles.lifted,
         pressed && styles.cellPressed,
       ]}
     >
@@ -159,6 +161,13 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   cellPressed: { transform: [{ scale: 0.97 }], opacity: 0.8 },
+  lifted: {
+    shadowColor: FIXED.shadow,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
   tile: {
     width: 30,
     height: 30,
