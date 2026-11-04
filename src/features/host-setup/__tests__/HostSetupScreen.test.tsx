@@ -61,7 +61,8 @@ test('the rules sheet describes the chosen style', async () => {
   await fireEvent.press(screen.getByText(t('lobby.rulesButton')));
 
   expect(screen.getByText(t('lobby.rulesTitle'))).toBeTruthy();
-  expect(screen.getByText(t('labels.preset.blitz.description'))).toBeTruthy();
+  // Once on the mode's card under the tiles, once in the sheet.
+  expect(screen.getAllByText(t('labels.preset.blitz.description'))).toHaveLength(2);
   await view.unmount();
 });
 

@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { Icon, IconName } from './icons/Icon';
 import { Text } from './Text';
 import { useTheme } from './theme/ThemeProvider';
 import { FIXED } from './theme/tokens';
@@ -15,7 +16,10 @@ type AvatarProps = {
   dimmed?: boolean;
 };
 
-/** A player's initial on their colour. Text on player colours is always dark. */
+/**
+ * A player's initial on their colour. Text on player colours is always dark. Without a name yet
+ * ("?") it shows a person instead of a question.
+ */
 export function Avatar({ initial, color, size = 44, framed = false, dimmed = false }: AvatarProps) {
   const { colors } = useTheme();
 
@@ -37,13 +41,17 @@ export function Avatar({ initial, color, size = 44, framed = false, dimmed = fal
         flexShrink: 0,
       }}
     >
-      <Text
-        color={{ raw: FIXED.onPlayer }}
-        size={Math.round(size * 0.45)}
-        style={{ fontFamily: fontFamily(Font.Display, 700) }}
-      >
-        {initial}
-      </Text>
+      {initial === '?' ? (
+        <Icon name={IconName.User} color={FIXED.onPlayer} size={Math.round(size * 0.5)} />
+      ) : (
+        <Text
+          color={{ raw: FIXED.onPlayer }}
+          size={Math.round(size * 0.45)}
+          style={{ fontFamily: fontFamily(Font.Display, 700) }}
+        >
+          {initial}
+        </Text>
+      )}
     </View>
   );
 }

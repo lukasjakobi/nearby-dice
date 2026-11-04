@@ -1,6 +1,6 @@
 /** "Endstand": each player's total, the gap to the winner and a bar of where the points came from. */
 import type { TFunction } from '@/i18n';
-import { UPPER_BONUS_THRESHOLD, upperSum, yatzyCount } from '@/domain';
+import { yatzyCount } from '@/domain';
 import type { Rules } from '@/domain';
 
 import type { RankedPlayer, RankRow } from './rankingView';
@@ -23,8 +23,6 @@ export type Standing = RankRow & {
   gap: { text: string; lead: boolean } | null;
   /** Scored at least one Yatzy. */
   yatzy: boolean;
-  /** "Kein Bonus · 52/63" when a one-sheet game missed the upper bonus. */
-  noBonus: string | null;
   /** Bar length against the winner's, 0–100. */
   barWidth: number;
   /** Empty shares are left out. */
@@ -33,7 +31,7 @@ export type Standing = RankRow & {
 };
 
 export type StandingsView = {
-  /** The bar's parts that this game's rules have. */
+  /** The bar's parts that this game's rules have and at least one bar shows. */
   legend: BarPart[];
   rows: Standing[];
 };
@@ -58,7 +56,6 @@ export function buildStandings(
       [BarPart.Bonus]: row.bonus,
       [BarPart.Lower]: row.lower,
     };
-    const single = player.sheets.length === 1 ? player.sheets[0]! : null;
 
     return {
       ...row,
@@ -68,10 +65,6 @@ export function buildStandings(
           : { text: `+${lead}`, lead: true }
         : { text: t('results.behind', { n: row.behind }), lead: false },
       yatzy: yatzyCount(player.sheets) > 0,
-      noBonus:
-        rules.upperBonus && single && row.bonus === 0
-          ? t('results.noBonus', { sum: upperSum(single), need: UPPER_BONUS_THRESHOLD })
-          : null,
       barWidth: top > 0 ? (row.points / top) * 100 : 0,
       segments: legend
         .filter((part) => parts[part] > 0)
@@ -87,5 +80,10 @@ export function buildStandings(
     };
   });
 
-  return { legend, rows };
+  // A legend entry for a share nobody scored, like a bonus nobody reached, explains nothing.
+  const drawn = legend.filter((part) =>
+    rows.some((row) => row.segments.some((segment) => segment.part === part)),
+  );
+
+  return { legend: drawn, rows };
 }

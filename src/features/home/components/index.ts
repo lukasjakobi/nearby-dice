@@ -8,4 +8,3 @@ export { ResumeBanner } from './ResumeBanner';
 export { ResumeSheet } from './ResumeSheet';
 export { StatsRow } from './StatsRow';
 export { TrainingTile } from './TrainingTile';
-export { WarmUpDice } from './WarmUpDice';

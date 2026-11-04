@@ -37,6 +37,14 @@ export enum IconName {
   Bolt = 'bolt',
   Copy = 'copy',
   Layers = 'layers',
+  // Settings rows
+  Sound = 'sound',
+  Music = 'music',
+  Vibrate = 'vibrate',
+  Phone = 'phone',
+  Contrast = 'contrast',
+  Globe = 'globe',
+  Trash = 'trash',
 }
 
 enum ShapeKind {
@@ -123,6 +131,27 @@ const ICONS: Record<IconName, Shape[]> = {
     path('M9.5 8V7a3 3 0 0 1 3-3h5a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3h-3'),
   ],
   [IconName.Layers]: [path('M12 4l9 5-9 5-9-5z'), path('M3 13.5l9 5 9-5')],
+  [IconName.Sound]: [
+    path('M4 9.5h3.5L12 5.5v13l-4.5-4H4z'),
+    path('M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11'),
+  ],
+  [IconName.Music]: [path('M9 18V5.5l10-2V16'), circle(6.5, 18, 2.5), circle(16.5, 16, 2.5)],
+  [IconName.Vibrate]: [
+    path(
+      'M9 4h6a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 15 20H9a1.5 1.5 0 0 1-1.5-1.5v-13A1.5 1.5 0 0 1 9 4z',
+    ),
+    path('M4 9v6M20 9v6'),
+  ],
+  [IconName.Phone]: [
+    path('M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'),
+    path('M11 18h2'),
+  ],
+  [IconName.Contrast]: [circle(12, 12, 9), path('M12 3a9 9 0 0 1 0 18z', true)],
+  [IconName.Globe]: [
+    circle(12, 12, 9),
+    path('M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z'),
+  ],
+  [IconName.Trash]: [path('M4 7h16M10 7V4.5h4V7M6.5 7l1 13h9l1-13'), path('M10 11v5M14 11v5')],
 };
 
 type IconProps = {

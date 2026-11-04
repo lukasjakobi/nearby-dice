@@ -1,5 +1,7 @@
 /** The action bar: the five dice, and the roll button or who is playing right now. */
 import type { TFunction } from '@/i18n';
+import { avatarOf } from '@/shared';
+import type { AvatarView } from '@/shared';
 
 import type { CellView } from './sheetView';
 import type { TurnContext } from './turnContext';
@@ -35,7 +37,13 @@ export type ControlView =
       /** The dice are in the air: the button ignores presses but does not dim. */
       rollBusy: boolean;
     })
-  | (RollsView & { kind: ControlKind.Waiting; text: string; busy: boolean });
+  | (RollsView & {
+      kind: ControlKind.Waiting;
+      text: string;
+      busy: boolean;
+      /** Whose turn it is, beside the text. */
+      avatar: AvatarView;
+    });
 
 /** The dice shake, or my roll is on its way to the host. */
 const rollInFlight = (ctx: TurnContext) => ctx.local.rolling || ctx.local.rollPending;
@@ -84,6 +92,7 @@ export function buildControl(
       kind: ControlKind.Waiting,
       text: waitingText(t, ctx, focused),
       busy: ctx.turnPlayerHere,
+      avatar: avatarOf(ctx.turnPlayer),
     };
   }
 

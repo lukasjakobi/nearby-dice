@@ -242,7 +242,6 @@ export function BottomSheet({ visible, onClose, title, children }: BottomSheetPr
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 8,
-                paddingHorizontal: 4,
                 paddingBottom: 4,
               }}
             >

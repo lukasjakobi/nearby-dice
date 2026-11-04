@@ -7,6 +7,9 @@ import { Text, TextVariant } from './Text';
 import { useTheme } from './theme/ThemeProvider';
 import { MAX_FONT_SCALE, Font, fontFamily } from './theme/typography';
 
+/** The counter appears this many characters before the limit. */
+const COUNTER_LEAD = 4;
+
 type TextFieldProps = {
   label: string;
   value: string;
@@ -16,7 +19,7 @@ type TextFieldProps = {
   /** Shown in red below the input; replaces `help`. */
   error?: string | null;
   help?: string;
-  /** "n/16" on the right of the help line. */
+  /** "n/16" on the right of the help line, once the value nears the limit. */
   showCounter?: boolean;
 };
 
@@ -38,7 +41,9 @@ export function TextField({
   const input = useRef<TextInputInstance>(null);
   const [focused, setFocused] = useState(false);
   const message = error ?? help;
-  const borderColor = error ? colors.danger : focused ? colors.primary : colors.control;
+  // Quiet at rest so a prefilled field doesn't outweigh the screen's real choice.
+  const borderColor = error ? colors.danger : focused ? colors.primary : colors.line;
+  const counter = showCounter && value.length >= maxLength - COUNTER_LEAD;
 
   return (
     <Pressable
@@ -46,7 +51,7 @@ export function TextField({
       onPress={() => input.current?.focus()}
       style={{
         backgroundColor: colors.surface,
-        borderWidth: 2,
+        borderWidth: focused || error ? 2 : 1.5,
         borderColor,
         borderRadius: 20,
         paddingTop: 12,
@@ -65,7 +70,7 @@ export function TextField({
           onChangeText={onChangeText}
           maxLength={maxLength}
           placeholder={placeholder}
-          placeholderTextColor={colors.muted}
+          placeholderTextColor={colors.control}
           autoCorrect={false}
           autoComplete="off"
           accessibilityLabel={label}
@@ -85,7 +90,7 @@ export function TextField({
         />
         <Icon name={IconName.Pencil} color={colors.muted} size={20} strokeWidth={2} />
       </View>
-      {message || showCounter ? (
+      {message || counter ? (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
           <Text
             variant={TextVariant.Caption}
@@ -96,7 +101,7 @@ export function TextField({
           >
             {message ?? ''}
           </Text>
-          {showCounter ? (
+          {counter ? (
             <Text variant={TextVariant.Caption} color="muted">
               {`${value.length}/${maxLength}`}
             </Text>

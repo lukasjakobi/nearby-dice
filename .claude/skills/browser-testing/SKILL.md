@@ -23,8 +23,14 @@ Options:
 
 - `--tap <name>` taps a button by its exact German accessible name; repeat it to go further, e.g.
   `game-six-players --tap Spielstand` opens the scoreboard.
+- `--type <text>` types into the first visible text field after the taps (or into whatever has
+  focus, like the join code): `onboarding --tap Weiter --tap Weiter --type Mira`.
+- `--show <text>` scrolls the element with that exact text into view before the shot, for parts
+  below the fold: `settings --param update=available --show "Nach Updates suchen"`.
 - `--dark`, `--en`, `--size 390x844`, `--seed 7` (other dice; the default seed repeats exactly).
-- `--param key=value` adds a URL option to the scenario, for the permission and radio sheets:
+- `--param key=value` adds a URL option to the scenario: `update=available` (or `checking`,
+  `upToDate`, `downloading`, `checkFailed` …) shows the settings' update card, which the web build
+  otherwise lacks. For the permission and radio sheets:
   `permission=denied|blocked|unavailable` or `radio=bluetooth-off|location-off`. For example,
   `home --param permission=blocked --tap Hosten --tap "Lobby öffnen"`.
 

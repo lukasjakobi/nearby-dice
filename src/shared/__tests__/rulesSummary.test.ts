@@ -11,6 +11,7 @@ test.each([PresetId.Classic, PresetId.Yatzy, PresetId.ClassicXl, PresetId.LuckyN
       {
         label: t('lobby.rules.luckyNumber'),
         value: PRESETS[preset].luckyNumber ? t('lobby.rules.on') : t('lobby.rules.off'),
+        changed: PRESETS[preset].luckyNumber,
       },
     ]);
   },
@@ -19,13 +20,19 @@ test.each([PresetId.Classic, PresetId.Yatzy, PresetId.ClassicXl, PresetId.LuckyN
 test.each([
   [PresetId.ClassicXl, 17],
   [PresetId.LuckyNumber, 14],
-])('%s summary names the preset and its turn count', (preset, turns) => {
+])('%s summary marks its turn count as changed from the classic game', (preset, turns) => {
   expect(rulesSummary(t, preset)).toEqual(
     expect.arrayContaining([
-      { label: t('lobby.rules.style'), value: t(`labels.preset.${preset}.title`) },
-      { label: t('lobby.rules.rounds'), value: String(turns) },
+      { label: t('lobby.rules.rounds'), value: String(turns), changed: true },
     ]),
   );
+});
+
+test('the classic summary changes nothing and leaves the mode to the sheet title', () => {
+  const lines = rulesSummary(t, PresetId.Classic);
+
+  expect(lines.every((line) => !line.changed)).toBe(true);
+  expect(lines.map((line) => line.label)).not.toContain(t('lobby.rules.style'));
 });
 
 test.each(PRESET_ORDER)('%s summary leaves out rules every preset shares', (preset) => {

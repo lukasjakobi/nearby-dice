@@ -6,7 +6,7 @@ import { IconName, mix, useTheme } from '@/ui';
 
 import { ResultChip } from './ResultChip';
 
-/** Both chips as a standings row shows them under a name. */
+/** The Yatzy chip as a standings row shows it under a name. */
 function Chips() {
   const { colors } = useTheme();
 
@@ -19,12 +19,6 @@ function Chips() {
         color={colors.ink}
         weight={600}
       />
-      <ResultChip
-        label={i18n.t('results.noBonus', { sum: 52, need: 63 })}
-        background={mix(colors.ink, colors.surface, 0.09)}
-        color={colors.muted}
-        weight={500}
-      />
     </View>
   );
 }
@@ -36,4 +30,4 @@ const meta: Meta<typeof ResultChip> = {
 
 export default meta;
 
-export const YatzyAndNoBonus: StoryObj<typeof ResultChip> = { render: () => <Chips /> };
+export const Yatzy: StoryObj<typeof ResultChip> = { render: () => <Chips /> };

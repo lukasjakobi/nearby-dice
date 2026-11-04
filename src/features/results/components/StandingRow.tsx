@@ -11,7 +11,8 @@ import { StandingBar } from './StandingBar';
 export function StandingRow({ row, index }: { row: Standing; index: number }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const background = row.winner ? mix(colors.accent, colors.surface, 0.16) : colors.surface;
+  // The winner's row takes on their own colour.
+  const background = row.winner ? mix(row.avatar.color, colors.surface, 0.18) : colors.surface;
   const display = { fontFamily: fontFamily(Font.Display, 700) };
 
   return (
@@ -37,30 +38,20 @@ export function StandingRow({ row, index }: { row: Standing; index: number }) {
             {row.name}
             {row.isMe ? <Text color="muted" weight={500}>{` ${t('results.you')}`}</Text> : null}
           </Text>
-          {row.yatzy || row.noBonus ? (
+          {row.yatzy ? (
             <View style={styles.chips}>
-              {row.yatzy ? (
-                <ResultChip
-                  label={t('labels.category.yatzy')}
-                  icon={IconName.StarFilled}
-                  background={mix(colors.accent, background, 0.28)}
-                  color={colors.ink}
-                  weight={600}
-                />
-              ) : null}
-              {row.noBonus ? (
-                <ResultChip
-                  label={row.noBonus}
-                  background={mix(colors.ink, background, 0.09)}
-                  color={colors.muted}
-                  weight={500}
-                />
-              ) : null}
+              <ResultChip
+                label={t('labels.category.yatzy')}
+                icon={IconName.StarFilled}
+                background={mix(colors.accent, background, 0.28)}
+                color={colors.ink}
+                weight={600}
+              />
             </View>
           ) : null}
         </View>
         <View style={styles.points}>
-          <Text size={34} style={[display, styles.total]}>
+          <Text size={row.winner ? 38 : 28} style={[display, { lineHeight: row.winner ? 40 : 30 }]}>
             {String(row.points)}
           </Text>
           {row.gap ? (
@@ -95,5 +86,4 @@ const styles = StyleSheet.create({
   name: { lineHeight: 20 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   points: { alignItems: 'flex-end', gap: 3 },
-  total: { lineHeight: 36 },
 });

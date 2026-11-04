@@ -8,9 +8,15 @@ export enum Scenario {
   Onboarding = 'onboarding',
   /** A returning player with statistics and two saved games. */
   Home = 'home',
+  /** Just onboarded: no games, no statistics yet. */
+  HomeNew = 'home-new',
+  /** Join, with someone's round showing up nearby. */
+  JoinNearby = 'join-nearby',
   Settings = 'settings',
   /** Hosting, with three guests in the lobby. */
   HostLobby = 'host-lobby',
+  /** Hosting, nobody has joined yet. */
+  HostLobbyAlone = 'host-lobby-alone',
   /** Joined someone else's lobby. */
   GuestLobby = 'guest-lobby',
   /** Three players, my turn, after my first roll. */
@@ -21,6 +27,8 @@ export enum Scenario {
   GameSixPlayers = 'game-six-players',
   /** A finished game of two. */
   Results = 'results',
+  /** A finished game of four. */
+  ResultsFourPlayers = 'results-four-players',
   /** A saved game, opened from the home screen. */
   SavedGame = 'saved-game',
   /** Training in round five. */

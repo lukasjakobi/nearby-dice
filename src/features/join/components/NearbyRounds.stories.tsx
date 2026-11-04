@@ -34,7 +34,7 @@ const ROUNDS: NearbyRoundView[] = [
 const meta: Meta<typeof NearbyRounds> = {
   title: 'Features/Join/NearbyRounds',
   component: NearbyRounds,
-  args: { rounds: ROUNDS, scanning: false, error: false, onJoin: fn(), onRefresh: fn() },
+  args: { rounds: ROUNDS, error: false, onJoin: fn(), onRetry: fn() },
   decorators: [
     (Story) => (
       <View style={{ height: 360 }}>
@@ -50,11 +50,10 @@ type Story = StoryObj<typeof NearbyRounds>;
 /** A round with free seats and a full one. */
 export const Found: Story = {};
 
-/** Scanning with nothing found yet: two skeleton rows. */
-export const Scanning: Story = { args: { rounds: [], scanning: true } };
+/** Nothing found yet: the radar pulses for as long as the search runs. */
+export const Searching: Story = { args: { rounds: [] } };
 
-export const ScanningWithResults: Story = { args: { rounds: ROUNDS.slice(0, 1), scanning: true } };
+export const OneRound: Story = { args: { rounds: ROUNDS.slice(0, 1) } };
 
-export const NothingNearby: Story = { args: { rounds: [] } };
-
+/** The search could not start: the radar gives way to the error and a retry. */
 export const ScanFailed: Story = { args: { rounds: [], error: true } };

@@ -35,7 +35,7 @@ export function StandingTile({ player, selected, onSelect }: StandingTileProps) 
         {player.leading ? (
           <Icon name={IconName.Crown} color={colors.accent} size={16} />
         ) : (
-          <Text size={12} weight={600} color="muted">
+          <Text size={14} weight={700} color="muted">
             {`${player.place}.`}
           </Text>
         )}

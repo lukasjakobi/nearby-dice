@@ -10,7 +10,10 @@ export function getTransport(): Transport {
   return transport;
 }
 
-/** One more phone in this page, on `channel`; scenarios use one channel per run. */
-export function createBrowserTransport(channel: string): Transport {
+/**
+ * One more phone in this page, on `channel`; scenarios use one channel per run. Without one it
+ * shares the app's channel, so the phone on screen finds its rounds nearby.
+ */
+export function createBrowserTransport(channel?: string): Transport {
   return new BroadcastTransport(channel);
 }

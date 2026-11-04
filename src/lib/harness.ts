@@ -13,4 +13,6 @@ export enum HarnessParam {
   Scenario = 'scenario',
   /** Seeds the dice of a scenario. */
   Seed = 'seed',
+  /** An `UpdateStatus` the settings' update card shows, frozen, on a build that has no updates. */
+  Update = 'update',
 }

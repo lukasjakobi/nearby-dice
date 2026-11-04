@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { ViewStyle } from 'react-native';
 
-import { Avatar, Font, Text, alpha, fontFamily, useTheme } from '@/ui';
+import { Avatar, Font, Tag, Text, alpha, fontFamily, useTheme } from '@/ui';
 import type { Palette } from '@/ui';
 
 import type { PillView } from '../view';
@@ -15,9 +15,9 @@ type PlayerPillsProps = {
 
 /**
  * One pill per player: initial, name, running total. The player whose turn it is has a
- * primary border. When space is tight, avatars stack above names and scores.
- * Tapping a pill opens that player's sheet; while it is open, their pill
- * is tinted and outlined in their colour.
+ * primary border and a dot on their avatar. When space is tight, avatars stack above names and
+ * scores; Training's lone pill keeps its own size and gets a tag. Tapping a pill opens that
+ * player's sheet; while it is open, their pill is tinted and outlined in their colour.
  */
 export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
   const { t } = useTranslation();
@@ -40,16 +40,28 @@ export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
           accessibilityState={{ selected: pill.shown }}
           style={[
             styles.pill,
+            pills.length === 1 && styles.lonePill,
             compact && styles.compactPill,
             pillColors(pill, colors),
             { opacity: pill.dimmed ? 0.5 : 1 },
           ]}
         >
-          <Avatar
-            initial={pill.avatar.initial}
-            color={pill.avatar.color}
-            size={compact ? 24 : 30}
-          />
+          <View>
+            <Avatar
+              initial={pill.avatar.initial}
+              color={pill.avatar.color}
+              size={compact ? 24 : 30}
+            />
+            {/* Whose turn it is, without relying on the border colour alone. */}
+            {pill.active ? (
+              <View
+                style={[
+                  styles.turnDot,
+                  { backgroundColor: colors.primary, borderColor: colors.bg },
+                ]}
+              />
+            ) : null}
+          </View>
           <View style={[styles.text, compact && styles.compactText]}>
             <Text
               size={compact ? 11 : 12}
@@ -72,6 +84,12 @@ export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
           </View>
         </Pressable>
       ))}
+      {/* Training's one player: say so, since nothing else on the board differs. */}
+      {pills.length === 1 ? (
+        <View style={styles.lone}>
+          <Tag label={t('home.training')} background="surface2" color="ink" />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -115,6 +133,18 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   text: { flex: 1, minWidth: 0 },
+  turnDot: {
+    position: 'absolute',
+    right: -3,
+    bottom: -2,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 2,
+  },
+  // Training's one player: a pill as wide as its content, not a banner across the screen.
+  lonePill: { flex: 0, minWidth: 140, alignSelf: 'flex-start' },
+  lone: { justifyContent: 'center' },
   compactRow: { gap: 4 },
   compactPill: {
     flexDirection: 'column',

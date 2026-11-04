@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { Button, Card, Text, TextVariant } from '@/ui';
+import { Button, IconBadge, IconName, ListGroup, ListRow, useTheme } from '@/ui';
 
 /** Connection status for the nearby permission, with a shortcut to the system settings when missing. */
 export function NearbyPermissionCard({
@@ -12,29 +11,23 @@ export function NearbyPermissionCard({
   onOpenSettings: () => void;
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
-    <Card
-      border={granted ? 'line' : 'danger'}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        minHeight: 56,
-        paddingVertical: 8,
-      }}
-    >
-      <View style={{ flex: 1, gap: 2 }}>
-        <Text variant={TextVariant.Body} size={16} weight={500}>
-          {t('settings.nearby')}
-        </Text>
-        <Text variant={TextVariant.Label} color={granted ? 'ok' : 'danger'}>
-          {granted ? t('settings.allowed') : t('settings.notAllowed')}
-        </Text>
-      </View>
-      {granted ? null : (
-        <Button label={t('settings.openSettings')} onPress={onOpenSettings} height={44} />
-      )}
-    </Card>
+    <ListGroup style={granted ? undefined : { borderColor: colors.danger }}>
+      <ListRow
+        title={t('settings.nearby')}
+        subtitle={granted ? t('settings.allowed') : t('settings.notAllowed')}
+        subtitleColor={granted ? 'ok' : 'danger'}
+        leading={
+          <IconBadge icon={IconName.Bluetooth} color={granted ? colors.primary : colors.danger} />
+        }
+        trailing={
+          granted ? undefined : (
+            <Button label={t('settings.openSettings')} onPress={onOpenSettings} height={44} />
+          )
+        }
+      />
+    </ListGroup>
   );
 }

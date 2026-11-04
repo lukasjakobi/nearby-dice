@@ -16,7 +16,6 @@ export type StatTile = {
   value: number;
   tint: string;
   icon: IconName;
-  tilt: number;
   sub?: string;
 };
 export type ModeChip = { label: string; selected: boolean; onPress: () => void };
@@ -42,7 +41,13 @@ function statsForMode(
   const yatzys = all.reduce((sum, m) => sum + m.yatzys, 0);
   const top = all.reduce((a, m) => (m.best > a.best ? m : a), all[0]!);
 
-  return { wins, yatzys, best: top.best, sub: t(`labels.preset.${top.id}.title`) };
+  // Before any game a best of 0 belongs to no mode.
+  return {
+    wins,
+    yatzys,
+    best: top.best,
+    sub: top.best > 0 ? t(`labels.preset.${top.id}.title`) : undefined,
+  };
 }
 
 /** My place and points in a saved game, against everyone who stayed to the end. */
@@ -82,14 +87,12 @@ export function useHome() {
     value: number,
     color: PlayerColor,
     icon: IconName,
-    tilt: number,
     sub?: string,
   ): StatTile => ({
     label,
     value,
     tint: PLAYER_COLOR_HEX[color],
     icon,
-    tilt,
     sub,
   });
 
@@ -103,9 +106,9 @@ export function useHome() {
         ? t('home.trainingHintBest', { best: stats.trainingBest })
         : t('home.trainingHint'),
     stats: [
-      stat(t('home.stats.wins'), current.wins, PlayerColor.Amber, IconName.Cup, -1.5),
-      stat(t('home.stats.best'), current.best, PlayerColor.Mint, IconName.Star, 1, current.sub),
-      stat(t('home.stats.yatzys'), current.yatzys, PlayerColor.Sky, IconName.Dice, -1),
+      stat(t('home.stats.wins'), current.wins, PlayerColor.Amber, IconName.Cup),
+      stat(t('home.stats.best'), current.best, PlayerColor.Mint, IconName.Star, current.sub),
+      stat(t('home.stats.yatzys'), current.yatzys, PlayerColor.Sky, IconName.Dice),
     ],
     modeChips: [null, ...PRESET_ORDER].map((id): ModeChip => ({
       label: id === null ? t('home.statsAll') : t(`labels.preset.${id}.title`),

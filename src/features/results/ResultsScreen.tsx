@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet } from 'react-native';
 
-import { PresetSheet } from '@/shared';
+import { PresetRow, PresetSheet } from '@/shared';
 import { Dialog, Screen } from '@/ui';
 
 import {
@@ -29,16 +29,14 @@ export function ResultsScreen() {
         {results.facts ? (
           <TrainingFacts facts={results.facts} />
         ) : (
-          <>
-            <StandingsCard standings={results.standings} />
-          </>
+          <StandingsCard standings={results.standings} />
         )}
-        <ScoreComparison columns={results.rows} rows={results.compare} />
+        <ScoreComparison columns={results.rows} rows={results.compare} collapsed />
+        {/* The next game's mode; only the host (or the Training player) can change it. */}
+        <PresetRow preset={results.preset} onPress={results.openPreset} />
       </ScrollView>
 
       <ResultsFooter
-        preset={results.preset}
-        onChangePreset={results.openPreset}
         action={results.action}
         votes={results.votes}
         waitingText={results.waitingText}

@@ -17,14 +17,12 @@ export const stats = (t: TFunction): StatTile[] => [
     value: 12,
     tint: PLAYER_COLOR_HEX[PlayerColor.Amber],
     icon: IconName.Cup,
-    tilt: -1.5,
   },
   {
     label: t('home.stats.best'),
     value: 284,
     tint: PLAYER_COLOR_HEX[PlayerColor.Mint],
     icon: IconName.Star,
-    tilt: 1,
     sub: t('labels.preset.classic.title'),
   },
   {
@@ -32,7 +30,6 @@ export const stats = (t: TFunction): StatTile[] => [
     value: 7,
     tint: PLAYER_COLOR_HEX[PlayerColor.Sky],
     icon: IconName.Dice,
-    tilt: -1,
   },
 ];
 

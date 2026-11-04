@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { TRAINING_PRESET_ORDER } from '@/domain';
 import { PresetGrid, RulesSheet } from '@/shared';
-import { Button, Footer, Header, IconName, Screen, Text, TextVariant } from '@/ui';
+import { Button, Footer, Header, Icon, IconName, Screen, Text, TextVariant, useTheme } from '@/ui';
 
 import { useTrainingSetup } from './hooks';
 
 /** "Training": pick a style, then play alone. */
 export function TrainingSetupScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const setup = useTrainingSetup();
 
   return (
@@ -32,9 +33,21 @@ export function TrainingSetupScreen() {
           onRules={setup.openRules}
         />
 
-        <Text variant={TextVariant.Caption} color="muted">
-          {t('training.note')}
-        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+            padding: 14,
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: colors.line,
+          }}
+        >
+          <Icon name={IconName.Info} color={colors.muted} size={18} strokeWidth={2} />
+          <Text variant={TextVariant.Caption} color="muted" style={{ flex: 1 }}>
+            {t('training.note')}
+          </Text>
+        </View>
       </ScrollView>
 
       <Footer>

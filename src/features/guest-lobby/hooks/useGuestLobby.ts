@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { ConnectionStatus, SessionPhase, setActiveSession, toLocalTime } from '@/session';
 import { useGuestSession } from '@/features/session';
-import { lobbyRows, useBackAction, useFeedbackSwitches } from '@/shared';
+import { lobbyRows, PlayerTag, useBackAction, useFeedbackSwitches } from '@/shared';
 
 export enum GuestLobbyView {
   Lobby = 'lobby',
@@ -35,7 +35,10 @@ export function useGuestLobby() {
   return {
     view,
     title: shared.roundName,
+    code: shared.code,
     rows,
+    /** For the waiting bar: who the guests are waiting for. */
+    hostAvatar: rows.find((row) => row.tags.includes(PlayerTag.Host))?.avatar ?? null,
     maxPlayers: shared.maxPlayers,
     hasFreeSeat: rows.length < shared.maxPlayers,
     reconnecting: connection.status === ConnectionStatus.Reconnecting,

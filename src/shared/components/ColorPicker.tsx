@@ -17,7 +17,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const { colors } = useTheme();
 
   return (
-    <View style={{ gap: 10 }}>
+    <View style={{ gap: 12 }}>
       <Text variant={TextVariant.Label}>{label}</Text>
       <View
         accessibilityRole="radiogroup"
@@ -40,10 +40,12 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 minHeight: 44,
                 borderRadius: 999,
                 backgroundColor: PLAYER_COLOR_HEX[color],
+                // The chosen swatch grows, with a gap and a ring around it.
                 borderWidth: 3,
-                borderColor: selected ? colors.ink : 'transparent',
-                outlineWidth: selected ? 2 : 0,
-                outlineColor: colors.bg,
+                borderColor: selected ? colors.bg : 'transparent',
+                outlineWidth: selected ? 2.5 : 0,
+                outlineColor: colors.ink,
+                transform: [{ scale: selected ? 1.08 : 1 }],
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

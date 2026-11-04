@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { RedirectTo, Route } from '@/shared';
-import { Header, IconName, Screen, Text, TextVariant } from '@/ui';
+import { Header, IconName, Screen } from '@/ui';
 
 import { HistoryCard, ResultsHeader, ScoreComparison, StandingsCard } from './components';
 import { useSavedGame } from './hooks';
@@ -17,13 +17,11 @@ export function SavedGameScreen() {
     <Screen>
       <Header
         title={view.title}
+        subtitle={view.when}
         leading={{ icon: IconName.Back, label: t('common.back'), onPress: back }}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text variant={TextVariant.Caption} color="muted" align="center">
-          {view.when}
-        </Text>
-        <ResultsHeader winners={view.winners} crown headline={view.headline} />
+        <ResultsHeader winners={view.winners} crown headline={view.headline} celebrate={false} />
         <StandingsCard standings={view.standings} />
         <ScoreComparison columns={view.rows} rows={view.compare} />
         <HistoryCard rows={view.history} />
@@ -33,5 +31,5 @@ export function SavedGameScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24, gap: 18 },
+  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24, gap: 18 },
 });

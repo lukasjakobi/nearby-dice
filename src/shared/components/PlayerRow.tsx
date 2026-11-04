@@ -23,20 +23,17 @@ function tagLook(
   tag: PlayerTag,
 ): { label: string; background: ColorToken; color: ColorToken } {
   const looks: Record<PlayerTag, ReturnType<typeof tagLook>> = {
-    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'accent', color: 'onAccent' },
-    [PlayerTag.You]: { label: t('common.youTag'), background: 'surface2', color: 'ink' },
+    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'surface2', color: 'ink' },
+    [PlayerTag.You]: { label: t('common.youTag'), background: 'primary', color: 'onPrimary' },
   };
 
   return looks[tag];
 }
 
-function statusLook(
-  t: TFunction,
-  status: RowStatus,
-): { label: string; color: ColorToken; busy: boolean } {
+function statusLook(t: TFunction, status: RowStatus): { label: string; color: ColorToken } {
   const looks: Record<RowStatus, ReturnType<typeof statusLook>> = {
-    [RowStatus.Connected]: { label: t('common.connected'), color: 'ok', busy: false },
-    [RowStatus.Reconnecting]: { label: t('common.reconnectingPeer'), color: 'danger', busy: true },
+    [RowStatus.Connected]: { label: t('common.connected'), color: 'ok' },
+    [RowStatus.Reconnecting]: { label: t('common.reconnectingPeer'), color: 'danger' },
   };
 
   return looks[status];
@@ -56,7 +53,10 @@ type PlayerRowProps = {
   onMenu?: () => void;
 };
 
-/** A lobby row: avatar, name with tags, connection status. */
+/**
+ * A lobby row inside the players' `ListGroup`: avatar, name with tags. Being connected is the
+ * normal case and goes unsaid; only a reconnecting player gets a status line.
+ */
 export function PlayerRow({ row, onMenu }: PlayerRowProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -69,17 +69,18 @@ export function PlayerRow({ row, onMenu }: PlayerRowProps) {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
-        minHeight: 68,
-        paddingVertical: 10,
-        paddingLeft: 12,
-        paddingRight: onMenu ? 8 : 12,
-        borderRadius: 18,
-        borderWidth: 1,
-        borderColor: reconnecting ? colors.danger : colors.line,
-        backgroundColor: colors.surface,
+        minHeight: 60,
+        paddingVertical: 8,
+        paddingLeft: 14,
+        paddingRight: onMenu ? 4 : 14,
       }}
     >
-      <Avatar initial={row.avatar.initial} color={row.avatar.color} dimmed={reconnecting} />
+      <Avatar
+        initial={row.avatar.initial}
+        color={row.avatar.color}
+        size={40}
+        dimmed={reconnecting}
+      />
       <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Text variant={TextVariant.BodyStrong}>{row.name}</Text>
@@ -87,12 +88,14 @@ export function PlayerRow({ row, onMenu }: PlayerRowProps) {
             <Tag key={tag} {...tagLook(t, tag)} />
           ))}
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          {status.busy ? <Spinner color={colors[status.color]} size={14} strokeWidth={3} /> : null}
-          <Text variant={TextVariant.Caption} color={status.color} style={{ flexShrink: 1 }}>
-            {status.label}
-          </Text>
-        </View>
+        {reconnecting ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Spinner color={colors[status.color]} size={14} strokeWidth={3} />
+            <Text variant={TextVariant.Caption} color={status.color} style={{ flexShrink: 1 }}>
+              {status.label}
+            </Text>
+          </View>
+        ) : null}
       </View>
       {onMenu ? (
         <IconButton

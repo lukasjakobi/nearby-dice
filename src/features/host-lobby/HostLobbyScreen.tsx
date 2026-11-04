@@ -1,21 +1,33 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import { Button, Dialog, Footer, Header, IconName, Screen, Text, TextVariant } from '@/ui';
+import {
+  Button,
+  Dialog,
+  Footer,
+  Header,
+  Icon,
+  IconName,
+  Screen,
+  Text,
+  TextVariant,
+  useTheme,
+} from '@/ui';
 import {
   FeedbackSettingsSheet,
   LobbyHeaderActions,
+  LobbyHero,
   PlayersSection,
-  PresetRow,
   PresetSheet,
   RulesSheet,
 } from '@/shared';
 
-import { PlayerMenuSheet, RoundCodeCard } from './components';
+import { PlayerMenuSheet } from './components';
 import { LobbyDialog, useHostLobby } from './hooks';
 
 export function HostLobbyScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const lobby = useHostLobby();
 
   return (
@@ -24,14 +36,18 @@ export function HostLobbyScreen() {
         title={lobby.title}
         variant={TextVariant.ScreenTitle}
         leading={{ icon: IconName.Close, label: t('lobby.closeLabel'), onPress: lobby.askClose }}
-        trailing={<LobbyHeaderActions onSettings={lobby.openSettings} onRules={lobby.openRules} />}
+        trailing={<LobbyHeaderActions onSettings={lobby.openSettings} />}
       />
-      <RoundCodeCard code={lobby.code} />
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, gap: 14 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16, gap: 22 }}
       >
-        <PresetRow preset={lobby.preset} onPress={lobby.openPreset} />
+        <LobbyHero
+          code={lobby.code}
+          preset={lobby.preset}
+          onChangePreset={lobby.openPreset}
+          onRules={lobby.openRules}
+        />
         <PlayersSection
           rows={lobby.rows}
           maxPlayers={lobby.maxPlayers}
@@ -41,14 +57,23 @@ export function HostLobbyScreen() {
       </ScrollView>
 
       <Footer style={{ gap: 10 }}>
-        <Text
-          variant={TextVariant.Caption}
-          color="muted"
-          align="center"
+        {/* What holds the start back, or a green light once nothing does. */}
+        <View
           accessibilityLiveRegion="polite"
+          style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6 }}
         >
-          {lobby.startHint}
-        </Text>
+          {lobby.canStart ? (
+            <Icon name={IconName.CheckCircle} color={colors.ok} size={16} strokeWidth={2.4} />
+          ) : null}
+          <Text
+            variant={TextVariant.Caption}
+            weight={lobby.canStart ? 600 : 400}
+            color={lobby.canStart ? 'ok' : 'muted'}
+            align="center"
+          >
+            {lobby.startHint}
+          </Text>
+        </View>
         <Button label={t('lobby.start')} onPress={lobby.start} disabled={!lobby.canStart} />
       </Footer>
 

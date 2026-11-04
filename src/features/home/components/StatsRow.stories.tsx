@@ -12,7 +12,7 @@ const meta: Meta<typeof StatsRow> = {
 
 export default meta;
 
-/** Wins, best score (with its mode) and Yatzys, slightly tilted like dice. */
+/** Wins, best score (with its mode) and Yatzys. */
 export const Default: StoryObj<typeof StatsRow> = {
   render: () => <StatsRow stats={stats(i18n.t)} />,
 };

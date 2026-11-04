@@ -51,7 +51,7 @@ function randomFace(not: number): number {
 }
 
 type DieFaceProps = {
-  /** 1–6, or 0 for the translucent placeholder before the first roll. */
+  /** 1–6, or 0 for the blank, translucent placeholder before the first roll. */
   value: number;
   size?: number;
   held?: boolean;
@@ -147,7 +147,8 @@ export function DieFace({
 
   const face = tumbling ? tumble : value;
   const placeholder = face === 0;
-  const pips = PIPS[placeholder ? 5 : face] ?? [];
+  // Before the first roll the die is blank: a ghost face would read as a roll of fives.
+  const pips = placeholder ? [] : (PIPS[face] ?? []);
 
   return (
     <Animated.View

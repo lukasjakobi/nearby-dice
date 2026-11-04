@@ -24,7 +24,7 @@ export function ProfileScreen() {
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, paddingBottom: 24, gap: 20 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={{ alignItems: 'center', paddingTop: 4 }}>
+        <View style={{ alignItems: 'center', paddingTop: 16, paddingBottom: 4 }}>
           <Avatar initial={form.avatar.initial} color={form.avatar.color} size={112} framed />
         </View>
         <TextField
@@ -40,17 +40,20 @@ export function ProfileScreen() {
         <ColorPicker label={t('profile.colorLabel')} value={form.color} onChange={form.setColor} />
         <View style={{ flex: 1 }} />
         {screen.saved ? <SavedNotice /> : null}
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: 16 }}>
           <Button
             label={editing ? t('profile.saveEdit') : t('profile.saveCreate')}
             onPress={screen.save}
             disabled={!form.valid}
           />
+          {/* Resetting is rare and asks first; smaller, and kept apart from saving. */}
           {editing ? (
             <Button
               label={t('profile.reset')}
               onPress={screen.askReset}
               variant={ButtonVariant.DangerOutline}
+              height={44}
+              style={{ alignSelf: 'center' }}
             />
           ) : null}
         </View>

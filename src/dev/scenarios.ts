@@ -135,6 +135,18 @@ const SETUPS: Record<Scenario, Setup> = {
 
     return { route: Route.Home };
   },
+  [Scenario.HomeNew]: async () => {
+    signIn();
+
+    return { route: Route.Home };
+  },
+  [Scenario.JoinNearby]: async (_table, rng) => {
+    signIn();
+    const [host, ...guests] = OTHERS;
+    await lobby(new Table(rng, { inRange: true }), host, guests.slice(0, 2));
+
+    return { route: Route.Join };
+  },
   [Scenario.Settings]: async () => {
     signIn();
 
@@ -143,6 +155,12 @@ const SETUPS: Record<Scenario, Setup> = {
   [Scenario.HostLobby]: async (table) => {
     signIn();
     const { host } = await lobby(table, ME, OTHERS.slice(0, 3));
+
+    return show(host, Route.HostLobby);
+  },
+  [Scenario.HostLobbyAlone]: async (table) => {
+    signIn();
+    const { host } = await lobby(table, ME, []);
 
     return show(host, Route.HostLobby);
   },
@@ -194,6 +212,16 @@ const SETUPS: Record<Scenario, Setup> = {
     const host = await hostedGame(
       table,
       OTHERS.slice(0, 1),
+      ({ shared }) => shared.phase === SessionPhase.Finished,
+    );
+
+    return show(host, Route.Results);
+  },
+  [Scenario.ResultsFourPlayers]: async (table) => {
+    signIn();
+    const host = await hostedGame(
+      table,
+      OTHERS.slice(0, 3),
       ({ shared }) => shared.phase === SessionPhase.Finished,
     );
 

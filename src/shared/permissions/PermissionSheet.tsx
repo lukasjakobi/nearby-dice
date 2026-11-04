@@ -2,7 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView, View, useWindowDimensions } from 'react-native';
 
 import { RadioState } from '@/net';
-import { Button, ButtonVariant, BottomSheet, Text, TextVariant } from '@/ui';
+import {
+  BottomSheet,
+  Button,
+  ButtonVariant,
+  IconBadge,
+  IconName,
+  Text,
+  TextVariant,
+  useTheme,
+} from '@/ui';
 
 export type PermissionSheetState =
   | { variant: 'primer' }
@@ -17,6 +26,22 @@ export type PermissionSheetProps = {
   onClose: () => void;
 };
 
+type Section =
+  'primer' | 'blocked' | 'bluetoothOff' | 'locationOff' | 'unavailable' | 'checkFailed';
+
+/**
+ * What each case shows above its title: the same "nearby" waves as the search on Join, the radio
+ * that is off, or a warning when nothing helps.
+ */
+const SECTION_ICON: Record<Section, IconName> = {
+  primer: IconName.Broadcast,
+  blocked: IconName.Broadcast,
+  bluetoothOff: IconName.Bluetooth,
+  locationOff: IconName.Target,
+  unavailable: IconName.Warning,
+  checkFailed: IconName.Warning,
+};
+
 export function PermissionSheet({
   state,
   busy,
@@ -26,7 +51,8 @@ export function PermissionSheet({
 }: PermissionSheetProps) {
   const { height } = useWindowDimensions();
   const { t } = useTranslation();
-  const section =
+  const { colors } = useTheme();
+  const section: Section =
     state.variant === 'primer'
       ? 'primer'
       : state.variant === 'radio'
@@ -50,32 +76,37 @@ export function PermissionSheet({
         : t('permission.openSettings');
 
   return (
-    <BottomSheet visible onClose={onClose} title={content.title}>
+    <BottomSheet visible onClose={onClose}>
       <ScrollView
         style={{ flexGrow: 0, maxHeight: height * 0.65 }}
-        contentContainerStyle={{ gap: 12 }}
+        contentContainerStyle={{ gap: 12, alignItems: 'center' }}
       >
-        <Text variant={TextVariant.Body} color="muted">
+        <IconBadge icon={SECTION_ICON[section]} color={colors.primary} size={72} />
+        <Text
+          variant={TextVariant.DialogTitle}
+          align="center"
+          accessibilityRole="header"
+          style={{ marginTop: 4 }}
+        >
+          {content.title}
+        </Text>
+        <Text variant={TextVariant.Body} color="muted" align="center">
           {content.body}
         </Text>
         {Platform.OS === 'android' &&
         (state.variant === 'primer' || (state.variant === 'blocked' && !state.problem)) ? (
-          <Text variant={TextVariant.Body} color="muted">
+          <Text variant={TextVariant.Body} color="muted" align="center">
             {t('permission.androidLocation')}
           </Text>
         ) : null}
         {settingsError ? (
-          <Text variant={TextVariant.Body} color="danger" accessibilityRole="alert">
+          <Text variant={TextVariant.Body} color="danger" align="center" accessibilityRole="alert">
             {t('permission.settingsFailed')}
           </Text>
         ) : null}
-        <View style={{ gap: 10, paddingTop: 8 }}>
+        <View style={{ gap: 4, paddingTop: 8, alignSelf: 'stretch' }}>
           <Button label={label} onPress={onAction} loading={busy} />
-          <Button
-            label={t('permission.later')}
-            onPress={onClose}
-            variant={ButtonVariant.Secondary}
-          />
+          <Button label={t('permission.later')} onPress={onClose} variant={ButtonVariant.Quiet} />
         </View>
       </ScrollView>
     </BottomSheet>

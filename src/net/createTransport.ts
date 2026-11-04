@@ -15,6 +15,6 @@ export function getTransport(): Transport {
 }
 
 /** Scenarios play several phones in one page, which only the web build can. */
-export function createBrowserTransport(channel: string): Transport {
-  throw new Error(`Browser transports (${channel}) exist in the web build only.`);
+export function createBrowserTransport(channel?: string): Transport {
+  throw new Error(`Browser transports (${channel ?? 'app'}) exist in the web build only.`);
 }

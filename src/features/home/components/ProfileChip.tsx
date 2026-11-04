@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 
-import { Avatar, Text, TextVariant, useTheme } from '@/ui';
+import { Avatar, useTheme } from '@/ui';
 import type { AvatarView } from '@/shared';
 
+/** The player's avatar in the header; the greeting below already says their name. */
 export function ProfileChip({
   name,
   avatar,
@@ -22,23 +23,14 @@ export function ProfileChip({
       accessibilityRole="button"
       accessibilityLabel={t('home.editProfile', { name })}
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        minHeight: 44,
-        paddingVertical: 2,
-        paddingLeft: 2,
-        paddingRight: 14,
+        padding: 2,
         borderRadius: 999,
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.line,
+        borderWidth: 2,
+        borderColor: avatar.color,
+        backgroundColor: colors.bg,
       }}
     >
       <Avatar initial={avatar.initial} color={avatar.color} size={40} />
-      <Text variant={TextVariant.Label} size={15}>
-        {name}
-      </Text>
     </Pressable>
   );
 }

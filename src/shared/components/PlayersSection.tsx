@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-
-import { Section, Text, TextVariant } from '@/ui';
+import { ListGroup, Section, Text, TextVariant } from '@/ui';
 
 import { FreeSeatRow } from './FreeSeatRow';
 import type { FreeSeatRowProps } from './FreeSeatRow';
@@ -24,14 +22,14 @@ export function PlayersSection({ rows, maxPlayers, freeSeat, onPlayerMenu }: Pla
   return (
     <Section
       title={t('lobby.playersTitle')}
-      gap={14}
+      gap={12}
       trailing={
         <Text variant={TextVariant.Body} size={14} color="muted" accessibilityLiveRegion="polite">
           {t('lobby.playerCount', { n: rows.length, max: maxPlayers })}
         </Text>
       }
     >
-      <View style={{ gap: 10 }}>
+      <ListGroup inset={66}>
         {rows.map((row) => (
           <PlayerRow
             key={row.id}
@@ -44,7 +42,7 @@ export function PlayersSection({ rows, maxPlayers, freeSeat, onPlayerMenu }: Pla
           />
         ))}
         {freeSeat ? <FreeSeatRow {...freeSeat} /> : null}
-      </View>
+      </ListGroup>
     </Section>
   );
 }

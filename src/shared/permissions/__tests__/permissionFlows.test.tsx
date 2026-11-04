@@ -54,42 +54,39 @@ test('a failed discovery is shown as a search error and can be retried', async (
     .mockRejectedValueOnce(new Error('8034: MISSING_PERMISSION_ACCESS_COARSE_LOCATION'));
   const view = await renderScreen(<JoinScreen />);
   expect(screen.getByText(t('join.scanFailed'))).toBeTruthy();
-  expect(screen.queryByText(t('join.nearbyEmpty'))).toBeNull();
-  await fireEvent.press(screen.getByLabelText(t('join.refresh')));
+  expect(screen.queryByRole('progressbar', { name: t('join.scanning') })).toBeNull();
+  await fireEvent.press(screen.getByText(t('join.retry')));
   expect(screen.queryByText(t('join.scanFailed'))).toBeNull();
   expect(scanner.state.get()).toMatchObject({ scanning: true, error: null });
   await view.unmount();
 });
 
-test('refresh restarts discovery, keeps the entered code and prevents duplicate scans', async () => {
+test('retrying a failed search restarts discovery and keeps the entered code', async () => {
   jest.useFakeTimers();
-  const start = jest.spyOn(transport, 'startDiscovery');
-  const stop = jest.spyOn(transport, 'stopDiscovery');
+  const start = jest
+    .spyOn(transport, 'startDiscovery')
+    .mockRejectedValueOnce(new Error('8007: STATUS_RADIO_ERROR'));
   const view = await renderScreen(<JoinScreen />);
   await fireEvent.changeText(screen.getByLabelText(t('join.codeLabel')), '7K4M');
   await act(async () => jest.advanceTimersByTimeAsync(TIMING.scanWindow));
 
-  await fireEvent.press(screen.getByLabelText(t('join.refresh')));
-  expect(stop).toHaveBeenCalledTimes(1);
+  await fireEvent.press(screen.getByText(t('join.retry')));
   expect(start).toHaveBeenCalledTimes(2);
   expect(screen.getByLabelText(t('join.codeLabel')).props.value).toBe('7K4M');
-  expect(screen.getByLabelText(t('join.refresh')).props.accessibilityState.disabled).toBe(true);
-  await fireEvent.press(screen.getByLabelText(t('join.refresh')));
-  expect(start).toHaveBeenCalledTimes(2);
-
-  await act(async () => jest.advanceTimersByTimeAsync(TIMING.scanWindow));
-  expect(screen.getByLabelText(t('join.refresh')).props.accessibilityState.disabled).toBe(false);
+  expect(screen.getByRole('progressbar', { name: t('join.scanning') })).toBeTruthy();
   await view.unmount();
 });
 
-test('refresh checks radio readiness before restarting discovery', async () => {
+test('retrying checks radio readiness before restarting discovery', async () => {
   jest.useFakeTimers();
-  const start = jest.spyOn(transport, 'startDiscovery');
+  const start = jest
+    .spyOn(transport, 'startDiscovery')
+    .mockRejectedValueOnce(new Error('8007: STATUS_RADIO_ERROR'));
   const view = await renderScreen(<JoinScreen />);
   await act(async () => jest.advanceTimersByTimeAsync(TIMING.scanWindow));
   transport.radio = RadioState.LocationOff;
 
-  await fireEvent.press(screen.getByLabelText(t('join.refresh')));
+  await fireEvent.press(screen.getByText(t('join.retry')));
   expect(screen.getByText(t('permission.locationOff.title'))).toBeTruthy();
   expect(start).toHaveBeenCalledTimes(1);
   transport.radio = RadioState.Ready;

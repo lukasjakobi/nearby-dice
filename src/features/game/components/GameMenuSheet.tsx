@@ -29,7 +29,13 @@ export function GameMenuSheet({
     <BottomSheet visible={visible} onClose={onContinue} title={t('game.menu')}>
       <SwitchList rows={switches} onToggle={onToggle} onVolume={onVolume} />
       <Button label={t('game.continue')} onPress={onContinue} style={{ marginTop: 12 }} />
-      <Button label={leaveLabel} onPress={onLeave} variant={ButtonVariant.TonalDanger} />
+      {/* Leaving sits apart from "Weiterspielen", where a thumb won't land on it by accident. */}
+      <Button
+        label={leaveLabel}
+        onPress={onLeave}
+        variant={ButtonVariant.QuietDanger}
+        style={{ marginTop: 8 }}
+      />
     </BottomSheet>
   );
 }
