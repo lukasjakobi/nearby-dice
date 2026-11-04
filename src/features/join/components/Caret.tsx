@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { Animated, useAnimatedValue } from 'react-native';
 
-import { FIXED, useTheme } from '@/ui';
+import { useTheme } from '@/ui';
 
 /** The blinking caret on the empty code die (static when reduce motion is on). */
 export function Caret() {
-  const { reduceMotion } = useTheme();
+  const { colors, reduceMotion } = useTheme();
   const opacity = useAnimatedValue(1);
   useEffect(() => {
     if (reduceMotion) return;
@@ -22,7 +22,7 @@ export function Caret() {
 
   return (
     <Animated.View
-      style={{ width: 3, height: 44, borderRadius: 2, backgroundColor: FIXED.diePip, opacity }}
+      style={{ width: 3, height: 44, borderRadius: 2, backgroundColor: colors.ink, opacity }}
     />
   );
 }

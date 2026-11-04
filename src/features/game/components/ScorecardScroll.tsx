@@ -14,8 +14,8 @@ const FADE_HEIGHT = 56;
 type Extent = { viewport: number; content: number; offset: number };
 
 /**
- * Scroll view around the scorecard. The card normally shrinks to fit; when it still
- * cannot (small phones, large text), a fade and a "Weitere Felder" chip mark the fields
+ * Scroll view around the scorecard. When the fixed rows exceed the viewport,
+ * a fade and a "Weitere Felder" chip mark the fields
  * hidden below so nobody misses them.
  */
 export function ScorecardScroll({ children }: { children: ReactNode }) {

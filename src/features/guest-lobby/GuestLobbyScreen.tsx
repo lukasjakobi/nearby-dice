@@ -37,7 +37,7 @@ export function GuestLobbyScreen() {
   return (
     <Screen>
       <Header
-        title={lobby.title}
+        title={t('lobby.title')}
         leading={{ icon: IconName.Close, label: t('lobby.leaveLabel'), onPress: lobby.askLeave }}
         trailing={<LobbyHeaderActions onSettings={lobby.openSettings} />}
       />

@@ -15,7 +15,7 @@ const sheet = (scene: Scene) => gameScene(i18n.t, scene).view.sheet;
 const meta: Meta<typeof Scorecard> = {
   title: 'Features/Game/Scorecard',
   component: Scorecard,
-  args: { dimmed: false, onPick: fn(), onSelectSheet: fn() },
+  args: { playing: true, dimmed: false, onPick: fn(), onSelectSheet: fn() },
   decorators: [
     (Story) => (
       <View style={{ height: 640 }}>

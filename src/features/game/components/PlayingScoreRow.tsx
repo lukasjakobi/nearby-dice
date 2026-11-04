@@ -1,0 +1,141 @@
+import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+
+import { alpha, Font, fontFamily, Icon, IconName, SIZE, Text, useTheme } from '@/ui';
+import type { ColorToken } from '@/ui';
+
+import { CellState } from '../view';
+import type { CellView } from '../view';
+import { CategoryIcon } from './CategoryIcon';
+
+const VALUE_COLOR: Record<CellState, ColorToken> = {
+  [CellState.Filled]: 'ink',
+  [CellState.Preview]: 'primary',
+  [CellState.PreviewZero]: 'danger',
+  [CellState.Open]: 'muted',
+  [CellState.Blocked]: 'danger',
+};
+
+type PlayingScoreRowProps = {
+  cell: CellView;
+  onPick: (cell: CellView) => void;
+  selected: boolean;
+};
+
+/** A fixed-height row on the playing board, shared by every preset. */
+export function PlayingScoreRow({ cell, onPick, selected }: PlayingScoreRowProps) {
+  const { colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const compact = width <= 340;
+  const valueColor = VALUE_COLOR[cell.state];
+  const preview = cell.state === CellState.Preview;
+  const filled = cell.state === CellState.Filled;
+  const solidPreview = preview && (cell.pickable || selected);
+  const valueBackground = solidPreview
+    ? colors.primary
+    : preview || valueColor === 'danger'
+      ? alpha(colors[valueColor], 0.12)
+      : filled
+        ? colors.surface2
+        : undefined;
+  const labelColor = filled ? 'muted' : 'ink';
+  const singleLine = cell.hint !== null || !cell.label.includes(' ');
+
+  return (
+    <Pressable
+      onPress={() => onPick(cell)}
+      disabled={!cell.pickable}
+      accessibilityRole="button"
+      accessibilityLabel={cell.accessibilityLabel}
+      accessibilityState={{ disabled: !cell.pickable, selected }}
+      style={({ pressed }) => [
+        styles.row,
+        compact && styles.compactRow,
+        { borderTopColor: alpha(colors.ink, 0.1) },
+        (selected || pressed) && { backgroundColor: colors.surface2 },
+      ]}
+    >
+      <View style={styles.icon}>
+        <CategoryIcon
+          category={cell.category}
+          face={cell.face}
+          color={colors[labelColor]}
+          size={cell.face !== null ? 23 : 19}
+        />
+        {filled ? (
+          <View
+            style={[styles.entered, { backgroundColor: colors.surface, borderColor: colors.line }]}
+          >
+            <Icon name={IconName.Check} color={colors.primary} size={10} strokeWidth={3} />
+          </View>
+        ) : null}
+      </View>
+      <View style={styles.label}>
+        <Text
+          size={compact ? 11.5 : 13}
+          weight={selected ? 700 : 500}
+          color={labelColor}
+          numberOfLines={singleLine ? 1 : 2}
+          adjustsFontSizeToFit={singleLine}
+          minimumFontScale={0.8}
+        >
+          {cell.label}
+        </Text>
+        {cell.hint ? (
+          <Text size={10.5} color="muted" numberOfLines={1}>
+            {cell.hint}
+          </Text>
+        ) : null}
+      </View>
+      <View style={[styles.value, { backgroundColor: valueBackground }]}>
+        {cell.state === CellState.Blocked ? (
+          <Icon name={IconName.Ban} color={colors.danger} size={14} />
+        ) : (
+          <Text size={16} color={solidPreview ? 'onPrimary' : valueColor} style={styles.points}>
+            {cell.value}
+          </Text>
+        )}
+      </View>
+      {selected ? (
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, styles.selection, { borderColor: colors.primary }]}
+        />
+      ) : null}
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: SIZE.touch,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 8,
+    gap: 5,
+  },
+  compactRow: { paddingHorizontal: 6 },
+  icon: { width: 23, alignItems: 'center' },
+  entered: {
+    position: 'absolute',
+    bottom: -3,
+    right: -2,
+    width: 14,
+    height: 14,
+    borderRadius: 3,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selection: { borderWidth: 2, borderRadius: 3 },
+  label: { flex: 1, minWidth: 0 },
+  value: {
+    minWidth: 26,
+    height: 24,
+    borderRadius: 3,
+    paddingHorizontal: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  points: { fontFamily: fontFamily(Font.Display, 600) },
+});

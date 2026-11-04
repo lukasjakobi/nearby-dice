@@ -11,6 +11,7 @@ import { ScorecardScroll } from './ScorecardScroll';
 
 const card = (preset = PresetId.Classic) => (
   <Scorecard
+    playing
     sheet={gameScene(i18n.t, { preset, dice: THREE_FIVES }).view.sheet}
     dimmed={false}
     onPick={fn()}
@@ -27,7 +28,7 @@ const meta: Meta<typeof ScorecardScroll> = {
 export default meta;
 type Story = StoryObj<typeof ScorecardScroll>;
 
-/** Enough room: the card shrinks to fit and nothing is hidden. */
+/** Enough room to show every row. */
 export const Fits: Story = {
   render: () => (
     <View style={{ height: 640 }}>

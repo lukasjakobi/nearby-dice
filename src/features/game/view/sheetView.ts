@@ -25,14 +25,16 @@ import type { AvatarView } from '@/shared';
 import type { TurnContext } from './turnContext';
 
 export enum CellState {
-  /** Eingetragen: grey fill, check mark, final points. */
+  /** Entered points. */
   Filled = 'filled',
-  /** Wählbar: live preview on a primary tint. */
+  /** A positive score preview. */
   Preview = 'preview',
   /** A preview of 0: same layout in red ("Streichen"). */
   PreviewZero = 'preview-zero',
-  /** Noch offen: dashed border, "–". */
+  /** Open, with no roll to preview. */
   Open = 'open',
+  /** Open but ineligible for this roll under the field-order or joker rule. */
+  Blocked = 'blocked',
 }
 
 export type CellView = {
@@ -263,7 +265,7 @@ function cellView(
   if (!preview || !allowedCategories(preview.dice, sheet, rules).includes(category)) {
     return {
       ...base,
-      state: CellState.Open,
+      state: preview ? CellState.Blocked : CellState.Open,
       value: '–',
       pickable: false,
       accessibilityLabel: t('game.cell.open', { label }),

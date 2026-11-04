@@ -12,7 +12,7 @@ const ROUNDS: NearbyRoundView[] = [
   {
     endpointId: 'a',
     code: '7K4M',
-    roundName: 'Lukas’ Runde',
+    hostName: 'Lukas',
     initial: 'L',
     color: PLAYER_COLOR_HEX[PlayerColor.Amber],
     players: 2,
@@ -22,7 +22,7 @@ const ROUNDS: NearbyRoundView[] = [
   {
     endpointId: 'b',
     code: 'Q2XD',
-    roundName: 'Spieleabend bei Mia',
+    hostName: 'Mia',
     initial: 'M',
     color: PLAYER_COLOR_HEX[PlayerColor.Mint],
     players: 6,

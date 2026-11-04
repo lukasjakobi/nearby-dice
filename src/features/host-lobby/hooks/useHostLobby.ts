@@ -35,7 +35,6 @@ export function useHostLobby() {
   useBackAction(() => setDialog(LobbyDialog.Close));
 
   return {
-    title: shared.roundName,
     code: shared.code,
     rows,
     maxPlayers: shared.maxPlayers,

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, View, useAnimatedValue } from 'react-native';
 
-import { Icon, IconName, Pop, Text, alpha, useTheme } from '@/ui';
+import { Icon, IconName, Pop, SIZE, Text, alpha, useTheme } from '@/ui';
 
 import type { SheetView } from '../view';
 import { CELL_MAX_HEIGHT } from './ScoreCell';
 
-type BonusProgressProps = { bonus: NonNullable<SheetView['bonus']> };
+type BonusProgressProps = { bonus: NonNullable<SheetView['bonus']>; inline?: boolean };
 
 const TRACK = 8;
 
@@ -14,7 +14,7 @@ const TRACK = 8;
  * Upper block: "Bonus (+35)" with how far the upper sum has got to the threshold. The fill
  * glides to each new sum; once reached the card turns primary with a check mark.
  */
-export function BonusProgress({ bonus }: BonusProgressProps) {
+export function BonusProgress({ bonus, inline = false }: BonusProgressProps) {
   const { colors, reduceMotion } = useTheme();
   const [trackWidth, setTrackWidth] = useState(0);
   const fill = useAnimatedValue(bonus.fraction);
@@ -37,10 +37,15 @@ export function BonusProgress({ bonus }: BonusProgressProps) {
       accessibilityValue={{ text: bonus.progress }}
       style={[
         styles.bonus,
-        { backgroundColor: bonus.reached ? alpha(colors.primary, 0.14) : colors.surface2 },
+        inline
+          ? [styles.inline, { borderTopColor: alpha(colors.ink, 0.1) }]
+          : [
+              styles.tile,
+              { backgroundColor: bonus.reached ? alpha(colors.primary, 0.14) : colors.surface2 },
+            ],
       ]}
     >
-      <View style={styles.bonusRow}>
+      <View style={[styles.bonusRow, inline && styles.inlineRow]}>
         <View style={styles.title}>
           {bonus.reached ? (
             <Pop>
@@ -75,17 +80,15 @@ export function BonusProgress({ bonus }: BonusProgressProps) {
 }
 
 const styles = StyleSheet.create({
-  // As tall as a field beside it, so both blocks end on the same line.
   bonus: {
-    flex: 1,
-    minHeight: 38,
-    maxHeight: CELL_MAX_HEIGHT,
     justifyContent: 'center',
     gap: 6,
     paddingVertical: 8,
     paddingHorizontal: 10,
-    borderRadius: 12,
   },
+  tile: { flex: 1, minHeight: 38, maxHeight: CELL_MAX_HEIGHT, borderRadius: 12 },
+  inline: { minHeight: SIZE.touch, borderTopWidth: StyleSheet.hairlineWidth },
+  inlineRow: { flexWrap: 'wrap', columnGap: 4 },
   bonusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   title: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   track: { height: TRACK, borderRadius: TRACK / 2, overflow: 'hidden' },

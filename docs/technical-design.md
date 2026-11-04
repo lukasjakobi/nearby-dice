@@ -151,6 +151,16 @@ The engine knows players only by their id. Names, colours and connection links l
 `history` (scored, auto-scored, skipped and removed entries, each with its round and dice). The host
 broadcasts it after every change, so any phone can show "Spielstand" and "Verlauf".
 
+**Confirmed:** The game shows upper and lower scoring blocks side by side in rounded panels.
+Score rows keep the same height across presets. On smaller screens, players scroll for the
+remaining fields while the dice and actions stay visible. A red badge marks a zero or a
+field excluded by the current roll. A check mark identifies an entered score. A zero can still
+be entered with "Streichen" when the rules allow it. See [scoring](scoring.md) for the joker rule.
+
+**Confirmed:** The host chooses a preset when opening a lobby. Nearby discovery identifies a
+lobby by its host, and manual entry uses the round code. The session and discovery payloads
+carry the default round name for compatibility with older clients.
+
 ### Game modes
 
 **Confirmed:** games are played only in the predefined presets ("Spielstil"); there are no
@@ -163,7 +173,8 @@ host's own vote stays. Guests see the mode read-only and get the toast „Spiels
 
 **Confirmed:** `ClassicXl` is the Classic XL ruleset with 17 fields per sheet. Its fields and points
 are written in [scoring.md](scoring.md#classic-xl). `TwoPairs` is scored by one helper in `fields.ts`
-that Yatzy shares.
+that Yatzy shares. See the playing board in [light](screenshots/classic-xl-light.png) and
+[dark](screenshots/classic-xl-dark.png).
 
 **Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block; its points are
 in [scoring.md](scoring.md#lucky-number). While the field is open it shows the current target; once it

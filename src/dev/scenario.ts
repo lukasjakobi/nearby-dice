@@ -21,6 +21,8 @@ export enum Scenario {
   GuestLobby = 'guest-lobby',
   /** Three players, my turn, after my first roll. */
   GameMyTurn = 'game-my-turn',
+  /** Classic XL, my turn after rolling. */
+  GameClassicXl = 'game-classic-xl',
   /** A guest watching the host's turn. */
   GameWaiting = 'game-waiting',
   /** Six players in round four, my turn. */

@@ -75,7 +75,7 @@ export function usePendingScore(
       });
     },
     // Keep the selection until the entry arrives, so the bar does not flash back
-    // to "Nochmal würfeln" while the host confirms it.
+    // to "Würfeln" while the host confirms it.
     markSent: () => setPending((p) => (p ? { ...p, sent: true } : p)),
     clear: () => setPending(null),
   };
