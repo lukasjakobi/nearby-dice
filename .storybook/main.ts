@@ -31,19 +31,17 @@ function reactNativeShim(): Plugin {
 }
 
 /**
- * The dev server pre-bundles packages with esbuild, which rejects two files Metro takes as they
+ * The dev server pre-bundles packages with Rolldown, which rejects two files Metro takes as they
  * are: Expo's type-only global declarations and react-native-svg's native sound module (loaded
  * lazily on Android touches, never on the web). Both become empty modules there.
  */
 const NATIVE_ONLY =
   /expo-modules-core\/build\/ts-declarations\/global\.js$|react-native-svg\/lib\/module\/fabric\/NativeSvgSoundModule\.js$/;
 
-const stubNativeOnly = {
+const stubNativeOnly: Plugin = {
   name: 'nearby-dice:stub-native-only',
-  setup(build: {
-    onLoad: (options: { filter: RegExp }, load: () => { contents: string }) => void;
-  }) {
-    build.onLoad({ filter: NATIVE_ONLY }, () => ({ contents: 'export default null;' }));
+  load(id) {
+    return NATIVE_ONLY.test(id) ? 'export default null;' : null;
   },
 };
 
@@ -57,7 +55,7 @@ const config: StorybookConfig = {
 
     return mergeConfig(viteConfig, {
       plugins: [reactNativeShim()],
-      optimizeDeps: { esbuildOptions: { plugins: [stubNativeOnly] } },
+      optimizeDeps: { rolldownOptions: { plugins: [stubNativeOnly] } },
       resolve: {
         alias: {
           // react-native-svg's web build looks images up here; React Native 0.88 no longer ships it.
