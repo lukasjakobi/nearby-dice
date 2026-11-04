@@ -80,7 +80,7 @@ export function PresetGrid({ value, onChange, presets = PRESET_ORDER, onRules }:
                       borderColor: selected ? colors.primary : colors.line,
                       // Unchosen tiles stand up to be tapped; the chosen one is pressed in.
                       borderBottomWidth: selected ? 1.5 : EDGE,
-                      borderBottomColor: selected ? colors.primary : colors.control,
+                      borderBottomColor: selected ? colors.primary : colors.line,
                       transform: [{ translateY: selected ? EDGE - 1.5 : 0 }],
                       backgroundColor: selected ? colors.primary : colors.surface,
                       alignItems: 'center',

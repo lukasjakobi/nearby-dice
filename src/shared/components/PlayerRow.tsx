@@ -23,7 +23,7 @@ function tagLook(
   tag: PlayerTag,
 ): { label: string; background: ColorToken; color: ColorToken } {
   const looks: Record<PlayerTag, ReturnType<typeof tagLook>> = {
-    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'surface2', color: 'ink' },
+    [PlayerTag.Host]: { label: t('common.hostTag'), background: 'ink', color: 'bg' },
     [PlayerTag.You]: { label: t('common.youTag'), background: 'primary', color: 'onPrimary' },
   };
 

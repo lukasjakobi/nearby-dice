@@ -17,7 +17,7 @@ type ScorecardProps = {
 
 /**
  * Two columns: "Oberer Block" with the bonus progress, "Unterer Block" with illustrations.
- * Fills the height it is given: rows shrink from 62 to 38 so Yatzy's nine lower fields
+ * Fills the height it is given: rows shrink from 70 to 38 so Yatzy's nine lower fields
  * fit without scrolling; only below that does the card overflow its scroll view.
  */
 export function Scorecard({ sheet, dimmed, onPick, onSelectSheet }: ScorecardProps) {
