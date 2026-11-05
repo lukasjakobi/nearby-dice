@@ -63,7 +63,7 @@ export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
               />
             ) : null}
           </View>
-          <View style={[styles.text, compact && styles.compactText]}>
+          <View style={[styles.text, compact && !wrapped && styles.compactText]}>
             <Text
               size={compact ? 11 : 12}
               weight={600}
