@@ -16,18 +16,18 @@ type PlayerPillsProps = {
 /**
  * One pill per player: initial, name, running total. The player whose turn it is has a
  * primary border and a dot on their avatar. When space is tight, avatars stack above names and
- * scores; Training's lone pill keeps its own size and gets a tag. Tapping a pill opens that
+ * scores; narrow six-player strips wrap into two rows. Training's lone pill keeps its own size and gets a tag. Tapping a pill opens that
  * player's sheet; while it is open, their pill is tinted and outlined in their colour.
  */
 export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { compact, onLayout } = usePlayerPillLayout(pills.length);
+  const { compact, wrapped, onLayout } = usePlayerPillLayout(pills.length);
 
   return (
     <View
       onLayout={onLayout}
-      style={[styles.row, compact && styles.compactRow]}
+      style={[styles.row, compact && styles.compactRow, wrapped && styles.wrappedRow]}
       accessibilityRole="list"
       accessibilityLabel={t('game.players')}
     >
@@ -42,6 +42,7 @@ export function PlayerPills({ pills, onSelect }: PlayerPillsProps) {
             styles.pill,
             pills.length === 1 && styles.lonePill,
             compact && styles.compactPill,
+            wrapped && styles.wrappedPill,
             pillColors(pill, colors),
             { opacity: pill.dimmed ? 0.5 : 1 },
           ]}
@@ -146,6 +147,8 @@ const styles = StyleSheet.create({
   lonePill: { flex: 0, minWidth: 140, alignSelf: 'flex-start' },
   lone: { justifyContent: 'center' },
   compactRow: { gap: 4 },
+  wrappedRow: { flexWrap: 'wrap', gap: 6 },
+  wrappedPill: { flexBasis: '30%', flexDirection: 'row', paddingHorizontal: 4, gap: 4 },
   compactPill: {
     flexDirection: 'column',
     gap: 4,

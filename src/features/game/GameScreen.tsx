@@ -64,13 +64,16 @@ export function GameScreen() {
       {view.viewingOther ? <SheetBackButton onPress={screen.showTurnSheet} /> : null}
 
       <ScorecardScroll>
-        <Scorecard
-          playing
-          sheet={view.sheet}
-          dimmed={view.cardDimmed}
-          onPick={screen.pick}
-          onSelectSheet={screen.selectSheet}
-        />
+        {(availableHeight) => (
+          <Scorecard
+            availableHeight={availableHeight}
+            playing
+            sheet={view.sheet}
+            dimmed={view.cardDimmed}
+            onPick={screen.pick}
+            onSelectSheet={screen.selectSheet}
+          />
+        )}
       </ScorecardScroll>
 
       <ActionBar

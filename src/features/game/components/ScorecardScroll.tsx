@@ -3,27 +3,25 @@ import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import type { ScrollViewInstance } from 'react-native';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
-import { Chip, IconName, useTheme } from '@/ui';
+import { Chip, IconName } from '@/ui';
 
 /** Hidden content smaller than this does not count as "more below". */
 const EDGE = 8;
-const FADE_HEIGHT = 56;
 
 type Extent = { viewport: number; content: number; offset: number };
 
 /**
- * Scroll view around the scorecard. When the fixed rows exceed the viewport,
- * a fade and a "Weitere Felder" chip mark the fields
+ * Scroll view around the scorecard. When the rows exceed the viewport,
+ * a "Weitere Felder" chip below the viewport marks the fields
  * hidden below so nobody misses them.
  */
-export function ScorecardScroll({ children }: { children: ReactNode }) {
+export function ScorecardScroll({ children }: { children: (height: number) => ReactNode }) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const scroll = useRef<ScrollViewInstance>(null);
   const extent = useRef<Extent>({ viewport: 0, content: 0, offset: 0 });
   const [hiddenBelow, setHiddenBelow] = useState(false);
+  const [viewport, setViewport] = useState(0);
 
   const update = (patch: Partial<Extent>) => {
     const next = Object.assign(extent.current, patch);
@@ -34,25 +32,21 @@ export function ScorecardScroll({ children }: { children: ReactNode }) {
     <View style={styles.wrap}>
       <ScrollView
         ref={scroll}
+        style={styles.scroll}
         contentContainerStyle={styles.content}
-        onLayout={(e) => update({ viewport: e.nativeEvent.layout.height })}
+        onLayout={(e) => {
+          const height = e.nativeEvent.layout.height;
+          setViewport(height);
+          update({ viewport: height });
+        }}
         onContentSizeChange={(_, height) => update({ content: height })}
         onScroll={(e) => update({ offset: e.nativeEvent.contentOffset.y })}
         scrollEventThrottle={32}
       >
-        {children}
+        {children(Math.max(0, viewport - 24))}
       </ScrollView>
       {hiddenBelow ? (
-        <View style={styles.hint} pointerEvents="box-none">
-          <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
-            <Defs>
-              <LinearGradient id="scorecard-fade" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor={colors.bg} stopOpacity={0} />
-                <Stop offset="0.7" stopColor={colors.bg} stopOpacity={1} />
-              </LinearGradient>
-            </Defs>
-            <Rect width="100%" height="100%" fill="url(#scorecard-fade)" />
-          </Svg>
+        <View style={styles.hint}>
           <Chip
             label={t('game.moreFields')}
             onPress={() => scroll.current?.scrollToEnd({ animated: true })}
@@ -65,16 +59,12 @@ export function ScorecardScroll({ children }: { children: ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: 12, paddingTop: 12, paddingBottom: 20 },
+  wrap: { flex: 1, minHeight: 0 },
+  scroll: { flex: 1, minHeight: 0 },
+  content: { flexGrow: 1, paddingHorizontal: 12, paddingTop: 12, paddingBottom: 12 },
   hint: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: FADE_HEIGHT,
+    flexShrink: 0,
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 8,
+    paddingBottom: 4,
   },
 });
