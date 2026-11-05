@@ -13,6 +13,12 @@ export enum Scenario {
   /** Join, with someone's round showing up nearby. */
   JoinNearby = 'join-nearby',
   Settings = 'settings',
+  /** Editing a returning player's name and colour. */
+  Profile = 'profile',
+  HostSetup = 'host-setup',
+  TrainingSetup = 'training-setup',
+  /** Searching nearby with no rounds available. */
+  JoinEmpty = 'join-empty',
   /** Hosting, with three guests in the lobby. */
   HostLobby = 'host-lobby',
   /** Hosting, nobody has joined yet. */
@@ -23,12 +29,33 @@ export enum Scenario {
   GameMyTurn = 'game-my-turn',
   /** A guest watching the host's turn. */
   GameWaiting = 'game-waiting',
+  /** My turn before rolling, with the scorecard still locked. */
+  GameBeforeRoll = 'game-before-roll',
+  /** My turn with two dice held after the first roll. */
+  GameHeldDice = 'game-held-dice',
+  /** No rolls left: a field must be chosen. */
+  GameLastRoll = 'game-last-roll',
+  /** A guest disconnected on their turn; the host can wait, skip or remove them. */
+  GamePlayerLost = 'game-player-lost',
+  GameTopToBottom = 'game-top-to-bottom',
+  GameBlitz = 'game-blitz',
+  GameSameDice = 'game-same-dice',
+  GameTriple = 'game-triple',
+  GameYatzy = 'game-yatzy',
+  GameClassicXl = 'game-classic-xl',
+  GameLuckyNumber = 'game-lucky-number',
   /** Six players in round four, my turn. */
   GameSixPlayers = 'game-six-players',
   /** A finished game of two. */
   Results = 'results',
   /** A finished game of four. */
   ResultsFourPlayers = 'results-four-players',
+  /** Results seen by a guest, with read-only preset selection. */
+  ResultsGuest = 'results-guest',
+  /** Host voted yes, still waiting for the guests. */
+  ResultsRematch = 'results-rematch',
+  /** Training has its own summary and restart action. */
+  ResultsTraining = 'results-training',
   /** A saved game, opened from the home screen. */
   SavedGame = 'saved-game',
   /** Training in round five. */

@@ -2,6 +2,7 @@ import {
   createGame,
   currentRound,
   PlayerColor,
+  Link,
   PRESETS,
   PresetId,
   randomSeed,
@@ -10,9 +11,9 @@ import {
 } from '@/domain';
 import type { GameState, NamedPlayer, Profile, Rng } from '@/domain';
 import { delay } from '@/lib';
-import { SessionPhase, setActiveSession, TrainingSession } from '@/session';
+import { RematchVote, SessionPhase, setActiveSession, TrainingSession } from '@/session';
 import type { AnySession, GuestSession, HostSession, SessionSnapshot } from '@/session';
-import { navigate, Route } from '@/shared';
+import { navigate, ProfileMode, Route } from '@/shared';
 import { useProfileStore, useStatsStore } from '@/store';
 
 import { botMove } from './botMove';
@@ -60,8 +61,8 @@ function myTurnFrom(round: number) {
 }
 
 /** A host with `guests` of the other players in its lobby. */
-async function lobby(table: Table, host: Profile, guests: Profile[]) {
-  const session = await table.host(host);
+async function lobby(table: Table, host: Profile, guests: Profile[], preset = PresetId.Classic) {
+  const session = await table.host(host, preset);
   const { code } = session.getSnapshot().shared;
   // One at a time: the host admits only a few joins at once.
   const joined: GuestSession[] = [];
@@ -75,8 +76,9 @@ async function hostedGame(
   table: Table,
   others: Profile[],
   reached: (snapshot: SessionSnapshot) => boolean,
+  preset = PresetId.Classic,
 ): Promise<HostSession> {
-  const { host, guests } = await lobby(table, ME, others);
+  const { host, guests } = await lobby(table, ME, others, preset);
   // Only guests have to mind the host's message cap.
   table.play(host, { thinkMs: 0 });
   guests.forEach((guest) => table.play(guest));
@@ -127,6 +129,17 @@ function show(session: AnySession, route: Route): Destination {
   return { route };
 }
 
+/** The preset's distinct scorecard, after my first roll in round three. */
+function presetGame(preset: PresetId): Setup {
+  return async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 1), myTurnFrom(3), preset);
+    host.roll();
+
+    return show(host, Route.Game);
+  };
+}
+
 const SETUPS: Record<Scenario, Setup> = {
   [Scenario.Onboarding]: async () => ({ route: Route.Onboarding }),
   [Scenario.Home]: async (_table, rng) => {
@@ -151,6 +164,26 @@ const SETUPS: Record<Scenario, Setup> = {
     signIn();
 
     return { route: Route.Settings };
+  },
+  [Scenario.Profile]: async () => {
+    signIn();
+
+    return { route: Route.Profile, params: { mode: ProfileMode.Edit } };
+  },
+  [Scenario.HostSetup]: async () => {
+    signIn();
+
+    return { route: Route.HostSetup };
+  },
+  [Scenario.TrainingSetup]: async () => {
+    signIn();
+
+    return { route: Route.Training };
+  },
+  [Scenario.JoinEmpty]: async () => {
+    signIn();
+
+    return { route: Route.Join };
   },
   [Scenario.HostLobby]: async (table) => {
     signIn();
@@ -201,6 +234,51 @@ const SETUPS: Record<Scenario, Setup> = {
 
     return show(me, Route.Game);
   },
+  [Scenario.GameBeforeRoll]: async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3));
+
+    return show(host, Route.Game);
+  },
+  [Scenario.GameHeldDice]: async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3));
+    host.roll();
+    host.toggleHold(0);
+    host.toggleHold(2);
+
+    return show(host, Route.Game);
+  },
+  [Scenario.GameLastRoll]: async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3));
+    for (let i = 0; i < PRESETS[PresetId.Classic].rollsPerTurn; i++) host.roll();
+
+    return show(host, Route.Game);
+  },
+  [Scenario.GamePlayerLost]: async (table) => {
+    signIn();
+    const { host, guests } = await lobby(table, ME, OTHERS.slice(0, 1));
+    table.play(host, { thinkMs: 0 });
+    table.play(guests[0]);
+    host.start();
+    await table.stopWhen(host, (snapshot) => {
+      const game = snapshot.shared.game;
+
+      return inGame(snapshot) && game!.turn.playerId !== snapshot.myId;
+    });
+    guests[0].dispose();
+    await table.stopWhen(host, ({ shared }) => shared.players.some((p) => p.link === Link.Lost));
+
+    return show(host, Route.Game);
+  },
+  [Scenario.GameTopToBottom]: presetGame(PresetId.TopToBottom),
+  [Scenario.GameBlitz]: presetGame(PresetId.Blitz),
+  [Scenario.GameSameDice]: presetGame(PresetId.SameDice),
+  [Scenario.GameTriple]: presetGame(PresetId.Triple),
+  [Scenario.GameYatzy]: presetGame(PresetId.Yatzy),
+  [Scenario.GameClassicXl]: presetGame(PresetId.ClassicXl),
+  [Scenario.GameLuckyNumber]: presetGame(PresetId.LuckyNumber),
   [Scenario.GameSixPlayers]: async (table) => {
     signIn();
     const host = await hostedGame(table, OTHERS, myTurnFrom(4));
@@ -226,6 +304,37 @@ const SETUPS: Record<Scenario, Setup> = {
     );
 
     return show(host, Route.Results);
+  },
+  [Scenario.ResultsGuest]: async (table) => {
+    signIn();
+    const { host, code } = await lobby(table, OTHERS[0], []);
+    const me = await table.join(code, ME, useProfileStore.getState().deviceId);
+    table.play(host, { thinkMs: 0 });
+    table.play(me);
+    host.start();
+    await table.stopWhen(host, ({ shared }) => shared.phase === SessionPhase.Finished);
+    await delay(SYNC_MS);
+
+    return show(me, Route.Results);
+  },
+  [Scenario.ResultsRematch]: async (table) => {
+    signIn();
+    const host = await hostedGame(
+      table,
+      OTHERS.slice(0, 2),
+      ({ shared }) => shared.phase === SessionPhase.Finished,
+    );
+    host.voteRematch(RematchVote.Yes);
+
+    return show(host, Route.Results);
+  },
+  [Scenario.ResultsTraining]: async (table, rng) => {
+    signIn();
+    const training = new TrainingSession({ profile: ME, preset: PresetId.Classic, rng });
+    table.play(training, { thinkMs: 0 });
+    await table.stopWhen(training, ({ shared }) => shared.phase === SessionPhase.Finished);
+
+    return show(training, Route.Results);
   },
   [Scenario.SavedGame]: async (_table, rng) => {
     signIn();

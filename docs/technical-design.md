@@ -460,7 +460,10 @@ whole rounds across browser tabs without radios. How to use it:
   in the same page, on a channel of their own (or, for `join-nearby`, on the app's channel, so the
   phone on screen finds their round), with storage that starts empty. The page reports
   `<html data-scenario="ready">` (or `failed`). `?seed=` changes the dice; the default seed makes
-  every run roll the same.
+  every run roll the same. The catalog includes setup and empty discovery, turn controls before
+  rolling / with held dice / after the last roll, each preset's scorecard, a disconnected player
+  on their turn, and guest, pending-rematch and Training results. Recovery uses a real bot
+  disconnect; timed presets retain their live timers.
 - **Dev builds only.** `app/_layout.tsx` requires `@/dev` behind `__DEV__`, so release bundles drop
   it; `npm run check:release-bundle` (CI) fails when dev code reaches an Android release bundle.
 - **Smoke flows** (`e2e/`, `npm run e2e`, CI job `e2e`): three phones join and each play a turn, a
