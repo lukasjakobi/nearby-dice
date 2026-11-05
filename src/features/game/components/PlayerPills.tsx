@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { ViewStyle } from 'react-native';
 
-import { Avatar, Font, Tag, Text, alpha, fontFamily, useTheme } from '@/ui';
+import { Avatar, Font, RADIUS, Tag, Text, alpha, fontFamily, useTheme } from '@/ui';
 import type { Palette } from '@/ui';
 
 import type { PillView } from '../view';
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingLeft: 6,
     paddingRight: 10,
-    borderRadius: 999,
+    borderRadius: RADIUS.chip,
     borderWidth: 2,
   },
   text: { flex: 1, minWidth: 0 },
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingLeft: 2,
     paddingRight: 2,
-    borderRadius: 16,
   },
   compactText: { flexGrow: 0, flexShrink: 0, flexBasis: 'auto', alignSelf: 'stretch' },
 });

@@ -3,6 +3,7 @@ import { Pressable } from 'react-native';
 import { Icon } from './icons/Icon';
 import type { IconName } from './icons/Icon';
 import { Text } from './Text';
+import { RADIUS } from './theme/tokens';
 import { useTheme } from './theme/ThemeProvider';
 
 type ChipProps = {
@@ -32,7 +33,7 @@ export function Chip({ label, onPress, leading, trailing }: ChipProps) {
         paddingLeft: leading ? 10 : 14,
         paddingRight: trailing ? 10 : 14,
         height: 32,
-        borderRadius: 16,
+        borderRadius: RADIUS.chip,
         borderWidth: 1,
         backgroundColor: colors.surface,
         borderColor: colors.line,

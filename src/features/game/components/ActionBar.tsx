@@ -9,6 +9,7 @@ import {
   DieFace,
   FIXED,
   IconName,
+  RADIUS,
   Text,
   TextVariant,
   useTheme,
@@ -154,8 +155,8 @@ export function ActionBar({
 
 const styles = StyleSheet.create({
   bar: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: RADIUS.chip,
+    borderTopRightRadius: RADIUS.chip,
     paddingTop: 12,
     paddingHorizontal: BAR_PADDING,
     gap: 10,
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6.5,
     marginHorizontal: -8,
     marginBottom: -6,
-    borderRadius: 18,
+    borderRadius: RADIUS.chip,
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   selection: { flexShrink: 1, gap: 4 },
-  rollButton: { flex: 1, paddingHorizontal: 28 },
+  rollButton: { flex: 1, paddingHorizontal: 28, borderRadius: RADIUS.chip },
   waiting: {
     flex: 1,
     minHeight: 48,

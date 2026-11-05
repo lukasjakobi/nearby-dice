@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 
-import { alpha, Font, fontFamily, Icon, IconName, SIZE, Text, useTheme } from '@/ui';
+import { alpha, Font, fontFamily, Icon, IconName, RADIUS, SIZE, Text, useTheme } from '@/ui';
 import type { ColorToken } from '@/ui';
 
 import { CellState } from '../view';
@@ -122,17 +122,17 @@ const styles = StyleSheet.create({
     right: -2,
     width: 14,
     height: 14,
-    borderRadius: 3,
+    borderRadius: RADIUS.chip / 2,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selection: { borderWidth: 2, borderRadius: 3 },
+  selection: { borderWidth: 2, borderRadius: RADIUS.chip / 2 },
   label: { flex: 1, minWidth: 0 },
   value: {
     minWidth: 26,
     height: 24,
-    borderRadius: 3,
+    borderRadius: RADIUS.chip / 2,
     paddingHorizontal: 3,
     alignItems: 'center',
     justifyContent: 'center',

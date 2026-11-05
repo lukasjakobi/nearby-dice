@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { SIZE, Text, useTheme } from '@/ui';
+import { RADIUS, SIZE, Text, useTheme } from '@/ui';
 
 import type { CellView, SheetView } from '../view';
 import { BonusProgress } from './BonusProgress';
@@ -79,6 +79,6 @@ const styles = StyleSheet.create({
   blockTitle: { paddingHorizontal: 4, paddingVertical: 2, letterSpacing: 0.5 },
   playingCard: { flex: 0, gap: 8, width: '100%', maxWidth: 560, alignSelf: 'center' },
   playingColumns: { flex: 0, alignItems: 'flex-start' },
-  playingColumn: { gap: 0, minWidth: 0, borderRadius: 6, overflow: 'hidden' },
+  playingColumn: { gap: 0, minWidth: 0, borderRadius: RADIUS.chip, overflow: 'hidden' },
   playingTitle: { minHeight: SIZE.touch, paddingHorizontal: 12, paddingVertical: 12 },
 });
