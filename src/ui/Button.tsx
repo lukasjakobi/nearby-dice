@@ -22,7 +22,7 @@ export enum ButtonVariant {
   Tonal = 'tonal',
   /** Tonal with red text: "Aus der Lobby entfernen". */
   TonalDanger = 'tonal-danger',
-  /** Raised sky tile for rolling dice. */
+  /** Raised ivory tile for rolling dice. */
   Roll = 'roll',
   /** Score confirmation on the felt. */
   Accent = 'accent',

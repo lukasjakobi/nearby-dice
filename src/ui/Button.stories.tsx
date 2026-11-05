@@ -23,7 +23,7 @@ export const Loading: Story = { args: { label: 'Wird sichtbar gemacht …', load
 
 export const Disabled: Story = { args: { disabled: true } };
 
-/** The selected sky raised tile, including its inactive and busy states. */
+/** The selected ivory raised tile, including its inactive and busy states. */
 export const RollTile: Story = {
   args: { label: 'Würfeln', icon: IconName.Dice, variant: ButtonVariant.Roll },
   decorators: [
