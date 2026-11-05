@@ -5,6 +5,7 @@ import { fn } from 'storybook/test';
 import { Banner } from './Banner';
 import { Button, ButtonVariant } from './Button';
 import { IconName } from './icons/Icon';
+import { useTheme } from './theme/ThemeProvider';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Actions/Button',
@@ -22,6 +23,25 @@ export const Loading: Story = { args: { label: 'Wird sichtbar gemacht …', load
 
 export const Disabled: Story = { args: { disabled: true } };
 
+/** The selected sky raised tile, including its inactive and busy states. */
+export const RollTile: Story = {
+  args: { label: 'Würfeln', icon: IconName.Dice, variant: ButtonVariant.Roll },
+  decorators: [
+    function OnFelt(Story) {
+      const { colors } = useTheme();
+
+      return (
+        <View style={{ padding: 20, gap: 16, backgroundColor: colors.felt }}>
+          <Story />
+        </View>
+      );
+    },
+  ],
+};
+
+export const RollTileDisabled: Story = { ...RollTile, args: { ...RollTile.args, disabled: true } };
+export const RollTileLoading: Story = { ...RollTile, args: { ...RollTile.args, loading: true } };
+
 /** Every variant in the place it is used: menu rows start-aligned, the roll button on felt. */
 export const Variants: Story = {
   render: (args) => (
@@ -37,7 +57,7 @@ export const Variants: Story = {
         label="Würfeln"
         icon={IconName.Dice}
         variant={ButtonVariant.Roll}
-        height={48}
+        height={52}
       />
       <Button {...args} label="Eintragen" icon={IconName.Check} variant={ButtonVariant.Accent} />
       <Button {...args} label="Später" variant={ButtonVariant.Quiet} />
