@@ -34,6 +34,24 @@ Options:
   `permission=denied|blocked|unavailable` or `radio=bluetooth-off|location-off`. For example,
   `home --param permission=blocked --tap Hosten --tap "Lobby öffnen"`.
 
+## Scenario coverage
+
+`--list` is the full catalog. Beyond the populated screens, these modes cover distinct states
+without extra taps:
+
+| Area                | Modes                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Setup and discovery | `profile`, `host-setup`, `training-setup`, `join-empty`, `join-nearby`                                                    |
+| Turn controls       | `game-before-roll`, `game-my-turn`, `game-held-dice`, `game-last-roll`                                                    |
+| Other players       | `game-waiting`, `game-six-players`, `game-player-lost`                                                                    |
+| Preset scorecards   | `game-top-to-bottom`, `game-blitz`, `game-same-dice`, `game-triple`, `game-yatzy`, `game-classic-xl`, `game-lucky-number` |
+| Results variants    | `results`, `results-four-players`, `results-guest`, `results-rematch`, `results-training`                                 |
+
+`game-player-lost` disconnects a real bot on its turn, leaving the host's recovery actions
+available. `results-rematch` leaves guest votes pending after the host votes yes. Timed presets
+keep their real countdowns running; capture them promptly. Sheets and dialogs remain reachable
+with `--tap`; permission, radio and update variants use `--param` as described above.
+
 ## Several phones by hand
 
 For exploring rather than shooting, start `npm run web` and open one tab per phone at
