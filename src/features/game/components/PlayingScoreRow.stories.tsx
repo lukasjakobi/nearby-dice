@@ -62,6 +62,6 @@ export const Selected: Story = {
 
 /** Extra height on a taller phone increases the target and score type. */
 export const Expanded: Story = {
-  args: { rowHeight: 72 },
+  args: { rowHeight: 64 },
   render: (args) => <PlayingScoreRow {...args} {...cellIn(CellState.Preview)} />,
 };

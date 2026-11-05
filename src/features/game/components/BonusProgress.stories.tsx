@@ -56,5 +56,5 @@ export const Filling: Story = {
 
 /** The bonus stays aligned with expanded scoring rows. */
 export const ExpandedInline: Story = {
-  render: () => <BonusProgress bonus={bonus(21)} inline rowHeight={72} />,
+  render: () => <BonusProgress bonus={bonus(21)} inline rowHeight={64} />,
 };

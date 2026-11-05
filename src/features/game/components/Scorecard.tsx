@@ -9,6 +9,8 @@ import { PlayingScoreRow } from './PlayingScoreRow';
 import { ScoreCell } from './ScoreCell';
 import { SheetTabs } from './SheetTabs';
 
+const MAX_PLAYING_ROW_HEIGHT = 64;
+
 type ScorecardProps = {
   sheet: SheetView;
   dimmed: boolean;
@@ -32,9 +34,9 @@ export function Scorecard({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const rows = Math.max(sheet.upper.length + (sheet.bonus ? 1 : 0), sheet.lower.length);
-  const rowHeight = Math.max(
-    SIZE.touch,
-    Math.floor((availableHeight - SIZE.touch - (sheet.tabs ? 44 : 0)) / rows),
+  const rowHeight = Math.min(
+    MAX_PLAYING_ROW_HEIGHT,
+    Math.max(SIZE.touch, Math.floor((availableHeight - SIZE.touch - (sheet.tabs ? 44 : 0)) / rows)),
   );
   const blocks = [
     { title: t('game.upperBlock'), cells: sheet.upper, bonus: sheet.bonus },

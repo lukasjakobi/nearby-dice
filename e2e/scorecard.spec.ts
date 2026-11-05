@@ -16,8 +16,8 @@ for (const scenario of ['game-my-turn', 'game-classic-xl']) {
     const bottom = (await chance.boundingBox())!;
     const tray = (await roll.boundingBox())!;
     expect(bottom.y + bottom.height).toBeLessThan(tray.y);
-    // The card occupies the available board rather than leaving a large gap above the dice.
-    expect(tray.y - bottom.y - bottom.height).toBeLessThan(180);
+    // Taller phones get larger targets without oversized rows.
+    expect(tallRow.height).toBeLessThanOrEqual(64);
 
     await page.setViewportSize({ width: 320, height: 568 });
     const more = page.getByRole('button', { name: 'Weitere Felder', exact: true });

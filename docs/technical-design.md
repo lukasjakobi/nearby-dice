@@ -153,7 +153,7 @@ broadcasts it after every change, so any phone can show "Spielstand" and "Verlau
 
 **Confirmed:** The game shows upper and lower scoring blocks side by side in rounded panels.
 Score rows share a height within each board and expand with the available space, with a
-44-point minimum. On smaller screens, players scroll for the remaining fields while the dice
+44-point minimum and a 64-point maximum. On smaller screens, players scroll for the remaining fields while the dice
 and actions stay visible. The more-fields button sits below the scroll viewport so it does not
 cover scoring rows. On narrow phones, six-player identities wrap into two rows to keep names
 readable. A red badge marks a zero or a field excluded by the current roll. A check mark identifies an entered score. A zero can still
