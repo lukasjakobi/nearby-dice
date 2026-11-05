@@ -15,6 +15,7 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - Seeing one component, or writing a story → `docs/technical-design.md`, Storybook
 - Scoring screenshots or iterating on UI/UX → `.agents/skills/ui-improvement/SKILL.md`;
   independent reviewer persona → `.claude/agents/ui-ux-judge.md`
+- Full application audit (all UI areas plus automated checks) → `.agents/skills/full-app-check/SKILL.md`
 
 ## Every edit
 

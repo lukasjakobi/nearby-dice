@@ -1,6 +1,6 @@
 ---
 name: ui-improvement
-description: Review a specific Nearby Dice UI area with an independent screenshot judge scoring 0–10, or run bounded implementation and reassessment cycles to improve it over time.
+description: Review a Nearby Dice UI area with an independent screenshot judge scoring 0–10. Run guided or autonomous improvement rounds, inspect findings interactively, compare screenshots, or resume a saved review.
 ---
 
 # Screenshot review and improvement
@@ -19,6 +19,12 @@ Default improvement budget: **two implementation rounds**, target **8.0/10**, no
 and no state or dimension regression from the baseline. User-specified limits override defaults.
 The target is a stopping threshold, not a reason to inflate a score.
 
+Choose **guided** interaction when the user asks to choose fixes together or approve each batch;
+otherwise use **autonomous** interaction within the authorised scope. Both support mid-run steering.
+For interactive reviews, comparisons, questions about findings, or resuming a run, read
+[the interaction guide](interaction.md). Keep review/improve mode separate from interaction style:
+a guided review still makes no code changes. Record the chosen style in the brief.
+
 Use an isolated worktree per `AGENTS.md` for edits. Record the branch, commit, dirty state and a
 unique run ID. Keep evidence under `.screenshots/ui-review/<run-id>/` in that worktree; these local
 artifacts are ignored, so report their absolute path at handoff. Preserve earlier runs to compare
@@ -27,6 +33,8 @@ progress; never describe local artifacts as committed or available on another ma
 Create `brief.md` using [the run template](run-template.md). Name the target, primary player task,
 mode, constraints, round limit, threshold and evidence matrix before scoring. This is the stable
 contract for the run, not permission to broaden the product.
+Maintain `checkpoint.md` from that template at each handoff, recording pending choices, evidence
+freshness and the next executable step. For a resume request, validate the checkpoint before acting.
 
 ## 2. Capture comparable evidence
 
@@ -36,6 +44,9 @@ use its actual Storybook story per `docs/technical-design.md`, Storybook; includ
 in-context screen when judging its place in a task.
 
 Default matrix: the primary state in light/dark, German/English, at **390×844** and **320×568**.
+This means eight combinations for the primary state. Each scenario/step × viewport × locale ×
+theme combination is a distinct scored state ID; only multiple scroll captures of that same
+combination share an ID. This keeps a cramped phone or dark-theme regression visible in the totals.
 Include at least one relevant alternate state (waiting, empty, error, selected, disabled or recovery)
 where the application supports it. For a multi-step flow capture each step and record a separate
 interaction smoke check. Mark unsupported or unavailable cases as coverage gaps rather than inventing
@@ -68,6 +79,9 @@ the ready-to-use judge brief; any parent review is labelled **self-review**, nev
 Save its report verbatim as `baseline/review.md` (or `round-<n>/review.md`). A review-only request
 ends here with the score, top findings, coverage limits and evidence path. Missing evidence or
 an incomplete score triggers evidence repair, not implementation based on a guessed score.
+Present the interaction guide's short review card with actual screenshot previews and selectable
+finding IDs. In guided mode, collect the user's batch selection before implementing. In autonomous
+mode, show the recommended batch and continue; a status card is not an approval requirement.
 If the baseline already satisfies the stopping threshold, complete the applicable verification
 checks and record the result without making unnecessary edits.
 
@@ -89,6 +103,9 @@ Recapture **the entire same matrix** into `round-<n>/`, with the same seed, view
 steps and scroll positions. Give a fresh judge only the current evidence first. Once its score is
 saved, supply the previous report to reconcile stable finding IDs and record resolved, remaining,
 new and regressed issues in `comparison.md`, including per-state and per-dimension score deltas.
+Present the before/after images and concise result card from the interaction guide; preserve the
+full judge report as evidence rather than putting the whole scorecard in chat. Carry user decisions
+forward in the checkpoint, while retaining deferred findings in the judge's score and open counts.
 If cases or the rubric change, start a new baseline or compare only the common cases and label
 the overall scores non-comparable. Keep the original baseline intact.
 

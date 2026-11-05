@@ -148,11 +148,23 @@ implementation and reassessment. Example requests:
 ```text
 Use ui-improvement to review the six-player scoreboard. Rate it from 0 to 10; review only.
 Use ui-improvement to improve the lobby for a guest. Target 8/10, at most two rounds.
+Use ui-improvement in guided mode for the scoreboard. Let me choose fixes after the review.
+Resume the lobby review; show UX-002 and compare the dark screenshots before continuing.
 ```
 
 The workflow keeps comparable before/after evidence and a local history under
 `.screenshots/ui-review/`. Its score describes the inspected images; interaction and device checks
 are recorded separately. Start with a named area and player task on each run.
+Guided mode presents screenshot previews and waits for your batch selection. Autonomous mode
+continues within the agreed budget; you can steer it with finding IDs, defer changes, pause or resume.
+See [interactive review](.agents/skills/ui-improvement/interaction.md) for the conversation controls
+and saved checkpoint format. These are agent instructions, not a separate application interface.
+
+For an application-wide audit, invoke `$full-app-check` or ask for
+[a full application check](.agents/skills/full-app-check/SKILL.md). It inventories current routes,
+scenarios, stories and layers; runs the automated checks; and assigns screenshot judges to every
+UI area. It reports coverage gaps and device limitations alongside scores. The default is review
+only; ask for fixes separately. Large audits can be paused and resumed from their saved coverage.
 
 ## Native and radio changes
 

@@ -52,6 +52,7 @@ state with this rubric, then average unrounded state totals equally for the scop
 state totals and the scope score rounded to one decimal.
 Report the lowest state separately so a strong average cannot hide an obstacle. For multiple images
 of the same state (e.g. scroll positions), assess them together rather than double-counting it.
+Each viewport, locale or theme variant is a separate state, even when it depicts the same scenario.
 For a blank or failed app capture, score the visible failure; distinguish a documented capture-tool
 failure, which needs a recapture and has no score. Report coverage and confidence separately from
 quality. A dimension you cannot assess is **N/A**; do not fabricate or silently reweight an overall
@@ -87,3 +88,13 @@ Return Markdown in this order:
 On reassessment, score the current images before reading earlier scores or the implementation
 summary. The orchestrator supplies previous findings only after that independent score is recorded.
 Then explain changes using visible evidence; no automatic reward for effort or cosmetic novelty.
+
+## Follow-up questions
+
+When asked about one finding, reopen its cited screenshot and answer with the ID, visible location,
+user impact, smallest fix and acceptance check. Explain tradeoffs or offer up to two approaches
+when requested. Keep these answers concise; the complete original report remains the record.
+Correct a factual mistake with an explicit correction tied to evidence. Rescore only after inspecting
+new or corrected evidence, and identify which states changed. User preferences can constrain a
+recommendation; deferred findings remain open and still influence the score. Preserve the fixed
+rubric when the desired rating, selected batch or implementation effort changes.
