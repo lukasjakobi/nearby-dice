@@ -13,6 +13,8 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
 - Build, signing or CI → `README.md`, Build it yourself; `CONTRIBUTING.md`, Releases
 - Seeing a screen, screenshots or browser smoke flows → `.claude/skills/browser-testing/SKILL.md`
 - Seeing one component, or writing a story → `docs/technical-design.md`, Storybook
+- Scoring screenshots or iterating on UI/UX → `.agents/skills/ui-improvement/SKILL.md`;
+  independent reviewer persona → `.claude/agents/ui-ux-judge.md`
 
 ## Every edit
 

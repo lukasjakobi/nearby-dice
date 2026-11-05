@@ -137,6 +137,23 @@ Each test may take up to 20 s (`testTimeout` in `package.json`). With a cold tra
 on CI, the first test in a file to show a `Spinner` loads React Native's animation modules and can
 take several seconds; Jest's default of 5 s made that test fail at random.
 
+### Repeated UI/UX reviews
+
+**Confirmed workflow:** the repository includes an independent screenshot judge and an improvement
+loop. In Codex, invoke `$ui-improvement`, or ask the agent to follow
+[the workflow](.agents/skills/ui-improvement/SKILL.md). In Claude Code, the reviewer is the
+[`ui-ux-judge` subagent](.claude/agents/ui-ux-judge.md); use the workflow to orchestrate captures,
+implementation and reassessment. Example requests:
+
+```text
+Use ui-improvement to review the six-player scoreboard. Rate it from 0 to 10; review only.
+Use ui-improvement to improve the lobby for a guest. Target 8/10, at most two rounds.
+```
+
+The workflow keeps comparable before/after evidence and a local history under
+`.screenshots/ui-review/`. Its score describes the inspected images; interaction and device checks
+are recorded separately. Start with a named area and player task on each run.
+
 ## Native and radio changes
 
 Changes to `modules/nearby-connections/`, `src/net/nearby/`, permissions or native config cannot be
