@@ -10,6 +10,7 @@ export function usePlayerPillLayout(playerCount: number) {
 
   return {
     compact,
+    wrapped: playerCount > 3 && width > 0 && (width - 32) / playerCount < 56,
     onLayout: (event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width),
   };
 }

@@ -9,9 +9,10 @@ import { THREE_FIVES, gameScene } from './fixtures';
 import { Scorecard } from './Scorecard';
 import { ScorecardScroll } from './ScorecardScroll';
 
-const card = (preset = PresetId.Classic) => (
+const card = (availableHeight: number, preset = PresetId.Classic) => (
   <Scorecard
     playing
+    availableHeight={availableHeight}
     sheet={gameScene(i18n.t, { preset, dice: THREE_FIVES }).view.sheet}
     dimmed={false}
     onPick={fn()}
@@ -32,16 +33,16 @@ type Story = StoryObj<typeof ScorecardScroll>;
 export const Fits: Story = {
   render: () => (
     <View style={{ height: 640 }}>
-      <ScorecardScroll>{card()}</ScorecardScroll>
+      <ScorecardScroll>{(height) => card(height)}</ScorecardScroll>
     </View>
   ),
 };
 
-/** A small phone: a fade and "Weitere Felder" mark the fields below. */
+/** A small phone: "Weitere Felder" sits below the viewport without covering fields. */
 export const MoreBelow: Story = {
   render: () => (
     <View style={{ height: 380 }}>
-      <ScorecardScroll>{card(PresetId.ClassicXl)}</ScorecardScroll>
+      <ScorecardScroll>{(height) => card(height, PresetId.ClassicXl)}</ScorecardScroll>
     </View>
   ),
 };

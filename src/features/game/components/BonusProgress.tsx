@@ -6,7 +6,11 @@ import { Icon, IconName, Pop, SIZE, Text, alpha, useTheme } from '@/ui';
 import type { SheetView } from '../view';
 import { CELL_MAX_HEIGHT } from './ScoreCell';
 
-type BonusProgressProps = { bonus: NonNullable<SheetView['bonus']>; inline?: boolean };
+type BonusProgressProps = {
+  bonus: NonNullable<SheetView['bonus']>;
+  inline?: boolean;
+  rowHeight?: number;
+};
 
 const TRACK = 8;
 
@@ -14,7 +18,11 @@ const TRACK = 8;
  * Upper block: "Bonus (+35)" with how far the upper sum has got to the threshold. The fill
  * glides to each new sum; once reached the card turns primary with a check mark.
  */
-export function BonusProgress({ bonus, inline = false }: BonusProgressProps) {
+export function BonusProgress({
+  bonus,
+  inline = false,
+  rowHeight = SIZE.touch,
+}: BonusProgressProps) {
   const { colors, reduceMotion } = useTheme();
   const [trackWidth, setTrackWidth] = useState(0);
   const fill = useAnimatedValue(bonus.fraction);
@@ -38,7 +46,7 @@ export function BonusProgress({ bonus, inline = false }: BonusProgressProps) {
       style={[
         styles.bonus,
         inline
-          ? [styles.inline, { borderTopColor: alpha(colors.ink, 0.1) }]
+          ? [styles.inline, { minHeight: rowHeight, borderTopColor: alpha(colors.ink, 0.1) }]
           : [
               styles.tile,
               { backgroundColor: bonus.reached ? alpha(colors.primary, 0.14) : colors.surface2 },

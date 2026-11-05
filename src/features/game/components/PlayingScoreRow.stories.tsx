@@ -26,7 +26,7 @@ const meta: Meta<typeof PlayingScoreRow> = {
   args: { onPick: fn(), selected: false },
   decorators: [
     (Story) => (
-      <View style={{ width: 175, height: 46 }}>
+      <View style={{ width: 175 }}>
         <Story />
       </View>
     ),
@@ -58,4 +58,10 @@ export const Open: Story = {
 
 export const Selected: Story = {
   render: (args) => <PlayingScoreRow {...args} {...cellIn(CellState.Preview)} selected />,
+};
+
+/** Extra height on a taller phone increases the target and score type. */
+export const Expanded: Story = {
+  args: { rowHeight: 64 },
+  render: (args) => <PlayingScoreRow {...args} {...cellIn(CellState.Preview)} />,
 };

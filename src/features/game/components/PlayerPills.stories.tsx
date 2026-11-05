@@ -42,7 +42,7 @@ export const SixPlayers: Story = {
   render: (args) => <PlayerPills {...args} pills={pills({ players: SIX_PLAYERS, turns: 14 })} />,
 };
 
-/** A narrow phone keeps all six players in one compact row. */
+/** A narrow phone wraps the six players into two readable rows. */
 export const SixPlayersNarrow: Story = {
   render: (args) => (
     <View style={{ width: 320, maxWidth: '100%' }}>
@@ -63,4 +63,16 @@ export const LongNamesAndTotals: Story = {
       }))}
     />
   ),
+};
+
+/** Wrapped names and four-digit totals stay beside their avatar on a narrow phone. */
+export const LongNamesAndTotalsNarrow: Story = {
+  ...LongNamesAndTotals,
+  decorators: [
+    (Story) => (
+      <View style={{ width: 320, maxWidth: '100%' }}>
+        <Story />
+      </View>
+    ),
+  ],
 };

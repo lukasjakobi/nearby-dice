@@ -52,22 +52,25 @@ function sceneStory(scene: Scene = {}, timer = false): Story {
             <GameHeader roundLabel={view.roundLabel} onMenu={fn()} onScoreboard={fn()} />
             <PlayerPills pills={view.pills} onSelect={fn()} />
             <ScorecardScroll>
-              <Scorecard
-                {...args}
-                sheet={view.sheet}
-                dimmed={view.cardDimmed}
-                onPick={(picked) => {
-                  args.onPick(picked);
-                  setSelected((previous) =>
-                    previous === picked.category ? null : picked.category,
-                  );
-                }}
-                onSelectSheet={(index) => {
-                  args.onSelectSheet(index);
-                  setSelected(null);
-                  setSelectedSheet(index);
-                }}
-              />
+              {(availableHeight) => (
+                <Scorecard
+                  availableHeight={availableHeight}
+                  {...args}
+                  sheet={view.sheet}
+                  dimmed={view.cardDimmed}
+                  onPick={(picked) => {
+                    args.onPick(picked);
+                    setSelected((previous) =>
+                      previous === picked.category ? null : picked.category,
+                    );
+                  }}
+                  onSelectSheet={(index) => {
+                    args.onSelectSheet(index);
+                    setSelected(null);
+                    setSelectedSheet(index);
+                  }}
+                />
+              )}
             </ScorecardScroll>
             <ActionBar
               dice={view.dice.map((die, index) => ({ ...die, held: held.includes(index) }))}

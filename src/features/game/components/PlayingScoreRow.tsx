@@ -19,13 +19,20 @@ type PlayingScoreRowProps = {
   cell: CellView;
   onPick: (cell: CellView) => void;
   selected: boolean;
+  rowHeight?: number;
 };
 
-/** A fixed-height row on the playing board, shared by every preset. */
-export function PlayingScoreRow({ cell, onPick, selected }: PlayingScoreRowProps) {
+/** A score target that grows with the board, without shrinking below a touch target. */
+export function PlayingScoreRow({
+  cell,
+  onPick,
+  selected,
+  rowHeight = SIZE.touch,
+}: PlayingScoreRowProps) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const compact = width <= 340;
+  const labelSize = compact ? 12 : Math.min(15, 13 + Math.floor((rowHeight - SIZE.touch) / 16));
   const valueColor = VALUE_COLOR[cell.state];
   const preview = cell.state === CellState.Preview;
   const filled = cell.state === CellState.Filled;
@@ -49,6 +56,7 @@ export function PlayingScoreRow({ cell, onPick, selected }: PlayingScoreRowProps
       accessibilityState={{ disabled: !cell.pickable, selected }}
       style={({ pressed }) => [
         styles.row,
+        { minHeight: rowHeight },
         compact && styles.compactRow,
         { borderTopColor: alpha(colors.ink, 0.1) },
         (selected || pressed) && { backgroundColor: colors.surface2 },
@@ -71,7 +79,7 @@ export function PlayingScoreRow({ cell, onPick, selected }: PlayingScoreRowProps
       </View>
       <View style={styles.label}>
         <Text
-          size={compact ? 11.5 : 13}
+          size={labelSize}
           weight={selected ? 700 : 500}
           color={labelColor}
           numberOfLines={singleLine ? 1 : 2}
@@ -109,7 +117,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: SIZE.touch,
+    minHeight: SIZE.touch,
+    paddingVertical: 6,
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 8,
     gap: 5,
@@ -131,11 +140,11 @@ const styles = StyleSheet.create({
   label: { flex: 1, minWidth: 0 },
   value: {
     minWidth: 26,
-    height: 24,
+    minHeight: 24,
     borderRadius: RADIUS.chip / 2,
     paddingHorizontal: 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  points: { fontFamily: fontFamily(Font.Display, 600) },
+  points: { fontFamily: fontFamily(Font.Display, 500) },
 });
