@@ -173,8 +173,7 @@ host's own vote stays. Guests see the mode read-only and get the toast „Spiels
 
 **Confirmed:** `ClassicXl` is the Classic XL ruleset with 17 fields per sheet. Its fields and points
 are written in [scoring.md](scoring.md#classic-xl). `TwoPairs` is scored by one helper in `fields.ts`
-that Yatzy shares. See the playing board in [light](screenshots/classic-xl-light.png) and
-[dark](screenshots/classic-xl-dark.png).
+that Yatzy shares.
 
 **Confirmed:** the `luckyNumber` rule adds a `LuckyNumber` field to the lower block; its points are
 in [scoring.md](scoring.md#lucky-number). While the field is open it shows the current target; once it
