@@ -124,7 +124,7 @@ export function ActionBar({
               icon={confirm ? IconName.Check : IconName.Dice}
               variant={confirm ? ButtonVariant.Accent : ButtonVariant.Roll}
               height={52}
-              style={styles.rollButton}
+              style={[styles.rollButton, !!confirm && styles.confirmButton]}
             />
           </>
         ) : (
@@ -189,7 +189,9 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   selection: { flexShrink: 1, gap: 4 },
-  rollButton: { flex: 1, paddingHorizontal: 28, borderRadius: RADIUS.chip },
+  rollButton: { flex: 1, paddingHorizontal: 28 },
+  // The roll tile keeps its own corners; only the score confirmation takes the chip radius.
+  confirmButton: { borderRadius: RADIUS.chip },
   waiting: {
     flex: 1,
     minHeight: 48,

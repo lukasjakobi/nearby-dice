@@ -20,8 +20,9 @@ export type Palette = {
   control: string;
   primary: string;
   onPrimary: string;
-  /** Dice roll action on felt. */
+  /** Ivory roll tile, identical on the felt in both themes. */
   roll: string;
+  onRoll: string;
   /** Accent actions and highlights. */
   accent: string;
   onAccent: string;
@@ -52,7 +53,8 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     control: '#737D83',
     primary: '#076356',
     onPrimary: '#FFFFFF',
-    roll: '#FFC96D',
+    roll: '#F2E8D0',
+    onRoll: '#30291B',
     accent: '#D9623F',
     onAccent: '#2B0E03',
     danger: '#B3261E',
@@ -71,7 +73,8 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     control: '#737C82',
     primary: '#4FE3C1',
     onPrimary: '#032820',
-    roll: '#FFD89A',
+    roll: '#F2E8D0',
+    onRoll: '#30291B',
     accent: '#FF9E7A',
     onAccent: '#3A1405',
     danger: '#FF8A80',
@@ -116,6 +119,7 @@ export const RADIUS = {
   chip: 12,
   cell: 14,
   button: 16,
+  rollTile: 10,
   card: 18,
   dialog: 24,
   sheet: 28,
