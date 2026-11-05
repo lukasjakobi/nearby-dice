@@ -56,7 +56,7 @@ export function NearbyRounds({ rounds, onJoin, onRetry, error }: NearbyRoundsPro
               disabled={round.full}
               accessibilityRole="button"
               accessibilityLabel={t(round.full ? 'join.roundA11yFull' : 'join.roundA11y', {
-                name: round.roundName,
+                name: round.hostName,
                 n: round.players,
                 max: round.maxPlayers,
               })}
@@ -79,7 +79,7 @@ export function NearbyRounds({ rounds, onJoin, onRetry, error }: NearbyRoundsPro
               <Avatar initial={round.initial} color={round.color} />
               <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
                 <Text variant={TextVariant.BodyStrong} numberOfLines={1}>
-                  {round.roundName}
+                  {round.hostName}
                 </Text>
                 <Text variant={TextVariant.Caption} color="muted">
                   {t('join.seats', { n: round.players, max: round.maxPlayers })}

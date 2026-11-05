@@ -23,6 +23,8 @@ export enum ButtonVariant {
   /** Tonal with red text: "Aus der Lobby entfernen". */
   TonalDanger = 'tonal-danger',
   /** The roll button on the felt. */
+  Roll = 'roll',
+  /** Score confirmation on the felt. */
   Accent = 'accent',
   /** Small action inside the amber banner: "Optionen". */
   OnAccent = 'on-accent',
@@ -45,6 +47,7 @@ const LOOKS: Record<ButtonVariant, (c: Palette) => Look> = {
   }),
   [ButtonVariant.Tonal]: (c) => ({ background: c.surface2, text: c.ink }),
   [ButtonVariant.TonalDanger]: (c) => ({ background: c.surface2, text: c.danger }),
+  [ButtonVariant.Roll]: (c) => ({ background: c.roll, text: c.onAccent }),
   [ButtonVariant.Accent]: (c) => ({ background: c.accent, text: c.onAccent }),
   [ButtonVariant.OnAccent]: (c) => ({ background: c.onAccent, text: c.accent }),
   [ButtonVariant.Quiet]: (c) => ({ background: 'transparent', text: c.muted }),

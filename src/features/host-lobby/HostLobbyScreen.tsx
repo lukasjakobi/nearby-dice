@@ -33,7 +33,7 @@ export function HostLobbyScreen() {
   return (
     <Screen>
       <Header
-        title={lobby.title}
+        title={t('lobby.title')}
         variant={TextVariant.ScreenTitle}
         leading={{ icon: IconName.Close, label: t('lobby.closeLabel'), onPress: lobby.askClose }}
         trailing={<LobbyHeaderActions onSettings={lobby.openSettings} />}

@@ -36,9 +36,10 @@ export const Variants: Story = {
         {...args}
         label="Würfeln"
         icon={IconName.Dice}
-        variant={ButtonVariant.Accent}
+        variant={ButtonVariant.Roll}
         height={48}
       />
+      <Button {...args} label="Eintragen" icon={IconName.Check} variant={ButtonVariant.Accent} />
       <Button {...args} label="Später" variant={ButtonVariant.Quiet} />
       <Button {...args} label="Spiel für alle beenden" variant={ButtonVariant.QuietDanger} />
       <Banner

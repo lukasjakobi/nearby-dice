@@ -25,24 +25,13 @@ export function useHostSetup() {
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
   const profile = useProfileOrGuest();
-  const [roundName, setRoundName] = useState(() =>
-    t('hostSetup.roundNameDefault', { name: profile.name }),
-  );
-  const [nameTouched, setNameTouched] = useState(false);
   const [preset, setPreset] = useState(PresetId.Classic);
   const [rulesOpen, setRulesOpen] = useState(false);
   const [openState, setOpenState] = useState(OpenState.Idle);
   const [error, setError] = useState<HostError | null>(null);
 
-  const nameMissing = roundName.trim().length === 0;
-
   const open = async () => {
     if (opening.current) return;
-    if (nameMissing) {
-      setNameTouched(true);
-
-      return;
-    }
 
     opening.current = true;
     const controller = new AbortController();
@@ -62,7 +51,8 @@ export function useHostSetup() {
         transport: getTransport(),
         scanner: getRoundScanner(),
         profile,
-        roundName: roundName.trim(),
+        // Older clients still read this field from the advertisement and snapshot.
+        roundName: t('hostSetup.roundNameDefault', { name: profile.name }),
         preset,
       });
       // Left the setup while the lobby was opening: nobody will use this session.
@@ -85,12 +75,6 @@ export function useHostSetup() {
   };
 
   return {
-    roundName,
-    roundNameError: nameTouched && nameMissing ? t('hostSetup.roundNameEmpty') : null,
-    setRoundName: (value: string) => {
-      setRoundName(value);
-      setNameTouched(true);
-    },
     preset,
     choosePreset: (id: PresetId) => {
       setPreset(id);

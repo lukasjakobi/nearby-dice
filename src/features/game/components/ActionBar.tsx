@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
@@ -9,6 +9,7 @@ import {
   DieFace,
   FIXED,
   IconName,
+  RADIUS,
   Text,
   TextVariant,
   useTheme,
@@ -21,6 +22,8 @@ import { TimerBar } from './TimerBar';
 import type { Timer } from './TimerBar';
 
 const TILTS = [-3, 2, -2, 3, -2];
+const BAR_PADDING = 16;
+const DICE_GAP = 6;
 
 type ActionBarProps = {
   dice: DieView[];
@@ -47,6 +50,9 @@ export function ActionBar({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const diceWidth = width - 2 * BAR_PADDING - DICE_GAP * (dice.length - 1);
+  const dieSize = Math.min(64, Math.floor(diceWidth / dice.length));
   const locked = dice.some((die) => die.locked);
 
   return (
@@ -77,7 +83,7 @@ export function ActionBar({
           >
             <DieFace
               value={die.value}
-              size={64}
+              size={dieSize}
               held={die.held && !die.locked}
               tilt={die.locked ? 0 : TILTS[i]}
               shakeKey={shakeKeys[i]}
@@ -116,7 +122,7 @@ export function ActionBar({
               loading={!!confirm?.sending}
               accessibilityHint={confirm ? `${confirm.label}: ${confirm.points}` : undefined}
               icon={confirm ? IconName.Check : IconName.Dice}
-              variant={ButtonVariant.Accent}
+              variant={confirm ? ButtonVariant.Accent : ButtonVariant.Roll}
               height={52}
               style={styles.rollButton}
             />
@@ -149,10 +155,10 @@ export function ActionBar({
 
 const styles = StyleSheet.create({
   bar: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: RADIUS.chip,
+    borderTopRightRadius: RADIUS.chip,
     paddingTop: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: BAR_PADDING,
     gap: 10,
     borderTopWidth: 3,
     borderColor: 'rgba(255,255,255,0.08)',
@@ -162,12 +168,13 @@ const styles = StyleSheet.create({
   dice: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: DICE_GAP,
     paddingTop: 8,
     paddingBottom: 6,
     paddingHorizontal: 6.5,
     marginHorizontal: -8,
     marginBottom: -6,
-    borderRadius: 18,
+    borderRadius: RADIUS.chip,
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   selection: { flexShrink: 1, gap: 4 },
-  rollButton: { flex: 1, paddingHorizontal: 28 },
+  rollButton: { flex: 1, paddingHorizontal: 28, borderRadius: RADIUS.chip },
   waiting: {
     flex: 1,
     minHeight: 48,

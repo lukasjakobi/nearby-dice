@@ -60,8 +60,8 @@ function myTurnFrom(round: number) {
 }
 
 /** A host with `guests` of the other players in its lobby. */
-async function lobby(table: Table, host: Profile, guests: Profile[]) {
-  const session = await table.host(host);
+async function lobby(table: Table, host: Profile, guests: Profile[], preset = PresetId.Classic) {
+  const session = await table.host(host, preset);
   const { code } = session.getSnapshot().shared;
   // One at a time: the host admits only a few joins at once.
   const joined: GuestSession[] = [];
@@ -75,8 +75,9 @@ async function hostedGame(
   table: Table,
   others: Profile[],
   reached: (snapshot: SessionSnapshot) => boolean,
+  preset = PresetId.Classic,
 ): Promise<HostSession> {
-  const { host, guests } = await lobby(table, ME, others);
+  const { host, guests } = await lobby(table, ME, others, preset);
   // Only guests have to mind the host's message cap.
   table.play(host, { thinkMs: 0 });
   guests.forEach((guest) => table.play(guest));
@@ -175,6 +176,13 @@ const SETUPS: Record<Scenario, Setup> = {
   [Scenario.GameMyTurn]: async (table) => {
     signIn();
     const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3));
+    host.roll();
+
+    return show(host, Route.Game);
+  },
+  [Scenario.GameClassicXl]: async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3), PresetId.ClassicXl);
     host.roll();
 
     return show(host, Route.Game);

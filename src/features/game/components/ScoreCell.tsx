@@ -25,7 +25,7 @@ type CellLook = {
  * One look per state. What can be scored this roll is a solid pill; a zero stays neutral, since
  * striking a field is a choice, not a mistake; entered points sit quietly on a filled cell.
  */
-const LOOKS: Record<CellState, (c: Palette) => CellLook> = {
+const LOOKS: Record<Exclude<CellState, CellState.Blocked>, (c: Palette) => CellLook> = {
   [CellState.Filled]: (c) => ({
     background: c.surface2,
     border: c.surface2,
@@ -77,7 +77,8 @@ type ScoreCellProps = {
 /** One field of the scorecard: icon, name, hint and the (preview) points. */
 export function ScoreCell({ cell, onPick, selected }: ScoreCellProps) {
   const { colors } = useTheme();
-  const look = LOOKS[cell.state](colors);
+  const state = cell.state === CellState.Blocked ? CellState.Open : cell.state;
+  const look = LOOKS[state](colors);
   const background = selected ? mix(colors.primary, colors.surface, 0.24) : look.background;
   const border = selected ? colors.primary : look.border;
   // Someone else's possible points: outlined, so a watcher doesn't read them as entered.

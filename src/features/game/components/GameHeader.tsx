@@ -1,18 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { Chip, IconButton, IconName, Text, TextVariant } from '@/ui';
 
 type GameHeaderProps = { roundLabel: string; onMenu: () => void; onScoreboard: () => void };
 
-/** Top bar of the game: menu, round title, and the scoreboard as a named chip. */
+/** Top bar of the game: menu, round counter, and the scoreboard as a named chip. */
 export function GameHeader({ roundLabel, onMenu, onScoreboard }: GameHeaderProps) {
   const { t } = useTranslation();
+  const { width } = useWindowDimensions();
 
   return (
     <View style={styles.header}>
       <IconButton icon={IconName.Menu} label={t('game.menu')} onPress={onMenu} />
-      <Text variant={TextVariant.SectionTitle} style={styles.title} accessibilityRole="header">
+      <Text
+        variant={TextVariant.SectionTitle}
+        size={width <= 340 ? 16 : undefined}
+        style={styles.title}
+        accessibilityRole="header"
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.75}
+      >
         {roundLabel}
       </Text>
       <Chip label={t('game.scoreboard')} leading={IconName.Trophy} onPress={onScoreboard} />
