@@ -65,6 +65,7 @@ export function GameScreen() {
 
       <ScorecardScroll>
         <Scorecard
+          playing
           sheet={view.sheet}
           dimmed={view.cardDimmed}
           onPick={screen.pick}

@@ -22,6 +22,7 @@ const meta: Meta<typeof Scorecard> = {
   component: Scorecard,
   parameters: { screen: true },
   args: {
+    playing: true,
     dimmed: false,
     onPick: fn(),
     onSelectSheet: fn(),

@@ -78,8 +78,8 @@ describe('after a roll on my turn', () => {
     );
   });
 
-  test('"Nochmal würfeln" and dice can be held', () => {
-    expect(view.control).toMatchObject({ rollLabel: 'Nochmal würfeln', rollsLeft: 2 });
+  test('"Würfeln" and dice can be held', () => {
+    expect(view.control).toMatchObject({ rollLabel: 'Würfeln', rollsLeft: 2 });
     expect(view.dice.every((d) => d.canToggle)).toBe(true);
   });
 
@@ -191,10 +191,14 @@ describe('connection and rules', () => {
     const rules = PRESETS[PresetId.TopToBottom];
     const rolled = withDice(game([LUKAS, ANTONIA], rules), [6, 6, 6, 6, 6]);
     const view = buildGameView(t, snapshot({ game: rolled }), local([6, 6, 6, 6, 6]))!;
-    const previews = [...view.sheet.upper, ...view.sheet.lower].filter(
-      (c) => c.state !== CellState.Open,
-    );
+    const previews = [...view.sheet.upper, ...view.sheet.lower].filter((c) => c.pickable);
     expect(previews.map((c) => c.category)).toEqual([Category.Ones]);
+    expect(cell(view, Category.Ones)).toMatchObject({ state: CellState.PreviewZero, value: '0' });
+    expect(cell(view, Category.Sixes)).toMatchObject({
+      state: CellState.Blocked,
+      value: '–',
+      pickable: false,
+    });
   });
 
   test('yatzy straights spell out their fixed run', () => {

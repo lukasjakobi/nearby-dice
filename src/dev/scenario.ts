@@ -27,6 +27,8 @@ export enum Scenario {
   GuestLobby = 'guest-lobby',
   /** Three players, my turn, after my first roll. */
   GameMyTurn = 'game-my-turn',
+  /** Classic XL, my turn after rolling. */
+  GameClassicXl = 'game-classic-xl',
   /** A guest watching the host's turn. */
   GameWaiting = 'game-waiting',
   /** My turn before rolling, with the scorecard still locked. */
@@ -42,7 +44,6 @@ export enum Scenario {
   GameSameDice = 'game-same-dice',
   GameTriple = 'game-triple',
   GameYatzy = 'game-yatzy',
-  GameClassicXl = 'game-classic-xl',
   GameLuckyNumber = 'game-lucky-number',
   /** Six players in round four, my turn. */
   GameSixPlayers = 'game-six-players',

@@ -3,8 +3,7 @@ import { ScrollView } from 'react-native';
 
 import type { TFunction } from '@/i18n';
 import { PermissionSheet, PresetGrid, RulesSheet } from '@/shared';
-import { ROUND_NAME_MAX_LENGTH } from '@/domain';
-import { Button, Footer, Header, IconName, Screen, TextField } from '@/ui';
+import { Button, Footer, Header, IconName, Screen } from '@/ui';
 
 import { HostErrorCard } from './components';
 import { OpenState, useHostSetup } from './hooks';
@@ -27,7 +26,7 @@ export function HostSetupScreen() {
     : null;
 
   return (
-    <Screen keyboardAvoiding>
+    <Screen>
       <Header
         title={t('hostSetup.title')}
         leading={{ icon: IconName.Back, label: t('common.back'), onPress: setup.back }}
@@ -39,18 +38,8 @@ export function HostSetupScreen() {
           paddingBottom: 16,
           gap: 24,
         }}
-        keyboardShouldPersistTaps="handled"
       >
-        {/* The mode is the real decision; the name has a sensible default. */}
         <PresetGrid value={setup.preset} onChange={setup.choosePreset} onRules={setup.openRules} />
-
-        <TextField
-          label={t('hostSetup.roundNameLabel')}
-          value={setup.roundName}
-          onChangeText={setup.setRoundName}
-          maxLength={ROUND_NAME_MAX_LENGTH}
-          error={setup.roundNameError}
-        />
       </ScrollView>
 
       <Footer>

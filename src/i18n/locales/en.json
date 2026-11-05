@@ -324,9 +324,7 @@
   },
   "hostSetup": {
     "title": "Host a game",
-    "roundNameLabel": "Round name",
     "roundNameDefault": "{{name, possessive}} round",
-    "roundNameEmpty": "Please enter a name.",
     "styleLabel": "Game style",
     "open": "Open lobby",
     "opening": "Making the round visible …",
@@ -339,6 +337,7 @@
     "start": "Start training"
   },
   "lobby": {
+    "title": "Lobby",
     "roundCode": "Round code",
     "codeSpoken": "Round code {{code}}",
     "codeHint": "Other players enter this code under “Join a game”.",
@@ -441,7 +440,6 @@
     "rollsLeftOf_one": "{{name}}: {{count}}\u00a0roll left",
     "rollsLeftOf_other": "{{name}}: {{count}}\u00a0rolls left",
     "roll": "Roll",
-    "rollAgain": "Roll again",
     "pickField": "Pick a field",
     "timeLeft": "Time left",
     "isUp": "{{name, possessive}} turn",

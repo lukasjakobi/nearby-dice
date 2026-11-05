@@ -212,6 +212,13 @@ const SETUPS: Record<Scenario, Setup> = {
 
     return show(host, Route.Game);
   },
+  [Scenario.GameClassicXl]: async (table) => {
+    signIn();
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(3), PresetId.ClassicXl);
+    host.roll();
+
+    return show(host, Route.Game);
+  },
   [Scenario.GameWaiting]: async (table) => {
     signIn();
     const [hostProfile, ...guests] = OTHERS;
@@ -277,7 +284,6 @@ const SETUPS: Record<Scenario, Setup> = {
   [Scenario.GameSameDice]: presetGame(PresetId.SameDice),
   [Scenario.GameTriple]: presetGame(PresetId.Triple),
   [Scenario.GameYatzy]: presetGame(PresetId.Yatzy),
-  [Scenario.GameClassicXl]: presetGame(PresetId.ClassicXl),
   [Scenario.GameLuckyNumber]: presetGame(PresetId.LuckyNumber),
   [Scenario.GameSixPlayers]: async (table) => {
     signIn();

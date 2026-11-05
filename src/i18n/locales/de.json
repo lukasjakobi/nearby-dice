@@ -324,9 +324,7 @@
   },
   "hostSetup": {
     "title": "Spiel hosten",
-    "roundNameLabel": "Name der Runde",
     "roundNameDefault": "{{name, possessive}} Runde",
-    "roundNameEmpty": "Bitte einen Namen eingeben.",
     "styleLabel": "Spielstil",
     "open": "Lobby öffnen",
     "opening": "Wird sichtbar gemacht …",
@@ -339,6 +337,7 @@
     "start": "Training starten"
   },
   "lobby": {
+    "title": "Lobby",
     "roundCode": "Rundencode",
     "codeSpoken": "Rundencode {{code}}",
     "codeHint": "Mitspieler geben diesen Code unter „Spiel beitreten“ ein.",
@@ -441,7 +440,6 @@
     "rollsLeftOf_one": "{{name}}: {{count}}\u00a0Wurf übrig",
     "rollsLeftOf_other": "{{name}}: {{count}}\u00a0Würfe übrig",
     "roll": "Würfeln",
-    "rollAgain": "Nochmal würfeln",
     "pickField": "Feld wählen",
     "timeLeft": "Verbleibende Zeit",
     "isUp": "{{name}} ist dran",

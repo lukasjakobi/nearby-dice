@@ -33,7 +33,7 @@ test('picking a field replaces the roll button with an inline score action', asy
   await fireEvent.press(screen.getByLabelText('Würfel 1: 2'));
   expect(session.toggleHold).not.toHaveBeenCalled();
   expect(screen.getByLabelText('Würfel festgelegt: Diese Werte werden eingetragen')).toBeTruthy();
-  expect(screen.queryByText('Nochmal würfeln')).toBeNull();
+  expect(screen.queryByText('Würfeln')).toBeNull();
   expect(screen.queryByText('Zurück')).toBeNull();
   expect(
     screen.getByRole('button', { name: 'Full House: 25 Punkte eintragen', selected: true }),
@@ -42,10 +42,10 @@ test('picking a field replaces the roll button with an inline score action', asy
   await fireEvent.press(screen.getByRole('button', { name: 'Eintragen' }));
   expect(session.score).toHaveBeenCalledWith(Category.FullHouse, 0);
   // Until the entry arrives, the selection stays with a busy button instead of
-  // flashing back to "Nochmal würfeln", and a second press sends nothing.
+  // flashing back to "Würfeln", and a second press sends nothing.
   const sending = screen.getByRole('button', { name: 'Eintragen' });
   expect(sending.props.accessibilityState).toMatchObject({ busy: true });
-  expect(screen.queryByText('Nochmal würfeln')).toBeNull();
+  expect(screen.queryByText('Würfeln')).toBeNull();
   await fireEvent.press(sending);
   expect(session.score).toHaveBeenCalledTimes(1);
 });
@@ -74,7 +74,7 @@ test('a selection can be changed or cleared without scoring', async () => {
     screen.getByRole('button', { name: 'Fünfer: 15 Punkte eintragen', selected: true }),
   ).toBeTruthy();
   await fireEvent.press(screen.getByLabelText('Fünfer: 15 Punkte eintragen'));
-  expect(screen.getByText('Nochmal würfeln')).toBeTruthy();
+  expect(screen.getByText('Würfeln')).toBeTruthy();
   expect(screen.queryByText('Eintragen')).toBeNull();
   expect(session.score).not.toHaveBeenCalled();
 });

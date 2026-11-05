@@ -34,7 +34,6 @@ export function useGuestLobby() {
 
   return {
     view,
-    title: shared.roundName,
     code: shared.code,
     rows,
     /** For the waiting bar: who the guests are waiting for. */

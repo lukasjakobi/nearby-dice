@@ -28,7 +28,7 @@ export enum JoinPhase {
 export type NearbyRoundView = {
   endpointId: string;
   code: string;
-  roundName: string;
+  hostName: string;
   initial: string;
   color: string;
   players: number;
@@ -193,7 +193,7 @@ export function useJoinFlow() {
     rounds: scan.rounds.map(({ endpointId, advertisement: ad }): NearbyRoundView => ({
       endpointId,
       code: ad.code,
-      roundName: ad.roundName,
+      hostName: ad.hostName,
       initial: initialOf(ad.hostName),
       color: PLAYER_COLOR_HEX[ad.hostColor],
       players: ad.players,

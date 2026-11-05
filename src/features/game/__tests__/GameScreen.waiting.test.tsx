@@ -37,7 +37,7 @@ test("another player's turn shows their rolls and the time bar next to the statu
   expect(screen.getByLabelText('Jonas: 2\u00a0Würfe übrig')).toBeTruthy();
   expect(screen.getByLabelText('Verbleibende Zeit')).toBeTruthy();
   // Nothing to press: the roll button only exists on my own turn.
-  expect(screen.queryByText('Nochmal würfeln')).toBeNull();
+  expect(screen.queryByText('Würfeln')).toBeNull();
 });
 
 test('without a time limit there is no time bar, on any turn', async () => {

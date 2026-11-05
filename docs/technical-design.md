@@ -151,6 +151,16 @@ The engine knows players only by their id. Names, colours and connection links l
 `history` (scored, auto-scored, skipped and removed entries, each with its round and dice). The host
 broadcasts it after every change, so any phone can show "Spielstand" and "Verlauf".
 
+**Confirmed:** The game shows upper and lower scoring blocks side by side in rounded panels.
+Score rows keep the same height across presets. On smaller screens, players scroll for the
+remaining fields while the dice and actions stay visible. A red badge marks a zero or a
+field excluded by the current roll. A check mark identifies an entered score. A zero can still
+be entered with "Streichen" when the rules allow it. See [scoring](scoring.md) for the joker rule.
+
+**Confirmed:** The host chooses a preset when opening a lobby. Nearby discovery identifies a
+lobby by its host, and manual entry uses the round code. The session and discovery payloads
+carry the default round name for compatibility with older clients.
+
 ### Game modes
 
 **Confirmed:** games are played only in the predefined presets ("Spielstil"); there are no

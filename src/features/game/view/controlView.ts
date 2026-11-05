@@ -121,9 +121,7 @@ function rollsView(t: TFunction, ctx: TurnContext): RollsView {
 }
 
 function rollLabel(t: TFunction, ctx: TurnContext): string {
-  if (!ctx.rolled) return t('game.roll');
-
-  return ctx.rollsLeft > 0 ? t('game.rollAgain') : t('game.pickField');
+  return ctx.rollsLeft > 0 ? t('game.roll') : t('game.pickField');
 }
 
 /** What the other phones say while someone else plays. */

@@ -40,7 +40,7 @@ describe('on my turn', () => {
     expect(screen.getByRole('button', { name: 'Antonia: 25' })).toBeSelected();
     expect(screen.getByLabelText('Full House: 25 Punkte, eingetragen')).toBeTruthy();
     expect(screen.queryByLabelText(/Punkte eintragen$/)).toBeNull();
-    expect(screen.getByRole('button', { name: 'Nochmal würfeln' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Würfeln' })).toBeEnabled();
 
     await fireEvent.press(back()!);
     expect(back()).toBeNull();
