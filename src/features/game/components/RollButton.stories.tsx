@@ -25,5 +25,5 @@ const meta: Meta<typeof RollButton> = {
 
 export default meta;
 
-/** "Zum Würfeln wischen" switched off: a tap rolls. */
+/** The default roll control: a tap rolls. */
 export const Ready: StoryObj<typeof RollButton> = {};

@@ -39,7 +39,7 @@ const meta: Meta<typeof ActionBar> = {
     shakeKeys: NO_SHAKE,
     onToggleHold: fn(),
     onRoll: fn(),
-    swipeToRoll: true,
+    swipeToRoll: false,
     onConfirm: fn(),
   },
   decorators: [
@@ -57,10 +57,18 @@ type Story = StoryObj<typeof ActionBar>;
 /** My turn, nothing rolled yet: placeholder dice and "Würfeln". */
 export const BeforeRoll: Story = { render: (args) => <ActionBar {...args} {...bar({})} /> };
 
-/** "Zum Würfeln wischen" switched off: the roll tile is a plain tap button. */
-export const TapToRoll: Story = {
-  args: { swipeToRoll: false },
+/** "Zum Würfeln wischen" switched on: rolling takes sliding the knob to the far end. */
+export const SwipeToRoll: Story = {
+  args: { swipeToRoll: true },
   render: (args) => <ActionBar {...args} {...bar({})} />,
+};
+
+/** "Zum Würfeln wischen" switched on, a field selected: entering it takes a slide too. */
+export const SwipeToConfirm: Story = {
+  args: { swipeToRoll: true },
+  render: (args) => (
+    <ActionBar {...args} {...bar({ dice: THREE_FIVES, selected: FieldPick.Best })} />
+  ),
 };
 
 /** After the first roll: tap dice to hold them. */

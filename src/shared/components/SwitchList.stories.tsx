@@ -18,7 +18,7 @@ const meta: Meta<typeof SwitchList> = {
       music: { value: false, volume: 0.5 },
       haptics: { value: true },
       keepAwake: { value: false },
-      swipeToRoll: { value: true },
+      swipeToRoll: { value: false },
     });
     const rows: SwitchRow[] = (
       ['sound', 'music', 'haptics', 'keepAwake', 'swipeToRoll'] as const

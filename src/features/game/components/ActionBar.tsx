@@ -21,8 +21,8 @@ import type { ControlView, DieView } from '../view';
 import { RollButton } from './RollButton';
 import { RollCounter } from './RollCounter';
 import { RollHint } from './RollHint';
-import { RollSlider } from './RollSlider';
-import { ROLL_TILE_HEIGHT } from './rollTile';
+import { ROLL_TILE_HEIGHT, ROLL_TILE_RADIUS } from './rollTile';
+import { SlideButton, SlideTone } from './SlideButton';
 import { TimerBar } from './TimerBar';
 import type { Timer } from './TimerBar';
 
@@ -44,7 +44,7 @@ type ActionBarProps = {
   timer: Timer | null;
   onToggleHold: (die: number) => void;
   onRoll: () => void;
-  /** "Zum Würfeln wischen": rolling takes the slider; off, a tap on the roll tile rolls. */
+  /** "Zum Würfeln wischen": rolling and entering a score take a slide; off, a tap. */
   swipeToRoll: boolean;
   confirm: { label: string; points: string; strike: boolean; sending: boolean } | null;
   onConfirm: () => void;
@@ -131,7 +131,17 @@ export function ActionBar({
             ) : (
               <RollCounter rolls={control} />
             )}
-            {confirm ? (
+            {confirm && swipeToRoll ? (
+              <SlideButton
+                label={confirm.strike ? t('game.confirm.strike') : t('game.confirm.enter')}
+                icon={IconName.Check}
+                tone={SlideTone.Confirm}
+                onCommit={onConfirm}
+                busy={confirm.sending}
+                accessibilityHint={`${confirm.label}: ${confirm.points}`}
+                style={styles.control}
+              />
+            ) : confirm ? (
               <Button
                 label={confirm.strike ? t('game.confirm.strike') : t('game.confirm.enter')}
                 onPress={onConfirm}
@@ -140,14 +150,20 @@ export function ActionBar({
                 icon={IconName.Check}
                 variant={ButtonVariant.Accent}
                 height={ROLL_TILE_HEIGHT}
-                style={styles.confirmButton}
+                style={[styles.control, styles.confirmButton]}
               />
             ) : rollsUsedUp ? (
-              <RollHint label={control.rollLabel} style={styles.rollControl} />
+              <RollHint label={control.rollLabel} style={styles.control} />
             ) : swipeToRoll ? (
-              <RollSlider label={control.rollLabel} onRoll={onRoll} style={styles.rollControl} />
+              <SlideButton
+                label={control.rollLabel}
+                icon={IconName.Dice}
+                tone={SlideTone.Roll}
+                onCommit={onRoll}
+                style={styles.control}
+              />
             ) : (
-              <RollButton label={control.rollLabel} onRoll={onRoll} style={styles.rollControl} />
+              <RollButton label={control.rollLabel} onRoll={onRoll} style={styles.control} />
             )}
           </>
         ) : (
@@ -212,10 +228,10 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   selection: { flexShrink: 1, gap: 4 },
-  // A fixed share of the row, so the control keeps its left edge while the counter's text
-  // changes ("3 Würfe übrig" → "Kein Wurf übrig").
-  rollControl: { width: '62%' },
-  confirmButton: { flex: 1, paddingHorizontal: 28, borderRadius: RADIUS.chip },
+  // Every control on the right (slide, tap button, hint) takes the same fixed share of the row,
+  // so its edge stays put while the text on the left changes ("3 Würfe übrig" → "Fünfer").
+  control: { width: '60%' },
+  confirmButton: { borderRadius: ROLL_TILE_RADIUS },
   waiting: {
     flex: 1,
     minHeight: 48,

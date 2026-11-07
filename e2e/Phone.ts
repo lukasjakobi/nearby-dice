@@ -82,23 +82,9 @@ export class Phone {
     await this.sees('Du bist dabei!');
   }
 
-  /** Slides the roll knob to the far end: a tap does not roll. */
-  async roll(): Promise<void> {
-    const slider = this.page
-      .getByRole('button', { name: 'Würfeln', exact: true })
-      .filter({ visible: true })
-      .first();
-    // Hovering waits until the slider stops moving (a screen still sliding in) and lands on the knob.
-    await slider.hover({ position: { x: 20, y: 20 } });
-    const box = (await slider.boundingBox())!;
-    await this.page.mouse.down();
-    await this.page.mouse.move(box.x + box.width - 4, box.y + 20, { steps: 8 });
-    await this.page.mouse.up();
-  }
-
   /** Rolls once and enters the first field on offer. */
   async playTurn(): Promise<void> {
-    await this.roll();
+    await this.tap('Würfeln');
     await this.tap(/eintragen$/);
     // A field worth 0 points is struck instead.
     await this.tap(/^(Eintragen|Streichen)$/);

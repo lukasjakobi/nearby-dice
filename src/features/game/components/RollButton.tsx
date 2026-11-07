@@ -12,7 +12,7 @@ type RollButtonProps = {
 };
 
 /**
- * The roll control with "Zum Würfeln wischen" switched off: the mint tile is a raised button,
+ * The roll control by default ("Zum Würfeln wischen" off): the mint tile is a raised button,
  * and a tap rolls. It sinks onto its edge while pressed.
  */
 export function RollButton({ label, onRoll, style }: RollButtonProps) {

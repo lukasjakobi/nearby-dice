@@ -38,7 +38,7 @@ type SettingsData = {
   musicVolume: number;
   /** Keeps the screen on in the lobby and during the game. */
   keepAwake: boolean;
-  /** Rolling takes sliding the roll knob; off, a tap rolls. */
+  /** Rolling and entering a score take a slide; off (the default), a tap does. */
   swipeToRoll: boolean;
 };
 
@@ -61,7 +61,7 @@ const DEFAULTS: SettingsData = {
   soundVolume: 0.7,
   musicVolume: 0.7,
   keepAwake: true,
-  swipeToRoll: true,
+  swipeToRoll: false,
 };
 
 const isThemeMode = (value: unknown): value is ThemeMode =>

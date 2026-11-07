@@ -23,7 +23,7 @@ test('the confirm bar on the ×3 sheet shows raw points', async () => {
   await fireEvent.press(screen.getByLabelText('Full House: 25 Punkte eintragen'));
   expect(screen.getByText('Eintragen')).toBeTruthy();
   expect(screen.getAllByText('25 Punkte').length).toBeGreaterThan(0);
-  await fireEvent.press(screen.getByText('Eintragen'));
+  await fireEvent.press(screen.getByRole('button', { name: 'Eintragen' }));
   expect(session.score).toHaveBeenCalledWith(Category.FullHouse, 2);
 });
 
