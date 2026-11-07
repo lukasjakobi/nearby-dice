@@ -29,7 +29,7 @@ const meta: Meta<typeof DieFace> = {
   title: 'UI/Display/DieFace',
   component: DieFace,
   args: { value: 5, size: 56, held: false, tilt: 0, lift: true },
-  argTypes: { value: { control: { type: 'range', min: 0, max: 6, step: 1 } } },
+  argTypes: { value: { control: { type: 'range', min: 1, max: 6, step: 1 } } },
   decorators: [
     (Story) => (
       <Felt>
@@ -46,9 +46,6 @@ export const Default: Story = {};
 
 /** Held dice get the mint ring and lift by 8 pt. */
 export const Held: Story = { args: { held: true } };
-
-/** Before the first roll. */
-export const Placeholder: Story = { args: { value: 0 } };
 
 export const Faces: Story = {
   render: (args) => (
