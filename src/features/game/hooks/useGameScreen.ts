@@ -4,10 +4,17 @@ import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from '@/i18n';
 import { Role, setActiveSession } from '@/session';
 import { useSession } from '@/features/session';
-import { navigate, Route, useBackAction, useFeedback, useFeedbackSwitches } from '@/shared';
+import {
+  historyRows,
+  navigate,
+  Route,
+  useBackAction,
+  useFeedback,
+  useFeedbackSwitches,
+} from '@/shared';
 import { useSettingsStore } from '@/store';
 
-import { ControlKind, buildGameView, buildScoreboard } from '../view';
+import { ControlKind, buildGameView } from '../view';
 import type { CellView } from '../view';
 import { useDiceAnimation } from './useDiceAnimation';
 import { useGameFeedback } from './useGameFeedback';
@@ -17,7 +24,7 @@ import { useYatzyFlag } from './useYatzyFlag';
 
 export enum GameSheet {
   None = 'none',
-  Scoreboard = 'scoreboard',
+  History = 'history',
   Menu = 'menu',
   LostPlayer = 'lost-player',
 }
@@ -70,9 +77,10 @@ export function useGameScreen() {
     scorePending,
     selectedCategory,
   });
-  const scoreboard = useMemo(
-    () => (openSheet === GameSheet.Scoreboard ? buildScoreboard(t, snapshot) : null),
-    [openSheet, snapshot, t],
+  const history = useMemo(
+    () =>
+      openSheet === GameSheet.History && game ? historyRows(t, game, snapshot.shared.players) : [],
+    [openSheet, game, snapshot.shared.players, t],
   );
 
   const finished = !!view?.finished;
@@ -117,7 +125,7 @@ export function useGameScreen() {
     swipeToRoll,
     yatzyFlag: yatzyFlag.flag,
     closeYatzyFlag: yatzyFlag.close,
-    scoreboard,
+    history,
     openSheet,
     dialog,
     confirm,
@@ -175,7 +183,7 @@ export function useGameScreen() {
     },
     showTurnSheet: () => page.setViewed(null),
     closeSheet: close,
-    openScoreboard: () => setOpenSheet(GameSheet.Scoreboard),
+    openHistory: () => setOpenSheet(GameSheet.History),
     openMenu: () => setOpenSheet(GameSheet.Menu),
     openLostPlayer: () => setOpenSheet(GameSheet.LostPlayer),
     feedbackSwitches,

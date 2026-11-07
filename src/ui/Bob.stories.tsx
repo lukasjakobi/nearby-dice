@@ -11,6 +11,7 @@ const meta: Meta<typeof Bob> = {
     tilt: -8,
     distance: 6,
     delayMs: 0,
+    active: true,
     children: <Logo size={72} body={PALETTES.light.felt} pips={FIXED.dieFace} />,
   },
 };
@@ -19,3 +20,6 @@ export default meta;
 
 /** A slow float; it stays still with reduce motion. */
 export const Default: StoryObj<typeof Bob> = {};
+
+/** With `active` off the child settles back to rest and stays still. */
+export const Inactive: StoryObj<typeof Bob> = { args: { active: false } };

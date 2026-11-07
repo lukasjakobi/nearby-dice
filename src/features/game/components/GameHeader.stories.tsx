@@ -9,7 +9,7 @@ const meta: Meta<typeof GameHeader> = {
   title: 'Features/Game/GameHeader',
   component: GameHeader,
   parameters: { screen: true },
-  args: { onMenu: fn(), onScoreboard: fn() },
+  args: { onMenu: fn(), onHistory: fn() },
 };
 
 export default meta;

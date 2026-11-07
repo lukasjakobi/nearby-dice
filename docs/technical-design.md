@@ -149,7 +149,7 @@ The engine knows players only by their id. Names, colours and connection links l
 
 **Every phone holds the complete game.** `GameState` contains every player's sheets and the full
 `history` (scored, auto-scored, skipped and removed entries, each with its round and dice). The host
-broadcasts it after every change, so any phone can show "Spielstand" and "Verlauf".
+broadcasts it after every change, so any phone can show every player's sheet and "Verlauf".
 
 **Confirmed:** The game shows upper and lower scoring blocks side by side in rounded panels.
 Score rows share a height within each board and expand with the available space, with a

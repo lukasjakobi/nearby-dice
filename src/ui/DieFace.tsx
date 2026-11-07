@@ -51,7 +51,7 @@ function randomFace(not: number): number {
 }
 
 type DieFaceProps = {
-  /** 1–6, or 0 for the blank, translucent placeholder before the first roll. */
+  /** 1–6. */
   value: number;
   size?: number;
   held?: boolean;
@@ -146,9 +146,6 @@ export function DieFace({
   const tumbling = tumble !== null && landed.shakeKey !== shakeKey;
 
   const face = tumbling ? tumble : value;
-  const placeholder = face === 0;
-  // Before the first roll the die is blank: a ghost face would read as a roll of fives.
-  const pips = placeholder ? [] : (PIPS[face] ?? []);
 
   return (
     <Animated.View
@@ -170,18 +167,12 @@ export function DieFace({
           width={50}
           height={50}
           rx={13}
-          fill={placeholder ? 'rgba(255,252,245,0.12)' : FIXED.dieFace}
-          stroke={held ? FIXED.heldRing : placeholder ? 'rgba(255,255,255,0.4)' : FIXED.dieEdge}
+          fill={FIXED.dieFace}
+          stroke={held ? FIXED.heldRing : FIXED.dieEdge}
           strokeWidth={held ? 4 : 1.5}
         />
-        {pips.map(([cx, cy], i) => (
-          <Circle
-            key={i}
-            cx={cx}
-            cy={cy}
-            r={4.6}
-            fill={placeholder ? 'rgba(255,252,245,0.4)' : FIXED.diePip}
-          />
+        {(PIPS[face] ?? []).map(([cx, cy], i) => (
+          <Circle key={i} cx={cx} cy={cy} r={4.6} fill={FIXED.diePip} />
         ))}
       </Svg>
     </Animated.View>

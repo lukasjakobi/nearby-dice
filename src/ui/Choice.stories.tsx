@@ -34,7 +34,7 @@ const meta: Meta<typeof Choice<string>> = {
 export default meta;
 type Story = StoryObj<typeof Choice<string>>;
 
-/** Equal buttons, as for the scoreboard's "Spielstand / Verlauf". */
+/** Equal buttons for a few short options. */
 export const Segments: Story = { args: { style: ChoiceStyle.Segments } };
 
 /** On a track, as in Settings. */
