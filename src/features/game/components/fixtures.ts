@@ -5,14 +5,16 @@
 import { Category, PlayerColor, PRESETS, PresetId } from '@/domain';
 import type { TFunction } from '@/i18n';
 import type { PlayerInfo } from '@/session';
+import { historyRows } from '@/shared';
+import type { HistoryRow } from '@/shared';
 import { ANTONIA, JONAS, LUKAS, playedGame, snapshot, withDice } from '@/test/fixtures';
 
-import { CellState, buildGameView, buildScoreboard, buildYatzyFlag } from '../view';
-import type { GameView, LocalState, ScoreboardView, YatzyFlagView } from '../view';
+import { CellState, buildGameView, buildYatzyFlag } from '../view';
+import type { GameView, LocalState, YatzyFlagView } from '../view';
 
 export const PLAYERS = [LUKAS, ANTONIA, JONAS];
 
-/** Six players, so the scoreboard has to scroll sideways. */
+/** Six players, the most a round admits. */
 export const SIX_PLAYERS: PlayerInfo[] = [
   ...PLAYERS,
   { ...ANTONIA, id: 'mia', name: 'Mia', color: PlayerColor.Mint },
@@ -45,7 +47,7 @@ export type Scene = {
   local?: Partial<LocalState>;
 };
 
-export type SceneView = { view: GameView; board: ScoreboardView };
+export type SceneView = { view: GameView; history: HistoryRow[] };
 
 /** The game screen's props for one moment of a game. */
 export function gameScene(t: TFunction, scene: Scene = {}): SceneView {
@@ -79,7 +81,7 @@ export function gameScene(t: TFunction, scene: Scene = {}): SceneView {
     ...scene.local,
   };
 
-  return { view: buildGameView(t, snap, local)!, board: buildScoreboard(t, snap)! };
+  return { view: buildGameView(t, snap, local)!, history: historyRows(t, game, players) };
 }
 
 /** The flag for a Yatzy by `player`. */

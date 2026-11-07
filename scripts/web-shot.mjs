@@ -1,7 +1,7 @@
 // Screenshots of the web build for agents and reviewers (docs/technical-design.md, Browser harness).
 //
 //   npm run web:shot -- game-my-turn                 a scenario (see --list)
-//   npm run web:shot -- game-six-players --tap Spielstand
+//   npm run web:shot -- game-six-players --tap Verlauf
 //   npm run web:shot -- home --param radio=bluetooth-off --tap Beitreten
 //   npm run web:shot -- settings --param update=available --show "Nach Updates suchen"
 //   npm run web:shot -- onboarding --tap Weiter --tap Weiter --type Mira

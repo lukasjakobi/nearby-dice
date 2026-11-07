@@ -11,11 +11,11 @@ import {
   ConnectionFailedOverlay,
   GameHeader,
   GameMenuSheet,
+  HistorySheet,
   LostPlayerSheet,
   PlayerPills,
   Scorecard,
   ScorecardScroll,
-  ScoreboardSheet,
   ScreenOverlay,
   SheetBackButton,
   YatzyFlag,
@@ -39,7 +39,7 @@ export function GameScreen() {
       <GameHeader
         roundLabel={view.roundLabel}
         onMenu={screen.openMenu}
-        onScoreboard={screen.openScoreboard}
+        onHistory={screen.openHistory}
       />
 
       {view.banner ? (
@@ -86,9 +86,9 @@ export function GameScreen() {
         confirm={screen.confirm}
         onConfirm={screen.confirmScore}
       />
-      <ScoreboardSheet
-        visible={screen.openSheet === GameSheet.Scoreboard}
-        board={screen.scoreboard}
+      <HistorySheet
+        visible={screen.openSheet === GameSheet.History}
+        rows={screen.history}
         onClose={screen.closeSheet}
       />
       <GameMenuSheet

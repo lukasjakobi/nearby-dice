@@ -146,9 +146,9 @@ loop. In Codex, invoke `$ui-improvement`, or ask the agent to follow
 implementation and reassessment. Example requests:
 
 ```text
-Use ui-improvement to review the six-player scoreboard. Rate it from 0 to 10; review only.
+Use ui-improvement to review the six-player game screen. Rate it from 0 to 10; review only.
 Use ui-improvement to improve the lobby for a guest. Target 8/10, at most two rounds.
-Use ui-improvement in guided mode for the scoreboard. Let me choose fixes after the review.
+Use ui-improvement in guided mode for the score history. Let me choose fixes after the review.
 Resume the lobby review; show UX-002 and compare the dark screenshots before continuing.
 ```
 

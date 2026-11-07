@@ -3,10 +3,10 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { Chip, IconButton, IconName, Text, TextVariant } from '@/ui';
 
-type GameHeaderProps = { roundLabel: string; onMenu: () => void; onScoreboard: () => void };
+type GameHeaderProps = { roundLabel: string; onMenu: () => void; onHistory: () => void };
 
-/** Top bar of the game: menu, round counter, and the scoreboard as a named chip. */
-export function GameHeader({ roundLabel, onMenu, onScoreboard }: GameHeaderProps) {
+/** Top bar of the game: menu, round counter, and the score history as a named chip. */
+export function GameHeader({ roundLabel, onMenu, onHistory }: GameHeaderProps) {
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
 
@@ -24,7 +24,7 @@ export function GameHeader({ roundLabel, onMenu, onScoreboard }: GameHeaderProps
       >
         {roundLabel}
       </Text>
-      <Chip label={t('game.scoreboard')} leading={IconName.Trophy} onPress={onScoreboard} />
+      <Chip label={t('game.history')} leading={IconName.History} onPress={onHistory} />
     </View>
   );
 }

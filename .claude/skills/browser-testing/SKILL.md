@@ -22,7 +22,7 @@ Browser harness; this file is how to drive it.
 Options:
 
 - `--tap <name>` taps a button by its exact German accessible name; repeat it to go further, e.g.
-  `game-six-players --tap Spielstand` opens the scoreboard.
+  `game-six-players --tap Verlauf` opens the score history.
 - `--type <text>` types into the first visible text field after the taps (or into whatever has
   focus, like the join code): `onboarding --tap Weiter --tap Weiter --type Mira`.
 - `--show <text>` scrolls the element with that exact text into view before the shot, for parts
