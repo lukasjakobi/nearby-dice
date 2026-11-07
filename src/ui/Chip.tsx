@@ -11,12 +11,10 @@ type ChipProps = {
   onPress: () => void;
   /** Icon before the label ("‹ Zurück"). */
   leading?: IconName;
-  /** Icon after the label ("Weitere Felder ⌄"). */
-  trailing?: IconName;
 };
 
 /** A small outlined pill for a secondary action that floats over content. */
-export function Chip({ label, onPress, leading, trailing }: ChipProps) {
+export function Chip({ label, onPress, leading }: ChipProps) {
   const { colors } = useTheme();
 
   return (
@@ -31,7 +29,7 @@ export function Chip({ label, onPress, leading, trailing }: ChipProps) {
         gap: 4,
         // The icon side sits closer to the edge.
         paddingLeft: leading ? 10 : 14,
-        paddingRight: trailing ? 10 : 14,
+        paddingRight: 14,
         height: 32,
         borderRadius: RADIUS.chip,
         borderWidth: 1,
@@ -43,7 +41,6 @@ export function Chip({ label, onPress, leading, trailing }: ChipProps) {
       <Text size={13} weight={600}>
         {label}
       </Text>
-      {trailing ? <Icon name={trailing} color={colors.ink} size={16} /> : null}
     </Pressable>
   );
 }

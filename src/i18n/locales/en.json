@@ -416,7 +416,6 @@
     "players": "Players",
     "upperBlock": "Upper section",
     "lowerBlock": "Lower section",
-    "moreFields": "More fields",
     "bonus": "Bonus (+{{points}})",
     "yatzyBonusRow": "Yatzy bonus",
     "bonusProgress": "{{sum}} / {{threshold}}",

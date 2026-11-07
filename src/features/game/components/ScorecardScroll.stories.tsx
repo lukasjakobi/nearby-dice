@@ -38,8 +38,8 @@ export const Fits: Story = {
   ),
 };
 
-/** A small phone: "Weitere Felder" sits below the viewport without covering fields. */
-export const MoreBelow: Story = {
+/** A small phone: the lower fields scroll into view. */
+export const SmallPhone: Story = {
   render: () => (
     <View style={{ height: 380 }}>
       <ScorecardScroll>{(height) => card(height, PresetId.ClassicXl)}</ScorecardScroll>
