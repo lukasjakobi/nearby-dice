@@ -10,7 +10,6 @@ const meta: Meta<typeof Chip> = {
   args: { onPress: fn() },
   argTypes: {
     leading: { control: 'select', options: [undefined, ...Object.values(IconName)] },
-    trailing: { control: 'select', options: [undefined, ...Object.values(IconName)] },
   },
 };
 
@@ -19,10 +18,5 @@ type Story = StoryObj<typeof Chip>;
 
 /** Above another player's sheet in the game. */
 export const Back: Story = { args: { label: 'Zurück', leading: IconName.Back } };
-
-/** Over the scorecard's fade when fields are hidden below. */
-export const MoreBelow: Story = {
-  args: { label: 'Weitere Felder', trailing: IconName.ChevronDown },
-};
 
 export const TextOnly: Story = { args: { label: 'Regeln' } };

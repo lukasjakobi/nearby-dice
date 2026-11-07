@@ -20,16 +20,7 @@ for (const scenario of ['game-my-turn', 'game-classic-xl']) {
     expect(tallRow.height).toBeLessThanOrEqual(64);
 
     await page.setViewportSize({ width: 320, height: 568 });
-    const more = page.getByRole('button', { name: 'Weitere Felder', exact: true });
-    await expect(more).toBeVisible();
-    await expect
-      .poll(async () => {
-        const cue = (await more.boundingBox())!;
-        const dice = (await page.locator('[aria-label="Würfel"]').boundingBox())!;
-        return cue.y + cue.height <= dice.y;
-      })
-      .toBe(true);
-    await more.click();
+    await chance.scrollIntoViewIfNeeded();
     await expect(chance).toBeInViewport();
     await expect(roll).toBeInViewport();
     const compactRow = (await row.boundingBox())!;
