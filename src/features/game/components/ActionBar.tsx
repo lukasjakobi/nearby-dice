@@ -28,8 +28,8 @@ import type { Timer } from './TimerBar';
 
 const TILTS = [-3, 2, -2, 3, -2];
 /**
- * Before the first roll the dice float on the felt showing these faces: no pair and no run,
- * so they never look like a scored result.
+ * Before the first roll the dice float on the felt, greyed out, showing these faces: no pair
+ * and no run, so they never look like a scored result.
  */
 const RESTING_FACES = [3, 6, 1, 5, 2];
 /** Each die floats a little behind its neighbour, so the row ripples. */
@@ -109,6 +109,7 @@ export function ActionBar({
                   held={die.held && !die.locked}
                   tilt={die.locked ? 0 : TILTS[i]}
                   shakeKey={shakeKeys[i]}
+                  disabled={unrolled}
                 />
               </Bob>
             </Pressable>

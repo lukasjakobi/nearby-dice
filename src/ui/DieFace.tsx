@@ -60,9 +60,11 @@ type DieFaceProps = {
   tilt?: number;
   /** Lifts held dice by 8 pt. */
   lift?: boolean;
+  /** Not in play yet: flat grey with muted pips, so its face never reads as a roll. */
+  disabled?: boolean;
 };
 
-/** A die with the design's pips, held ring, tilt and shake. Purely visual. */
+/** A die with the design's pips, held ring, tilt, shake and disabled look. Purely visual. */
 export function DieFace({
   value,
   size = 56,
@@ -70,6 +72,7 @@ export function DieFace({
   shakeKey = 0,
   tilt = 0,
   lift = true,
+  disabled = false,
 }: DieFaceProps) {
   const { reduceMotion } = useTheme();
   const shake = useAnimatedValue(0);
@@ -146,6 +149,7 @@ export function DieFace({
   const tumbling = tumble !== null && landed.shakeKey !== shakeKey;
 
   const face = tumbling ? tumble : value;
+  const edge = held ? FIXED.heldRing : disabled ? undefined : FIXED.dieEdge;
 
   return (
     <Animated.View
@@ -167,12 +171,18 @@ export function DieFace({
           width={50}
           height={50}
           rx={13}
-          fill={FIXED.dieFace}
-          stroke={held ? FIXED.heldRing : FIXED.dieEdge}
+          fill={disabled ? FIXED.dieDisabledFace : FIXED.dieFace}
+          stroke={edge}
           strokeWidth={held ? 4 : 1.5}
         />
         {(PIPS[face] ?? []).map(([cx, cy], i) => (
-          <Circle key={i} cx={cx} cy={cy} r={4.6} fill={FIXED.diePip} />
+          <Circle
+            key={i}
+            cx={cx}
+            cy={cy}
+            r={4.6}
+            fill={disabled ? FIXED.dieDisabledPip : FIXED.diePip}
+          />
         ))}
       </Svg>
     </Animated.View>

@@ -90,6 +90,9 @@ export const FIXED = {
   dieFace: '#F2F5F4',
   diePip: '#101214',
   dieEdge: '#B7C0BD',
+  /** A die that cannot be used yet (before the first roll): flat grey on the felt, like a disabled button. */
+  dieDisabledFace: '#4D5B59',
+  dieDisabledPip: '#A3AEAB',
   heldRing: '#4FE3C1',
   /** Text on player colours and on the felt. */
   onPlayer: '#101214',
