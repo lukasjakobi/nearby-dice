@@ -12,6 +12,7 @@ import {
   useFeedback,
   useFeedbackSwitches,
 } from '@/shared';
+import { useSettingsStore } from '@/store';
 
 import { ControlKind, buildGameView } from '../view';
 import type { CellView } from '../view';
@@ -53,6 +54,7 @@ export function useGameScreen() {
   const { session, snapshot } = useSession();
   const feedback = useFeedback();
   const feedbackSwitches = useFeedbackSwitches();
+  const swipeToRoll = useSettingsStore((s) => s.swipeToRoll);
   const game = snapshot.shared.game;
   const dice = useDiceAnimation(game?.turn);
   const page = useSheetPage(game, snapshot.shared.gameNumber);
@@ -120,6 +122,7 @@ export function useGameScreen() {
   return {
     view,
     shakeKeys: dice.shakeKeys,
+    swipeToRoll,
     yatzyFlag: yatzyFlag.flag,
     closeYatzyFlag: yatzyFlag.close,
     history,

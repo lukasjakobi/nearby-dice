@@ -6,6 +6,7 @@ import { PRESETS, PresetId } from '@/domain/rules';
 import { ConnectionStatus } from '@/session/types';
 import { SessionContext } from '@/features/session/SessionContext';
 import { useSettingsStore } from '@/store';
+import { slide } from '@/test/gestures';
 import { renderScreen, fakeSession } from '@/test/render';
 import { ActionType, LUKAS, ANTONIA, game, play, snapshot, withDice } from '@/test/fixtures';
 
@@ -17,9 +18,39 @@ test('rolling on my turn', async () => {
   await renderScreen(<GameScreen />, { session, snapshot: snap });
 
   expect(screen.getByText('Runde 1 von 13')).toBeTruthy();
-  expect(screen.getByText('3 Würfe übrig')).toBeTruthy();
-  await fireEvent.press(screen.getByText('Würfeln'));
+  expect(screen.getByText('3 Würfe übrig')).toBeTruthy();
+  await fireEvent.press(screen.getByRole('button', { name: 'Würfeln' }));
   expect(session.roll).toHaveBeenCalled();
+});
+
+describe('with "Zum Würfeln wischen" on', () => {
+  beforeEach(() => useSettingsStore.setState({ swipeToRoll: true }));
+  afterEach(() => useSettingsStore.setState({ swipeToRoll: false }));
+
+  test('only a slide rolls', async () => {
+    const snap = snapshot({});
+    const session = fakeSession(snap);
+    await renderScreen(<GameScreen />, { session, snapshot: snap });
+
+    const roll = screen.getByRole('button', { name: 'Würfeln' });
+    await fireEvent.press(roll);
+    expect(session.roll).not.toHaveBeenCalled();
+    await slide(roll);
+    expect(session.roll).toHaveBeenCalled();
+  });
+
+  test('only a slide enters the selected field', async () => {
+    const snap = snapshot({ game: withDice(game([LUKAS, ANTONIA]), [2, 2, 5, 5, 5]) });
+    const session = fakeSession(snap);
+    await renderScreen(<GameScreen />, { session, snapshot: snap });
+
+    await fireEvent.press(screen.getByLabelText('Full House: 25 Punkte eintragen'));
+    const enter = screen.getByRole('button', { name: 'Eintragen' });
+    await fireEvent.press(enter);
+    expect(session.score).not.toHaveBeenCalled();
+    await slide(enter);
+    expect(session.score).toHaveBeenCalledWith(Category.FullHouse, 0);
+  });
 });
 
 test('picking a field replaces the roll button with an inline score action', async () => {
@@ -85,10 +116,12 @@ test('a field can be confirmed after the final roll', async () => {
   const session = fakeSession(snap);
   await renderScreen(<GameScreen />, { session, snapshot: snap });
 
-  expect(screen.getByRole('button', { name: 'Feld wählen' })).toBeDisabled();
+  // No roll left: a hint, not a button, points at the scorecard.
+  expect(screen.getByText('Feld wählen')).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Feld wählen' })).toBeNull();
   await fireEvent.press(screen.getByLabelText('Full House: 25 Punkte eintragen'));
   expect(screen.getByRole('button', { name: 'Eintragen' })).toBeEnabled();
-  await fireEvent.press(screen.getByText('Eintragen'));
+  await fireEvent.press(screen.getByRole('button', { name: 'Eintragen' }));
   expect(session.score).toHaveBeenCalledWith(Category.FullHouse, 0);
 });
 
@@ -103,7 +136,7 @@ test('changing sheets clears the selection and scores on the newly selected shee
   expect(screen.queryByText('Eintragen')).toBeNull();
   // The ×2 sheet shows raw points too.
   await fireEvent.press(screen.getByLabelText('Full House: 25 Punkte eintragen'));
-  await fireEvent.press(screen.getByText('Eintragen'));
+  await fireEvent.press(screen.getByRole('button', { name: 'Eintragen' }));
   expect(session.score).toHaveBeenCalledWith(Category.FullHouse, 1);
 });
 

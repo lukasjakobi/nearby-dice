@@ -6,7 +6,7 @@ import type { IconName } from './icons/Icon';
 import { Spinner } from './Spinner';
 import { Text } from './Text';
 import { useTheme } from './theme/ThemeProvider';
-import { EDGE, FIXED, RADIUS, SIZE, alpha, shade } from './theme/tokens';
+import { EDGE, RADIUS, SIZE, shade } from './theme/tokens';
 import type { Palette } from './theme/tokens';
 import { TextVariant } from './theme/typography';
 
@@ -22,8 +22,6 @@ export enum ButtonVariant {
   Tonal = 'tonal',
   /** Tonal with red text: "Aus der Lobby entfernen". */
   TonalDanger = 'tonal-danger',
-  /** Raised ivory tile for rolling dice. */
-  Roll = 'roll',
   /** Score confirmation on the felt. */
   Accent = 'accent',
   /** Small action inside the amber banner: "Optionen". */
@@ -47,7 +45,6 @@ const LOOKS: Record<ButtonVariant, (c: Palette) => Look> = {
   }),
   [ButtonVariant.Tonal]: (c) => ({ background: c.surface2, text: c.ink }),
   [ButtonVariant.TonalDanger]: (c) => ({ background: c.surface2, text: c.danger }),
-  [ButtonVariant.Roll]: (c) => ({ background: c.roll, text: c.onRoll }),
   [ButtonVariant.Accent]: (c) => ({ background: c.accent, text: c.onAccent }),
   [ButtonVariant.OnAccent]: (c) => ({ background: c.onAccent, text: c.accent }),
   [ButtonVariant.Quiet]: (c) => ({ background: 'transparent', text: c.muted }),
@@ -61,7 +58,7 @@ export type ButtonProps = {
   label: string;
   onPress: () => void;
   variant?: ButtonVariant;
-  /** Before the label: the dice on the roll button. */
+  /** Before the label: the check on the score confirmation. */
   icon?: IconName;
   disabled?: boolean;
   /** Shows a spinner next to the label and disables the button. */
@@ -88,14 +85,12 @@ export function Button({
   const { colors } = useTheme();
   const look = (disabled && !loading ? DISABLED : LOOKS[variant])(colors);
   const inactive = disabled || loading;
-  const rollTile = variant === ButtonVariant.Roll;
-  const edgeWidth = rollTile ? 5 : EDGE;
   // Filled and outlined buttons stand on a darker edge and sink into it when pressed; quiet ones
   // and disabled ones lie flat.
   const edge = inactive
     ? null
     : look.background.startsWith('#')
-      ? shade(look.background, rollTile ? 0.35 : 0.28)
+      ? shade(look.background, 0.28)
       : (look.border ?? null);
 
   return (
@@ -108,23 +103,19 @@ export function Button({
       style={({ pressed }) => [
         {
           minHeight: height,
-          borderRadius: rollTile ? RADIUS.rollTile : RADIUS.button,
+          borderRadius: RADIUS.button,
           paddingHorizontal: 20,
           backgroundColor: look.background,
           borderWidth: look.border ? 1.5 : 0,
           borderColor: look.border,
-          borderBottomWidth: edge ? (pressed ? 1.5 : edgeWidth) : look.border ? 1.5 : 0,
+          borderBottomWidth: edge ? (pressed ? 1.5 : EDGE) : look.border ? 1.5 : 0,
           borderBottomColor: edge ?? look.border,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: alignStart ? 'flex-start' : 'center',
           gap: 8,
           opacity: pressed && !edge && !inactive ? 0.7 : 1,
-          boxShadow:
-            rollTile && !inactive && !pressed
-              ? [{ offsetX: 0, offsetY: 5, blurRadius: 10, color: alpha(FIXED.shadow, 0.2) }]
-              : undefined,
-          transform: [{ translateY: pressed && edge ? edgeWidth - 1.5 : 0 }],
+          transform: [{ translateY: pressed && edge ? EDGE - 1.5 : 0 }],
         },
         style,
       ]}

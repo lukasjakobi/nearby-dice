@@ -18,7 +18,11 @@ import {
 
 import { ControlKind } from '../view';
 import type { ControlView, DieView } from '../view';
+import { RollButton } from './RollButton';
 import { RollCounter } from './RollCounter';
+import { RollHint } from './RollHint';
+import { ROLL_TILE_HEIGHT, ROLL_TILE_RADIUS } from './rollTile';
+import { SlideButton, SlideTone } from './SlideButton';
 import { TimerBar } from './TimerBar';
 import type { Timer } from './TimerBar';
 
@@ -40,11 +44,13 @@ type ActionBarProps = {
   timer: Timer | null;
   onToggleHold: (die: number) => void;
   onRoll: () => void;
+  /** "Zum Würfeln wischen": rolling and entering a score take a slide; off, a tap. */
+  swipeToRoll: boolean;
   confirm: { label: string; points: string; strike: boolean; sending: boolean } | null;
   onConfirm: () => void;
 };
 
-/** The felt bar at the bottom edge: time bar, five dice, roll or score controls. */
+/** The felt bar at the bottom edge: time bar, five dice, the roll control or score controls. */
 export function ActionBar({
   dice,
   shakeKeys,
@@ -52,6 +58,7 @@ export function ActionBar({
   timer,
   onToggleHold,
   onRoll,
+  swipeToRoll,
   confirm,
   onConfirm,
 }: ActionBarProps) {
@@ -62,6 +69,9 @@ export function ActionBar({
   const diceWidth = width - 2 * BAR_PADDING - DICE_GAP * (dice.length - 1);
   const dieSize = Math.min(64, Math.floor(diceWidth / dice.length));
   const locked = dice.some((die) => die.locked);
+  // While the dice are in the air the roll control stays as it is (rolls are ignored upstream)
+  // instead of flickering to the hint on every roll.
+  const rollsUsedUp = control.kind === ControlKind.MyTurn && !control.canRoll && !control.rollBusy;
 
   return (
     <View style={[styles.bar, { backgroundColor: colors.felt, paddingBottom: 16 + insets.bottom }]}>
@@ -121,28 +131,43 @@ export function ActionBar({
             ) : (
               <RollCounter rolls={control} />
             )}
-            <Button
-              label={
-                confirm
-                  ? confirm.strike
-                    ? t('game.confirm.strike')
-                    : t('game.confirm.enter')
-                  : control.rollLabel
-              }
-              onPress={confirm ? onConfirm : onRoll}
-              // While the dice are in the air the button stays as it is (presses are
-              // ignored upstream) instead of dimming for a moment on every roll.
-              disabled={!confirm && !control.canRoll && !control.rollBusy}
-              loading={!!confirm?.sending}
-              accessibilityHint={confirm ? `${confirm.label}: ${confirm.points}` : undefined}
-              icon={confirm ? IconName.Check : IconName.Dice}
-              variant={confirm ? ButtonVariant.Accent : ButtonVariant.Roll}
-              height={52}
-              style={[styles.rollButton, !!confirm && styles.confirmButton]}
-            />
+            {confirm && swipeToRoll ? (
+              <SlideButton
+                label={confirm.strike ? t('game.confirm.strike') : t('game.confirm.enter')}
+                icon={IconName.Check}
+                tone={SlideTone.Confirm}
+                onCommit={onConfirm}
+                busy={confirm.sending}
+                accessibilityHint={`${confirm.label}: ${confirm.points}`}
+                style={styles.control}
+              />
+            ) : confirm ? (
+              <Button
+                label={confirm.strike ? t('game.confirm.strike') : t('game.confirm.enter')}
+                onPress={onConfirm}
+                loading={confirm.sending}
+                accessibilityHint={`${confirm.label}: ${confirm.points}`}
+                icon={IconName.Check}
+                variant={ButtonVariant.Accent}
+                height={ROLL_TILE_HEIGHT}
+                style={[styles.control, styles.confirmButton]}
+              />
+            ) : rollsUsedUp ? (
+              <RollHint label={control.rollLabel} style={styles.control} />
+            ) : swipeToRoll ? (
+              <SlideButton
+                label={control.rollLabel}
+                icon={IconName.Dice}
+                tone={SlideTone.Roll}
+                onCommit={onRoll}
+                style={styles.control}
+              />
+            ) : (
+              <RollButton label={control.rollLabel} onRoll={onRoll} style={styles.control} />
+            )}
           </>
         ) : (
-          // Same counter as on my turn; the status takes the roll button's place.
+          // Same counter as on my turn; the status takes the roll control's place.
           <>
             <RollCounter rolls={control} />
             <View style={styles.waiting} accessibilityLiveRegion="polite">
@@ -203,9 +228,10 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   selection: { flexShrink: 1, gap: 4 },
-  rollButton: { flex: 1, paddingHorizontal: 28 },
-  // The roll tile keeps its own corners; only the score confirmation takes the chip radius.
-  confirmButton: { borderRadius: RADIUS.chip },
+  // Every control on the right (slide, tap button, hint) takes the same fixed share of the row,
+  // so its edge stays put while the text on the left changes ("3 Würfe übrig" → "Fünfer").
+  control: { width: '60%' },
+  confirmButton: { borderRadius: ROLL_TILE_RADIUS },
   waiting: {
     flex: 1,
     minHeight: 48,

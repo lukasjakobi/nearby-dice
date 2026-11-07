@@ -18,8 +18,11 @@ const meta: Meta<typeof SwitchList> = {
       music: { value: false, volume: 0.5 },
       haptics: { value: true },
       keepAwake: { value: false },
+      swipeToRoll: { value: false },
     });
-    const rows: SwitchRow[] = (['sound', 'music', 'haptics', 'keepAwake'] as const).map((key) => ({
+    const rows: SwitchRow[] = (
+      ['sound', 'music', 'haptics', 'keepAwake', 'swipeToRoll'] as const
+    ).map((key) => ({
       key,
       label: i18n.t(`settings.${key}`),
       ...state[key],

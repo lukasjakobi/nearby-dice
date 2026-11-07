@@ -35,7 +35,13 @@ const meta: Meta<typeof ActionBar> = {
   title: 'Features/Game/ActionBar',
   component: ActionBar,
   parameters: { screen: true },
-  args: { shakeKeys: NO_SHAKE, onToggleHold: fn(), onRoll: fn(), onConfirm: fn() },
+  args: {
+    shakeKeys: NO_SHAKE,
+    onToggleHold: fn(),
+    onRoll: fn(),
+    swipeToRoll: false,
+    onConfirm: fn(),
+  },
   decorators: [
     (Story) => (
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -50,6 +56,20 @@ type Story = StoryObj<typeof ActionBar>;
 
 /** My turn, nothing rolled yet: placeholder dice and "Würfeln". */
 export const BeforeRoll: Story = { render: (args) => <ActionBar {...args} {...bar({})} /> };
+
+/** "Zum Würfeln wischen" switched on: rolling takes sliding the knob to the far end. */
+export const SwipeToRoll: Story = {
+  args: { swipeToRoll: true },
+  render: (args) => <ActionBar {...args} {...bar({})} />,
+};
+
+/** "Zum Würfeln wischen" switched on, a field selected: entering it takes a slide too. */
+export const SwipeToConfirm: Story = {
+  args: { swipeToRoll: true },
+  render: (args) => (
+    <ActionBar {...args} {...bar({ dice: THREE_FIVES, selected: FieldPick.Best })} />
+  ),
+};
 
 /** After the first roll: tap dice to hold them. */
 export const Rolled: Story = {

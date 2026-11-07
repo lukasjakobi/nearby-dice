@@ -159,6 +159,16 @@ cover scoring rows. On narrow phones, six-player identities wrap into two rows t
 readable. A red badge marks a zero or a field excluded by the current roll. A check mark identifies an entered score. A zero can still
 be entered with "Streichen" when the rules allow it. See [scoring](scoring.md) for the joker rule.
 
+**Confirmed:** By default, rolling and entering a score are taps on raised buttons: mint
+"Würfeln" (`RollButton`) and coral "Eintragen"/"Streichen" (the accent `Button`). The setting
+"Zum Würfeln wischen" (off by default) makes both a slide instead (`SlideButton`): a flat track
+holds a raised dark knob, and only sliding it to the far end and letting go acts, so a stray tap
+never rolls or enters a score. A tap nudges the knob and springs back (no nudge with reduced
+motion), as does a short slide; a slide the system takes over never acts. Screen readers use the
+track's activate action (double tap). With no roll left, a caption with an arrow ("↑ Feld
+wählen", `RollHint`) points at the scorecard instead of a button. Every control in that place has
+the same 44-point height and share of the bar's width, so the bar keeps its shape.
+
 **Confirmed:** The host chooses a preset when opening a lobby. Nearby discovery identifies a
 lobby by its host, and manual entry uses the round code. The session and discovery payloads
 carry the default round name for compatibility with older clients.

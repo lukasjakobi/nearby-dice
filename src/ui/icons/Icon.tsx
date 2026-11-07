@@ -26,6 +26,7 @@ export enum IconName {
   History = 'history',
   User = 'user',
   ArrowDown = 'arrow-down',
+  ArrowUp = 'arrow-up',
   Star = 'star',
   StarFilled = 'star-filled',
   Dice = 'dice',
@@ -108,6 +109,7 @@ const ICONS: Record<IconName, Shape[]> = {
   [IconName.History]: [path('M3 12a9 9 0 1 0 3-6.7'), path('M3 4v5h5'), path('M12 8v4l3 2')],
   [IconName.User]: [circle(12, 8, 4), path('M4 21a8 8 0 0 1 16 0')],
   [IconName.ArrowDown]: [path('M12 4v14M6 12l6 6 6-6')],
+  [IconName.ArrowUp]: [path('M12 20V6M6 12l6-6 6 6')],
   [IconName.Star]: [path('M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z')],
   [IconName.StarFilled]: [
     path('M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z', true),

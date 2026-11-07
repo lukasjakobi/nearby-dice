@@ -39,6 +39,7 @@ export function SettingsScreen() {
   const switches = [
     ...screen.feedbackSwitches.rows,
     { key: 'keepAwake', label: t('settings.keepAwake'), value: settings.keepAwake },
+    { key: 'swipeToRoll', label: t('settings.swipeToRoll'), value: settings.swipeToRoll },
   ] as const;
 
   return (
