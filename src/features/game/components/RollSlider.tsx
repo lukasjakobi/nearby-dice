@@ -36,19 +36,28 @@ export function RollSlider({ label, onRoll, style }: RollSliderProps) {
 
   const travel = Math.max(1, width - 2 * INSET - KNOB_WIDTH);
 
+  const springBack = () =>
+    Animated.spring(offset, { toValue: 0, useNativeDriver: false, speed: 24 });
+
   const release = () => {
     const { dx } = drag.current;
     drag.current.dx = 0;
     // Until it is measured, the knob has no track to slide along.
     if (width > 0 && dx >= travel * COMMIT) onRoll();
-    const back = Animated.spring(offset, { toValue: 0, useNativeDriver: false, speed: 24 });
     // A tap does not roll; the knob shows which way it wants to go instead.
     if (dx < TAP_SLOP && !reduceMotion) {
       const nudge = { toValue: NUDGE, duration: 140, useNativeDriver: false };
-      Animated.sequence([Animated.timing(offset, nudge), back]).start();
+      Animated.sequence([Animated.timing(offset, nudge), springBack()]).start();
     } else {
-      back.start();
+      springBack().start();
     }
+  };
+
+  // The system took the touch (say, the notification shade): the slide was not let go, so it
+  // never rolls, however far the knob got.
+  const cancel = () => {
+    drag.current.dx = 0;
+    springBack().start();
   };
 
   return (
@@ -68,7 +77,7 @@ export function RollSlider({ label, onRoll, style }: RollSliderProps) {
         offset.setValue(drag.current.dx);
       }}
       onResponderRelease={release}
-      onResponderTerminate={release}
+      onResponderTerminate={cancel}
       accessible
       accessibilityRole="button"
       accessibilityLabel={label}

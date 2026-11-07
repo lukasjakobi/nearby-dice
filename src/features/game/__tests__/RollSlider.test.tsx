@@ -26,6 +26,15 @@ test('a tap or a short slide does not roll', async () => {
   expect(onRoll).not.toHaveBeenCalled();
 });
 
+test('a slide the system takes over does not roll, however far it got', async () => {
+  const { onRoll, slider } = await renderSlider();
+  await fireEvent(slider, 'layout', { nativeEvent: { layout: { width: 300, height: 44 } } });
+  await fireEvent(slider, 'responderGrant', { nativeEvent: { pageX: 0 } });
+  await fireEvent(slider, 'responderMove', { nativeEvent: { pageX: 300 } });
+  await fireEvent(slider, 'responderTerminate', { nativeEvent: { pageX: 300 } });
+  expect(onRoll).not.toHaveBeenCalled();
+});
+
 test('screen readers roll with the activate action', async () => {
   const { onRoll, slider } = await renderSlider();
   await fireEvent(slider, 'accessibilityAction', { nativeEvent: { actionName: 'activate' } });
