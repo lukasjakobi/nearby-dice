@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   Avatar,
+  Bob,
   Button,
   ButtonVariant,
   DieFace,
@@ -22,6 +23,13 @@ import { TimerBar } from './TimerBar';
 import type { Timer } from './TimerBar';
 
 const TILTS = [-3, 2, -2, 3, -2];
+/**
+ * Before the first roll the dice float on the felt showing these faces: no pair and no run,
+ * so they never look like a scored result.
+ */
+const RESTING_FACES = [3, 6, 1, 5, 2];
+/** Each die floats a little behind its neighbour, so the row ripples. */
+const FLOAT_STAGGER_MS = 180;
 const BAR_PADDING = 16;
 const DICE_GAP = 6;
 
@@ -70,26 +78,32 @@ export function ActionBar({
         accessibilityRole="none"
         accessibilityLabel={locked ? t('game.diceLocked') : t('game.dice')}
       >
-        {dice.map((die, i) => (
-          <Pressable
-            key={i}
-            onPress={() => onToggleHold(i)}
-            disabled={!die.canToggle}
-            accessibilityRole="button"
-            accessibilityLabel={die.label}
-            accessibilityState={{ selected: die.held, disabled: !die.canToggle }}
-            hitSlop={{ top: 10, bottom: 6, left: 2, right: 2 }}
-            style={({ pressed }) => pressed && styles.diePressed}
-          >
-            <DieFace
-              value={die.value}
-              size={dieSize}
-              held={die.held && !die.locked}
-              tilt={die.locked ? 0 : TILTS[i]}
-              shakeKey={shakeKeys[i]}
-            />
-          </Pressable>
-        ))}
+        {dice.map((die, i) => {
+          const unrolled = die.value === 0;
+
+          return (
+            <Pressable
+              key={i}
+              onPress={() => onToggleHold(i)}
+              disabled={!die.canToggle}
+              accessibilityRole="button"
+              accessibilityLabel={die.label}
+              accessibilityState={{ selected: die.held, disabled: !die.canToggle }}
+              hitSlop={{ top: 10, bottom: 6, left: 2, right: 2 }}
+              style={({ pressed }) => pressed && styles.diePressed}
+            >
+              <Bob active={unrolled} distance={3} delayMs={i * FLOAT_STAGGER_MS}>
+                <DieFace
+                  value={unrolled ? RESTING_FACES[i] : die.value}
+                  size={dieSize}
+                  held={die.held && !die.locked}
+                  tilt={die.locked ? 0 : TILTS[i]}
+                  shakeKey={shakeKeys[i]}
+                />
+              </Bob>
+            </Pressable>
+          );
+        })}
       </View>
 
       <View style={styles.controls}>
