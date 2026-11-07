@@ -75,6 +75,7 @@ function sceneStory(scene: Scene = {}, timer = false): Story {
             <ActionBar
               dice={view.dice.map((die, index) => ({ ...die, held: held.includes(index) }))}
               shakeKeys={[0, 0, 0, 0, 0]}
+              swipeToRoll
               control={view.control}
               timer={timer ? { deadline, limitMs: 30_000, lowMs: 10_000 } : null}
               confirm={

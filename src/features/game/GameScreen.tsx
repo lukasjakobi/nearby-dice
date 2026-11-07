@@ -83,6 +83,7 @@ export function GameScreen() {
         timer={view.timer}
         onToggleHold={screen.toggleHold}
         onRoll={screen.roll}
+        swipeToRoll={screen.swipeToRoll}
         confirm={screen.confirm}
         onConfirm={screen.confirmScore}
       />

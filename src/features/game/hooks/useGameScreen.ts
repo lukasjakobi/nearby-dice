@@ -5,6 +5,7 @@ import type { TFunction } from '@/i18n';
 import { Role, setActiveSession } from '@/session';
 import { useSession } from '@/features/session';
 import { navigate, Route, useBackAction, useFeedback, useFeedbackSwitches } from '@/shared';
+import { useSettingsStore } from '@/store';
 
 import { ControlKind, buildGameView, buildScoreboard } from '../view';
 import type { CellView } from '../view';
@@ -46,6 +47,7 @@ export function useGameScreen() {
   const { session, snapshot } = useSession();
   const feedback = useFeedback();
   const feedbackSwitches = useFeedbackSwitches();
+  const swipeToRoll = useSettingsStore((s) => s.swipeToRoll);
   const game = snapshot.shared.game;
   const dice = useDiceAnimation(game?.turn);
   const page = useSheetPage(game, snapshot.shared.gameNumber);
@@ -112,6 +114,7 @@ export function useGameScreen() {
   return {
     view,
     shakeKeys: dice.shakeKeys,
+    swipeToRoll,
     yatzyFlag: yatzyFlag.flag,
     closeYatzyFlag: yatzyFlag.close,
     scoreboard,

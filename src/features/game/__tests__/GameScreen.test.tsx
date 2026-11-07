@@ -6,6 +6,7 @@ import { PRESETS, PresetId } from '@/domain/rules';
 import { ConnectionStatus } from '@/session/types';
 import { SessionContext } from '@/features/session/SessionContext';
 import { useSettingsStore } from '@/store';
+import { slide } from '@/test/gestures';
 import { renderScreen, fakeSession } from '@/test/render';
 import { ActionType, LUKAS, ANTONIA, game, play, snapshot, withDice } from '@/test/fixtures';
 
@@ -18,8 +19,23 @@ test('rolling on my turn', async () => {
 
   expect(screen.getByText('Runde 1 von 13')).toBeTruthy();
   expect(screen.getByText('3 Würfe übrig')).toBeTruthy();
-  await fireEvent.press(screen.getByText('Würfeln'));
+  const roll = screen.getByRole('button', { name: 'Würfeln' });
+  // A tap is not enough: the knob has to be slid to the far end.
+  await fireEvent.press(roll);
+  expect(session.roll).not.toHaveBeenCalled();
+  await slide(roll);
   expect(session.roll).toHaveBeenCalled();
+});
+
+test('with "Zum Würfeln wischen" off, a tap rolls', async () => {
+  useSettingsStore.setState({ swipeToRoll: false });
+  const snap = snapshot({});
+  const session = fakeSession(snap);
+  await renderScreen(<GameScreen />, { session, snapshot: snap });
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Würfeln' }));
+  expect(session.roll).toHaveBeenCalled();
+  useSettingsStore.setState({ swipeToRoll: true });
 });
 
 test('picking a field replaces the roll button with an inline score action', async () => {
@@ -85,7 +101,9 @@ test('a field can be confirmed after the final roll', async () => {
   const session = fakeSession(snap);
   await renderScreen(<GameScreen />, { session, snapshot: snap });
 
-  expect(screen.getByRole('button', { name: 'Feld wählen' })).toBeDisabled();
+  // No roll left: a hint, not a button, points at the scorecard.
+  expect(screen.getByText('Feld wählen')).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Feld wählen' })).toBeNull();
   await fireEvent.press(screen.getByLabelText('Full House: 25 Punkte eintragen'));
   expect(screen.getByRole('button', { name: 'Eintragen' })).toBeEnabled();
   await fireEvent.press(screen.getByText('Eintragen'));

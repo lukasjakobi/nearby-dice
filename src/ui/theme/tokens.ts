@@ -20,7 +20,7 @@ export type Palette = {
   control: string;
   primary: string;
   onPrimary: string;
-  /** Ivory roll tile, identical on the felt in both themes. */
+  /** Mint roll slider, identical on the felt in both themes. */
   roll: string;
   onRoll: string;
   /** Accent actions and highlights. */
@@ -53,8 +53,8 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     control: '#737D83',
     primary: '#076356',
     onPrimary: '#FFFFFF',
-    roll: '#F2E8D0',
-    onRoll: '#30291B',
+    roll: '#4FE3C1',
+    onRoll: '#032820',
     accent: '#D9623F',
     onAccent: '#2B0E03',
     danger: '#B3261E',
@@ -73,8 +73,8 @@ export const PALETTES: Record<ColorScheme, Palette> = {
     control: '#737C82',
     primary: '#4FE3C1',
     onPrimary: '#032820',
-    roll: '#F2E8D0',
-    onRoll: '#30291B',
+    roll: '#4FE3C1',
+    onRoll: '#032820',
     accent: '#FF9E7A',
     onAccent: '#3A1405',
     danger: '#FF8A80',

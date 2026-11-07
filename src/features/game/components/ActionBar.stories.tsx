@@ -35,7 +35,13 @@ const meta: Meta<typeof ActionBar> = {
   title: 'Features/Game/ActionBar',
   component: ActionBar,
   parameters: { screen: true },
-  args: { shakeKeys: NO_SHAKE, onToggleHold: fn(), onRoll: fn(), onConfirm: fn() },
+  args: {
+    shakeKeys: NO_SHAKE,
+    onToggleHold: fn(),
+    onRoll: fn(),
+    swipeToRoll: true,
+    onConfirm: fn(),
+  },
   decorators: [
     (Story) => (
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -50,6 +56,12 @@ type Story = StoryObj<typeof ActionBar>;
 
 /** My turn, nothing rolled yet: placeholder dice and "Würfeln". */
 export const BeforeRoll: Story = { render: (args) => <ActionBar {...args} {...bar({})} /> };
+
+/** "Zum Würfeln wischen" switched off: the roll tile is a plain tap button. */
+export const TapToRoll: Story = {
+  args: { swipeToRoll: false },
+  render: (args) => <ActionBar {...args} {...bar({})} />,
+};
 
 /** After the first roll: tap dice to hold them. */
 export const Rolled: Story = {

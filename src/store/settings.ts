@@ -38,6 +38,8 @@ type SettingsData = {
   musicVolume: number;
   /** Keeps the screen on in the lobby and during the game. */
   keepAwake: boolean;
+  /** Rolling takes sliding the roll knob; off, a tap rolls. */
+  swipeToRoll: boolean;
 };
 
 /** Settings that are switched on or off. */
@@ -46,6 +48,7 @@ const SWITCHES = [
   'music',
   'haptics',
   'keepAwake',
+  'swipeToRoll',
 ] as const satisfies readonly (keyof SettingsData)[];
 type Switch = (typeof SWITCHES)[number];
 
@@ -58,6 +61,7 @@ const DEFAULTS: SettingsData = {
   soundVolume: 0.7,
   musicVolume: 0.7,
   keepAwake: true,
+  swipeToRoll: true,
 };
 
 const isThemeMode = (value: unknown): value is ThemeMode =>

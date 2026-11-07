@@ -15,7 +15,7 @@ import {
   TextVariant,
 } from '@/ui';
 
-export type SwitchKey = 'sound' | 'music' | 'haptics' | 'keepAwake';
+export type SwitchKey = 'sound' | 'music' | 'haptics' | 'keepAwake' | 'swipeToRoll';
 
 /** `volume` (0–1) adds a level slider below the switch while it is on. */
 export type SwitchRow = { key: SwitchKey; label: string; value: boolean; volume?: number };
@@ -26,6 +26,7 @@ const BADGES: Record<SwitchKey, { icon: IconName; color: PlayerColor }> = {
   music: { icon: IconName.Music, color: PlayerColor.Lilac },
   haptics: { icon: IconName.Vibrate, color: PlayerColor.Coral },
   keepAwake: { icon: IconName.Phone, color: PlayerColor.Sky },
+  swipeToRoll: { icon: IconName.Dice, color: PlayerColor.Mint },
 };
 
 /** One card with a badge and a switch per row, separated by hairlines. */
