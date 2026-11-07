@@ -49,7 +49,7 @@ function sceneStory(scene: Scene = {}, timer = false): Story {
       return (
         <View style={{ height: '100dvh' }}>
           <Screen edges={['top']}>
-            <GameHeader roundLabel={view.roundLabel} onMenu={fn()} onScoreboard={fn()} />
+            <GameHeader roundLabel={view.roundLabel} onMenu={fn()} onHistory={fn()} />
             <PlayerPills pills={view.pills} onSelect={fn()} />
             <ScorecardScroll>
               {(availableHeight) => (

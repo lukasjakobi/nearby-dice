@@ -116,8 +116,8 @@ export function buildViewedSheet(
   return buildEntriesSheet(t, ctx.game, player, sheetIndex, player.id === ctx.snapshot.myId);
 }
 
-/** Any player's sheet with only their entries; also what "Spielstand" shows. */
-export function buildEntriesSheet(
+/** Any player's sheet with only their entries. */
+function buildEntriesSheet(
   t: TFunction,
   game: GameState,
   player: PlayerInfo,

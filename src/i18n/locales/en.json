@@ -412,7 +412,6 @@
   },
   "game": {
     "menu": "Menu",
-    "scoreboard": "Scores",
     "round": "Round {{n}} of {{total}}",
     "players": "Players",
     "upperBlock": "Upper section",

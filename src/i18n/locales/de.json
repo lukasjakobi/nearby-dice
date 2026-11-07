@@ -412,7 +412,6 @@
   },
   "game": {
     "menu": "Menü",
-    "scoreboard": "Spielstand",
     "round": "Runde {{n}} von {{total}}",
     "players": "Spieler",
     "upperBlock": "Oberer Block",
