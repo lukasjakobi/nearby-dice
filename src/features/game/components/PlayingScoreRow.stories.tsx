@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { fn } from 'storybook/test';
 
 import { i18n } from '@/i18n';
+import { RADIUS } from '@/ui';
 
 import { CellState } from '../view';
 import type { CellView } from '../view';
@@ -64,4 +65,13 @@ export const Selected: Story = {
 export const Expanded: Story = {
   args: { rowHeight: 64 },
   render: (args) => <PlayingScoreRow {...args} {...cellIn(CellState.Preview)} />,
+};
+
+/** Last in its rounded column, like Chance: the selection follows the column's rounded bottom corners. */
+export const SelectedLast: Story = {
+  render: (args) => (
+    <View style={{ borderRadius: RADIUS.chip, overflow: 'hidden' }}>
+      <PlayingScoreRow {...args} {...cellIn(CellState.Preview)} selected last />
+    </View>
+  ),
 };

@@ -69,7 +69,7 @@ export function Scorecard({
                 {title.toUpperCase()}
               </Text>
             )}
-            {cells.map((cell) =>
+            {cells.map((cell, index) =>
               playing ? (
                 <PlayingScoreRow
                   key={cell.category}
@@ -77,6 +77,7 @@ export function Scorecard({
                   onPick={onPick}
                   selected={cell.category === sheet.focused}
                   rowHeight={rowHeight}
+                  last={!bonus && index === cells.length - 1}
                 />
               ) : (
                 <ScoreCell
