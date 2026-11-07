@@ -47,6 +47,9 @@ export const Default: Story = {};
 /** Held dice get the mint ring and lift by 8 pt. */
 export const Held: Story = { args: { held: true } };
 
+/** Before the first roll: flat and grey, so the resting faces never read as a roll. */
+export const Disabled: Story = { args: { disabled: true } };
+
 export const Faces: Story = {
   render: (args) => (
     <>
