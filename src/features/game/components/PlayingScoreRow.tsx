@@ -20,6 +20,8 @@ type PlayingScoreRowProps = {
   onPick: (cell: CellView) => void;
   selected: boolean;
   rowHeight?: number;
+  /** Last in its column: the selection follows the column's rounded bottom corners. */
+  last?: boolean;
 };
 
 /** A score target that grows with the board, without shrinking below a touch target. */
@@ -28,6 +30,7 @@ export function PlayingScoreRow({
   onPick,
   selected,
   rowHeight = SIZE.touch,
+  last = false,
 }: PlayingScoreRowProps) {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
@@ -59,9 +62,21 @@ export function PlayingScoreRow({
         { minHeight: rowHeight },
         compact && styles.compactRow,
         { borderTopColor: alpha(colors.ink, 0.1) },
-        (selected || pressed) && { backgroundColor: colors.surface2 },
+        pressed && { backgroundColor: colors.surface2 },
       ]}
     >
+      {/* First, so it lies behind the row's content. */}
+      {selected ? (
+        <View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            styles.selection,
+            last && styles.selectionLast,
+            { backgroundColor: colors.surface2, borderColor: colors.primary },
+          ]}
+        />
+      ) : null}
       <View style={styles.icon}>
         <CategoryIcon
           category={cell.category}
@@ -103,12 +118,6 @@ export function PlayingScoreRow({
           </Text>
         )}
       </View>
-      {selected ? (
-        <View
-          pointerEvents="none"
-          style={[StyleSheet.absoluteFill, styles.selection, { borderColor: colors.primary }]}
-        />
-      ) : null}
     </Pressable>
   );
 }
@@ -137,6 +146,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selection: { borderWidth: 2, borderRadius: RADIUS.chip / 2 },
+  // The column clips to RADIUS.chip; a smaller curve would lose the ring in its corners.
+  selectionLast: { borderBottomLeftRadius: RADIUS.chip, borderBottomRightRadius: RADIUS.chip },
   label: { flex: 1, minWidth: 0 },
   value: {
     minWidth: 26,

@@ -263,6 +263,14 @@ const SETUPS: Record<Scenario, Setup> = {
 
     return show(host, Route.Game);
   },
+  [Scenario.GameChanceOpen]: async (table) => {
+    signIn();
+    // My first turn: later, the bot playing my seat may already have entered Chance.
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(1));
+    host.roll();
+
+    return show(host, Route.Game);
+  },
   [Scenario.GamePlayerLost]: async (table) => {
     signIn();
     const { host, guests } = await lobby(table, ME, OTHERS.slice(0, 1));

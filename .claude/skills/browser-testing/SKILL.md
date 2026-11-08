@@ -42,13 +42,14 @@ without extra taps:
 | Area                | Modes                                                                                                                     |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Setup and discovery | `profile`, `host-setup`, `training-setup`, `join-empty`, `join-nearby`                                                    |
-| Turn controls       | `game-before-roll`, `game-my-turn`, `game-held-dice`, `game-last-roll`                                                    |
+| Turn controls       | `game-before-roll`, `game-my-turn`, `game-held-dice`, `game-last-roll`, `game-chance-open`                                |
 | Other players       | `game-waiting`, `game-six-players`, `game-player-lost`                                                                    |
 | Preset scorecards   | `game-top-to-bottom`, `game-blitz`, `game-same-dice`, `game-triple`, `game-yatzy`, `game-classic-xl`, `game-lucky-number` |
 | Results variants    | `results`, `results-four-players`, `results-guest`, `results-rematch`, `results-training`                                 |
 
-`game-player-lost` disconnects a real bot on its turn, leaving the host's recovery actions
-available. `results-rematch` leaves guest votes pending after the host votes yes. Timed presets
+`game-chance-open` leaves Chance, the board's corner field, open on my turn; select it with
+`--tap "Chance: 21 Punkte eintragen"` (other seeds roll other points). `game-player-lost`
+disconnects a real bot on its turn, leaving the host's recovery actions available. `results-rematch` leaves guest votes pending after the host votes yes. Timed presets
 keep their real countdowns running; capture them promptly. Sheets and dialogs remain reachable
 with `--tap`; permission, radio and update variants use `--param` as described above.
 

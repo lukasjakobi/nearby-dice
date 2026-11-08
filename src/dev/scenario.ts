@@ -37,6 +37,8 @@ export enum Scenario {
   GameHeldDice = 'game-held-dice',
   /** No rolls left: a field must be chosen. */
   GameLastRoll = 'game-last-roll',
+  /** My turn with Chance still open: the last field, in the board's corner. Tap it to select. */
+  GameChanceOpen = 'game-chance-open',
   /** A guest disconnected on their turn; the host can wait, skip or remove them. */
   GamePlayerLost = 'game-player-lost',
   GameTopToBottom = 'game-top-to-bottom',
