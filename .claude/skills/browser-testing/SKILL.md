@@ -48,7 +48,7 @@ without extra taps:
 | Results variants    | `results`, `results-four-players`, `results-guest`, `results-rematch`, `results-training`                                 |
 
 `game-chance-open` leaves Chance, the board's corner field, open on my turn; select it with
-`--tap "Chance: 13 Punkte eintragen"` (other seeds roll other points). `game-player-lost`
+`--tap "Chance: 21 Punkte eintragen"` (other seeds roll other points). `game-player-lost`
 disconnects a real bot on its turn, leaving the host's recovery actions available. `results-rematch` leaves guest votes pending after the host votes yes. Timed presets
 keep their real countdowns running; capture them promptly. Sheets and dialogs remain reachable
 with `--tap`; permission, radio and update variants use `--param` as described above.

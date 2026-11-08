@@ -1,8 +1,6 @@
 import {
-  Category,
   createGame,
   currentRound,
-  isOpen,
   PlayerColor,
   Link,
   PRESETS,
@@ -267,14 +265,8 @@ const SETUPS: Record<Scenario, Setup> = {
   },
   [Scenario.GameChanceOpen]: async (table) => {
     signIn();
-    // The bots often enter Chance early, so wait for a turn of mine that still has it open.
-    const chanceOpen = (snapshot: SessionSnapshot) =>
-      myTurnFrom(2)(snapshot) &&
-      isOpen(
-        snapshot.shared.game!.players.find((player) => player.id === snapshot.myId)!.sheets[0],
-        Category.Chance,
-      );
-    const host = await hostedGame(table, OTHERS.slice(0, 2), chanceOpen);
+    // My first turn: later, the bot playing my seat may already have entered Chance.
+    const host = await hostedGame(table, OTHERS.slice(0, 2), myTurnFrom(1));
     host.roll();
 
     return show(host, Route.Game);
