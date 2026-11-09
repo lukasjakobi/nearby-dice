@@ -1,4 +1,4 @@
-import { isNewerVersion, parseRelease } from '../view';
+import { isNewerVersion, parseRelease } from '../services/releases';
 
 describe('isNewerVersion', () => {
   test.each([

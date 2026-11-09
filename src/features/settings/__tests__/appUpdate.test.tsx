@@ -2,7 +2,7 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 
 import { renderScreen } from '@/test/render';
 
-import { downloadApk, fetchLatestRelease, openInstaller } from '../hooks/appUpdater';
+import { downloadApk, fetchLatestRelease, openInstaller } from '../services/appUpdater';
 import { SettingsScreen } from '../SettingsScreen';
 
 let mockSupported = true;
@@ -11,7 +11,7 @@ jest.mock('expo-constants', () => ({ expoConfig: { version: '1.2.0' } }));
 jest.mock('@/net/createTransport', () => ({
   getTransport: () => ({ getPermission: () => new Promise(() => {}) }),
 }));
-jest.mock('../hooks/appUpdater', () => ({
+jest.mock('../services/appUpdater', () => ({
   get updatesSupported() {
     return mockSupported;
   },

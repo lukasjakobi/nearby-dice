@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 
-import { isNewerVersion, UpdateAction, UpdateStatus } from '../view';
-import type { Release, UpdateState } from '../view';
-
-import { downloadApk, fetchLatestRelease, openInstaller } from './appUpdater';
+import { downloadApk, fetchLatestRelease, isNewerVersion, openInstaller } from '../services';
+import type { Release } from '../services';
+import { UpdateAction, UpdateStatus } from '../view';
+import type { UpdateState } from '../view';
 
 /** Checks GitHub for a newer release on request, then downloads it and opens the installer. */
 export function useAppUpdate(currentVersion: string | undefined) {
