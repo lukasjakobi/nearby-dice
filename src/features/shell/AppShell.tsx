@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Modal } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useStoresHydrated } from '@/store';
@@ -61,8 +61,14 @@ export function AppShell() {
             screenOptions={{ headerShown: false, contentStyle: { backgroundColor: background } }}
             screenLayout={screenLayout}
           />
+          {/* Mounted only when needed, so it opens above any sheet or dialog that is showing. */}
           {uncaught.fatal ? (
-            <View style={StyleSheet.absoluteFill}>
+            <Modal
+              visible
+              animationType="none"
+              onRequestClose={uncaught.dismiss}
+              statusBarTranslucent
+            >
               <CrashView
                 onRetry={uncaught.dismiss}
                 onHome={() => {
@@ -70,7 +76,7 @@ export function AppShell() {
                   leaveForHome();
                 }}
               />
-            </View>
+            </Modal>
           ) : null}
           <LaunchSplash />
         </ToastProvider>
