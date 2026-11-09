@@ -3,8 +3,8 @@ import { File, Paths } from 'expo-file-system';
 import { startActivityAsync } from 'expo-intent-launcher';
 import { Platform } from 'react-native';
 
-import { parseRelease } from '../view';
-import type { Release } from '../view';
+import { parseRelease } from './releases';
+import type { Release } from './releases';
 
 // `owner/name`, set at build time by app.config.js.
 const repository: unknown = Constants.expoConfig?.extra?.releaseRepository;

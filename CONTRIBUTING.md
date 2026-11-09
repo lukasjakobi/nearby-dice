@@ -63,6 +63,7 @@ features/<name>/
   <Name>Screen.tsx    composition only (`SessionLayout`, `AppShell` for the two layout features)
   hooks/              state, effects and actions; the screen's main hook is its view model
   view/               pure builders (snapshot → display-ready props), unit-tested; only where needed
+  services/           calls to the outside world (network, OS), mocked in tests; only where needed
   components/         one component per file, each with a `<Name>.stories.tsx` beside it;
                       `fixtures.ts` holds data several of those stories share
   __tests__/          Jest only runs tests in here
@@ -73,6 +74,7 @@ features/<name>/
 | What a screen shows and when (labels, states, enabled) | `view/`, e.g. `game/view/controlView.ts` (dice, roll button) |
 | What a tap does, timers, toasts and haptics            | `hooks/`, e.g. `game/hooks/usePendingScore.ts`               |
 | Layout and styling                                     | `components/`                                                |
+| Calls to the network or the OS                         | `services/`, e.g. `settings/services/appUpdater.ts`          |
 
 - Each subfolder has an `index.ts`. Files outside it import the barrel (`../view`, `../hooks`);
   files inside import their siblings directly.

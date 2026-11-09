@@ -442,8 +442,9 @@ with the installed version and "Nach Updates suchen". The scope is in
 The update installs over the old app only when both are signed with the same release key (see
 [CONTRIBUTING, Releases](../CONTRIBUTING.md#releases)). iOS can't install apps from outside the App
 Store, and the `.dev` debug variant has its own package id, so neither shows the card; they keep
-the plain version row. `src/features/settings/hooks/appUpdater.ts` holds the calls to GitHub and
-Android, and `view/updateView.ts` decides what the card shows in each state.
+the plain version row. `src/features/settings/services/appUpdater.ts` holds the calls to GitHub
+and Android, `services/releases.ts` reads the release and decides whether it is newer, and
+`view/updateView.ts` decides what the card shows in each state.
 
 Google Play restricts `REQUEST_INSTALL_PACKAGES`. A Play release would drop this flow in favour of
 Play's own in-app updates (**Open**, decided with a store release).
