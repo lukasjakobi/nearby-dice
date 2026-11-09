@@ -29,8 +29,9 @@ Offline multiplayer Yatzy-style dice game over Google Nearby Connections (Expo S
   strings, and ask before writing new German wording. Every key goes into both files.
 - Game option values come from `domain/rules.ts`; setup, validation and labels derive from them.
 - Screens are thin: a view-model hook or pure `build…View` produces props, components render them.
-  Each component gets its own file in `components/`, hooks go in `hooks/`, builders in `view/`
-  (CONTRIBUTING, "Feature folders"). Every component has a `<Name>.stories.tsx` beside it.
+  Each component gets its own file in `components/`, hooks go in `hooks/`, builders in `view/`,
+  network and OS calls in `services/` (CONTRIBUTING, "Feature folders"). Every component has a
+  `<Name>.stories.tsx` beside it.
 - Reach for `ui/` before styling by hand: `Chip`, `Tag`, `Section`, `CollapsibleCard`, `StepList` …
 - Colours come from `useTheme()`; only dice and player colours live in `ui/theme/tokens.ts`.
 - Navigate via `navigate.push/replace(Route.X)` from `@/shared`. The session phase decides the

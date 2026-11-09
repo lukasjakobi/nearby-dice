@@ -1,4 +1,3 @@
-import * as Clipboard from 'expo-clipboard';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 
@@ -7,6 +6,7 @@ import { useActiveSession } from '@/session';
 import { useErrorLogStore } from '@/store';
 import { useToast } from '@/ui';
 
+import { copyToClipboard } from '../services';
 import { buildDiagnostics } from '../view';
 
 /** Settles to null instead of failing, so one unreadable value cannot block the copy. */
@@ -32,7 +32,7 @@ export function useCopyDiagnostics(appVersion: string | undefined) {
       radio,
       errors: useErrorLogStore.getState().errors,
     });
-    await Clipboard.setStringAsync(text);
+    await copyToClipboard(text);
     toast.show(t('settings.diagnosticsCopied'));
   };
 }

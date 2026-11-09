@@ -1,18 +1,18 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
-import * as Clipboard from 'expo-clipboard';
 
 import { PermissionStatus } from '@/net';
 import { LanguageMode, useErrorLogStore, useSettingsStore } from '@/store';
 import { renderScreen } from '@/test/render';
 
 import { SettingsScreen } from '../SettingsScreen';
+import { copyToClipboard } from '../services/clipboard';
 
 const mockTransport = {
   getPermission: jest.fn(() => new Promise<PermissionStatus>(() => {})),
   getRadioState: () => Promise.reject(new Error('radio unavailable')),
 };
 jest.mock('@/net/createTransport', () => ({ getTransport: () => mockTransport }));
-jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(() => Promise.resolve(true)) }));
+jest.mock('../services/clipboard', () => ({ copyToClipboard: jest.fn(() => Promise.resolve()) }));
 
 afterEach(() => act(() => useSettingsStore.getState().setLanguageMode(LanguageMode.System)));
 
@@ -36,7 +36,7 @@ test('copy diagnostics copies the recent errors and confirms it', async () => {
   await fireEvent.press(screen.getByRole('button', { name: 'Diagnose kopieren' }));
 
   await waitFor(() => expect(screen.getByText('Diagnose kopiert.')).toBeTruthy());
-  const copied = jest.mocked(Clipboard.setStringAsync).mock.calls[0]?.[0];
+  const copied = jest.mocked(copyToClipboard).mock.calls[0]?.[0];
   expect(copied).toContain('Error: board broke');
   expect(copied).toContain('permission granted, radio unknown');
 });

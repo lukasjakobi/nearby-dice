@@ -443,8 +443,9 @@ with the installed version and "Nach Updates suchen". The scope is in
 The update installs over the old app only when both are signed with the same release key (see
 [CONTRIBUTING, Releases](../CONTRIBUTING.md#releases)). iOS can't install apps from outside the App
 Store, and the `.dev` debug variant has its own package id, so neither shows the card; they keep
-the plain version row. `src/features/settings/hooks/appUpdater.ts` holds the calls to GitHub and
-Android, and `view/updateView.ts` decides what the card shows in each state.
+the plain version row. `src/features/settings/services/appUpdater.ts` holds the calls to GitHub
+and Android, `services/releases.ts` reads the release and decides whether it is newer, and
+`view/updateView.ts` decides what the card shows in each state.
 
 Google Play restricts `REQUEST_INSTALL_PACKAGES`. A Play release would drop this flow in favour of
 Play's own in-app updates (**Open**, decided with a store release).
@@ -468,9 +469,9 @@ the last errors stay on the phone for a bug report. Nothing is sent anywhere
   first: the time, `Name: message`, the stack and component stack (each cut to 2,000 characters),
   and whether it was fatal.
 - **Diagnostics.** Development builds show "Diagnose kopieren" under Settings › Daten. It copies
-  (`expo-clipboard`) the app version, OS, the session's role, phase, connection and player links,
-  the Nearby permission and radio state, and the recent errors, but no player names
-  (`settings/view/diagnostics.ts`). Release builds leave it out because players have no use for it.
+  (`settings/services/clipboard.ts`, `expo-clipboard`) the app version, OS, the session's role,
+  phase, connection and player links, the Nearby permission and radio state, and the recent
+  errors, but no player names (`settings/view/diagnostics.ts`). Release builds leave it out because players have no use for it.
 - **Missing players.** Lookups that must find a player use `requirePlayer` (`domain/player.ts`),
   which throws a `MissingPlayerError` naming the id, instead of `find(...)!` and a vague
   `undefined` error later.

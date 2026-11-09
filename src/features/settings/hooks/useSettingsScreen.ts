@@ -8,10 +8,10 @@ import { PermissionStatus } from '@/net';
 import { useProfileStore, useSettingsStore, useStatsStore } from '@/store';
 import { avatarOf, navigate, ProfileMode, Route, useFeedbackSwitches } from '@/shared';
 
+import { updatesSupported } from '../services';
 import { buildUpdateView, UpdateStatus } from '../view';
 import type { UpdateState } from '../view';
 
-import { updatesSupported } from './appUpdater';
 import { useAppUpdate } from './useAppUpdate';
 import { useCopyDiagnostics } from './useCopyDiagnostics';
 import { useNearbyPermission } from './useNearbyPermission';
