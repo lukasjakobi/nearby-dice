@@ -122,8 +122,10 @@ function receiveTurn(
     };
   }
 
-  // Already shaking for this roll, or for my own: it lands when the running shake ends.
-  if (answered || turn?.rollSeq === state.turn?.rollSeq) return { ...state, turn, requested };
+  // Already shaking for this roll, or for my own: it lands when the running shake ends. My
+  // request may not be shaking (pressed with reduced motion still on); then the roll shakes now.
+  const shaking = answered && state.shakeEndsAt !== null;
+  if (shaking || turn?.rollSeq === state.turn?.rollSeq) return { ...state, turn, requested };
 
   return {
     ...state,

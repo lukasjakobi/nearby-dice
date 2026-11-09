@@ -193,6 +193,17 @@ describe('with reduced motion', () => {
     expect(landed.requested).toBeNull();
   });
 
+  test('switched off while my request waits, the answer still shakes and lands', () => {
+    const answered = run([
+      { type: DiceEvent.Request, now: 0, reduceMotion: true },
+      arrive(first, 50, false),
+      arrive(reroll, 100, false),
+    ]);
+    expect(view(answered)).toMatchObject({ rolling: true, shownDice: [2, 2, 5, 5, 5] });
+    expect(answered.shakeKeys).toEqual([1, 1, 1, 1, 1]);
+    expect(answered.shakeEndsAt).toBe(100 + SHAKE_MS);
+  });
+
   test("another player's roll lands at once", () => {
     const landed = run([arrive(reroll, 0, true)]);
     expect(landed.shakeKeys).toEqual([0, 0, 0, 0, 0]);
