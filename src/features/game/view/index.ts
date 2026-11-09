@@ -10,3 +10,12 @@ export { BannerKind } from './statusView';
 export type { BannerView, PillView } from './statusView';
 export { buildYatzyFlag } from './yatzyFlagView';
 export type { YatzyFlagView } from './yatzyFlagView';
+export {
+  buildDiceAnimationView,
+  diceAnimationReducer,
+  DiceEvent,
+  initDiceAnimation,
+  ROLL_PENDING_MS,
+  SHAKE_MS,
+} from './diceAnimation';
+export type { DiceAction, DiceAnimationState, DiceAnimationView } from './diceAnimation';
