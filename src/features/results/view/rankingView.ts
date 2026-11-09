@@ -1,6 +1,6 @@
 /** The ranking: one row per player, winners first, and the headline above it. */
 import type { TFunction } from '@/i18n';
-import { playerTotal, ranking, upperBonus, upperSum, weightedSum } from '@/domain';
+import { playerTotal, ranking, requirePlayer, upperBonus, upperSum, weightedSum } from '@/domain';
 import type { GamePlayer, GameState, NamedPlayer } from '@/domain';
 import { avatarOf } from '@/shared';
 import type { AvatarView } from '@/shared';
@@ -37,8 +37,8 @@ export function buildRanking(
   const top = placements[0]?.total ?? 0;
 
   return placements.map((placement) => {
-    const player = game.players.find((gp) => gp.id === placement.playerId)!;
-    const info = players.find((p) => p.id === placement.playerId)!;
+    const player = requirePlayer(game.players, placement.playerId);
+    const info = requirePlayer(players, placement.playerId);
     const upper = weightedSum(player.sheets, upperSum);
     const bonus = weightedSum(player.sheets, (sheet) => upperBonus(sheet, rules));
     const row: RankRow = {

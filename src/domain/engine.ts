@@ -8,6 +8,7 @@
 import { StartingPlayer } from './enums';
 import type { Category } from './enums';
 import { autoPick } from './autopick';
+import { requirePlayer } from './player';
 import { mixSeed, rollDie, seededRng } from './random';
 import type { Rng } from './random';
 import type { Dice } from './roll';
@@ -248,7 +249,7 @@ function mapPlayer(state: GameState, id: PlayerId, fn: (p: GamePlayer) => GamePl
 /** Passes the turn to the next player in turn order who still has turns left. */
 function passTurn(state: GameState, ctx: ReduceContext): GameState {
   const { turnOrder } = state;
-  const stillPlaying = (id: PlayerId) => !isDone(gamePlayer(state, id)!, state.rules);
+  const stillPlaying = (id: PlayerId) => !isDone(requirePlayer(state.players, id), state.rules);
   if (!turnOrder.some(stillPlaying)) {
     return next(state, {
       finished: true,
@@ -277,7 +278,7 @@ function passTurn(state: GameState, ctx: ReduceContext): GameState {
 /** With "same dice", round n and roll k give every player the same sequence. */
 function rollDice(state: GameState, ctx: ReduceContext): Dice {
   const { turn, rules } = state;
-  const round = gamePlayer(state, turn.playerId)!.turnsTaken;
+  const round = requirePlayer(state.players, turn.playerId).turnsTaken;
   const rng = rules.sameDice ? seededRng(mixSeed(state.seed, round, turn.rollsUsed)) : ctx.rng;
 
   return turn.dice.map((die, i) => {
@@ -311,7 +312,7 @@ function applyScore(
   ctx: ReduceContext,
 ): GameState {
   const { dice } = state.turn;
-  const player = gamePlayer(state, playerId)!;
+  const player = requirePlayer(state.players, playerId);
   const lucky = luckyNumberOf(state);
   const points = score(dice, category, player.sheets[sheetIndex], state.rules, lucky);
   const scored = next(state, {
@@ -390,7 +391,7 @@ export function reduce(state: GameState, action: GameAction, ctx: ReduceContext)
 
     case ActionType.Timeout: {
       const rolled = turn.rollsUsed === 0 ? applyRoll(state, ctx) : state;
-      const player = gamePlayer(rolled, turn.playerId)!;
+      const player = requirePlayer(rolled.players, turn.playerId);
       const pick = autoPick(rolled.turn.dice, player.sheets, rules, luckyNumberOf(rolled));
       if (!pick) return { state: passTurn(rolled, ctx) };
 

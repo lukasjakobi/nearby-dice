@@ -329,9 +329,10 @@ back, cancelling or leaving the screen abandons the attempt: a session that arri
 
 ## Stored data
 
-**Confirmed:** the profile, settings, statistics and interrupted session are zustand stores in
-`store/`. Each is made by `createPersistedStore` and saved to AsyncStorage under one fixed key
-(`nearbydice.<store>.v1`). A store holds only its defaults, a `sanitize` function and its actions.
+**Confirmed:** the profile, settings, statistics, interrupted session and error log are zustand
+stores in `store/`. Each is made by `createPersistedStore` and saved to AsyncStorage under one fixed
+key (`nearbydice.<store>.v1`). A store holds only its defaults, a `sanitize` function and its
+actions.
 Game rules, such as how a finished game changes the statistics, live in `domain/stats.ts`.
 
 Loading and saving go through `createValidatedStorage` (`store/storage.ts`). It never overwrites
@@ -448,6 +449,32 @@ and Android, `services/releases.ts` reads the release and decides whether it is 
 
 Google Play restricts `REQUEST_INSTALL_PACKAGES`. A Play release would drop this flow in favour of
 Play's own in-app updates (**Open**, decided with a store release).
+
+## Crash recovery
+
+**Confirmed, not yet tried on a device:** a crash shows a recovery view instead of a blank app, and
+the last errors stay on the phone for a bug report. Nothing is sent anywhere
+([PRODUCT.md](../PRODUCT.md#product-principles)).
+
+- **Render crashes.** The root stack wraps every screen in `CrashBoundary` (`features/shell`,
+  through the stack's `screenLayout`). A crash replaces only that screen with `CrashView`:
+  "Zur Startseite" leaves any session, like the other home buttons, and goes to Start; "Erneut
+  versuchen" renders the screen again. The stack itself stays mounted, so going home still works.
+- **Errors outside rendering**, such as in session timers or radio callbacks, reach React Native's
+  global handler, which `useUncaughtErrors` replaces while the app runs. Every error is logged. A
+  fatal one shows `CrashView` over the app, where a release build would otherwise close it.
+  Development builds still pass every error on to LogBox. Unhandled promise rejections are not
+  caught, and the browser harness has no global handler.
+- **Error log.** `store/errorLog.ts` (`nearbydice.errorLog.v1`) keeps the last 5 errors, newest
+  first: the time, `Name: message`, the stack and component stack (each cut to 2,000 characters),
+  and whether it was fatal.
+- **Diagnostics.** Development builds show "Diagnose kopieren" under Settings › Daten. It copies
+  (`settings/services/clipboard.ts`, `expo-clipboard`) the app version, OS, the session's role,
+  phase, connection and player links, the Nearby permission and radio state, and the recent
+  errors, but no player names (`settings/view/diagnostics.ts`). Release builds leave it out because players have no use for it.
+- **Missing players.** Lookups that must find a player use `requirePlayer` (`domain/player.ts`),
+  which throws a `MissingPlayerError` naming the id, instead of `find(...)!` and a vague
+  `undefined` error later.
 
 ## Testing
 

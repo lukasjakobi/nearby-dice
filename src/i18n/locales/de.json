@@ -179,6 +179,11 @@
         "title": "Die Runde wurde beendet",
         "body": "Der Gastgeber hat das Spiel beendet."
       }
+    },
+    "crash": {
+      "title": "Etwas ist schiefgelaufen",
+      "body": "Der Fehler wurde auf diesem Gerät gespeichert.",
+      "retry": "$t(home.resume.retry)"
     }
   },
   "common": {
@@ -559,6 +564,8 @@
       "body": "Siege, Bestwert und letzte Runden werden gelöscht. Das kannst du nicht rückgängig machen.",
       "confirm": "Zurücksetzen"
     },
+    "copyDiagnostics": "Diagnose kopieren",
+    "diagnosticsCopied": "Diagnose kopiert.",
     "app": "App",
     "update": {
       "check": "Nach Updates suchen",

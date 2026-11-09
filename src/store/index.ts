@@ -8,6 +8,8 @@ export type { VolumeKey } from './settings';
 export { useStatsStore } from './stats';
 export { useInterruptedStore } from './interrupted';
 export type { InterruptedSession } from './interrupted';
+export { useErrorLogStore } from './errorLog';
+export type { LoggedError } from './errorLog';
 
 /** True once every persisted store has loaded from disk. */
 export function useStoresHydrated(): boolean {

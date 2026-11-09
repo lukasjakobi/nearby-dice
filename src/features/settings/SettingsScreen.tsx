@@ -102,6 +102,13 @@ export function SettingsScreen() {
               leading={<IconBadge icon={IconName.Trash} color={colors.danger} />}
               onPress={screen.askReset}
             />
+            {screen.copyDiagnostics ? (
+              <ListRow
+                title={t('settings.copyDiagnostics')}
+                leading={<IconBadge icon={IconName.Copy} color={colors.primary} />}
+                onPress={screen.copyDiagnostics}
+              />
+            ) : null}
           </ListGroup>
           {screen.resetDone ? (
             <FadeIn>

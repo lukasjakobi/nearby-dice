@@ -1,6 +1,6 @@
 /** Small, pure questions screens ask about a snapshot. */
 import type { PlayerId } from '@/domain';
-import { Link } from '@/domain';
+import { Link, MissingPlayerError, requirePlayer } from '@/domain';
 
 import type { PlayerInfo, SessionSnapshot } from './types';
 
@@ -9,11 +9,14 @@ export function playerById(snapshot: SessionSnapshot, id: PlayerId): PlayerInfo 
 }
 
 export function me(snapshot: SessionSnapshot): PlayerInfo {
-  return playerById(snapshot, snapshot.myId)!;
+  return requirePlayer(snapshot.shared.players, snapshot.myId);
 }
 
 export function hostOf(snapshot: SessionSnapshot): PlayerInfo {
-  return snapshot.shared.players.find((p) => p.isHost)!;
+  const host = snapshot.shared.players.find((p) => p.isHost);
+  if (!host) throw new MissingPlayerError('the host');
+
+  return host;
 }
 
 /** Players still in the session (removed ones are gone from every list). */

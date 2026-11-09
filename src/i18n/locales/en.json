@@ -179,6 +179,11 @@
         "title": "The round has ended",
         "body": "The host ended the game."
       }
+    },
+    "crash": {
+      "title": "Something went wrong",
+      "body": "The error was saved on this device.",
+      "retry": "$t(home.resume.retry)"
     }
   },
   "common": {
@@ -559,6 +564,8 @@
       "body": "Wins, best score and recent rounds are deleted. You can’t undo this.",
       "confirm": "Reset"
     },
+    "copyDiagnostics": "Copy diagnostics",
+    "diagnosticsCopied": "Diagnostics copied.",
     "app": "App",
     "update": {
       "check": "Check for updates",

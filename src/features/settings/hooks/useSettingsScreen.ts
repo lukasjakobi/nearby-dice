@@ -13,6 +13,7 @@ import { buildUpdateView, UpdateStatus } from '../view';
 import type { UpdateState } from '../view';
 
 import { useAppUpdate } from './useAppUpdate';
+import { useCopyDiagnostics } from './useCopyDiagnostics';
 import { useNearbyPermission } from './useNearbyPermission';
 
 /** The release the frozen card names; any version newer than the installed one reads right. */
@@ -41,6 +42,7 @@ export function useSettingsScreen() {
   const version = Constants.expoConfig?.version;
   const appUpdate = useAppUpdate(version);
   const updateState = harnessUpdate() ?? (updatesSupported ? appUpdate.state : null);
+  const copyDiagnostics = useCopyDiagnostics(version);
 
   return {
     profile: profile ? { name: profile.name, avatar: avatarOf(profile) } : null,
@@ -63,6 +65,8 @@ export function useSettingsScreen() {
     version,
     update: updateState ? buildUpdateView(t, updateState) : null,
     runUpdate: appUpdate.run,
+    /** Development builds only, for now: players of a release have no use for it yet. */
+    copyDiagnostics: __DEV__ ? () => void copyDiagnostics() : null,
     editProfile: () => navigate.push(Route.Profile, { mode: ProfileMode.Edit }),
     back: () => navigate.back(),
   };

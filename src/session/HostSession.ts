@@ -2,7 +2,16 @@
  * The authoritative session on the host's phone: admits guests, runs the game
  * engine, enforces every rule, and broadcasts the full shared state after each change.
  */
-import { ActionType, createGame, Link, MAX_PLAYERS, PRESETS, randomSeed, reduce } from '@/domain';
+import {
+  ActionType,
+  createGame,
+  Link,
+  MAX_PLAYERS,
+  PRESETS,
+  randomSeed,
+  reduce,
+  requirePlayer,
+} from '@/domain';
 import type {
   Category,
   Focus,
@@ -610,7 +619,7 @@ export class HostSession implements HostController {
 
   private advertise(): Promise<void> {
     const { code, roundName, players, maxPlayers } = this.shared;
-    const me = players.find((p) => p.isHost)!;
+    const me = requirePlayer(players, this.myId);
 
     return this.options.transport.startAdvertising({
       code,

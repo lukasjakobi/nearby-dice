@@ -4,9 +4,9 @@ import {
   allowedCategories,
   Category,
   faceOf,
-  gamePlayer,
   lowerCategories,
   luckyNumberOf,
+  requirePlayer,
   Rules,
   Ruleset,
   score,
@@ -83,7 +83,7 @@ export type SheetView = {
 /** The sheet of the player whose turn it is, with previews of the dice on screen. */
 export function buildSheet(t: TFunction, ctx: TurnContext): SheetView {
   const { myTurn, turnPlayer } = ctx;
-  const sheets = gamePlayer(ctx.game, ctx.turn.playerId)!.sheets;
+  const sheets = requirePlayer(ctx.game.players, ctx.turn.playerId).sheets;
   const selectedTab = sheetIndexOf(ctx, sheets.length);
   const blocks = blocksOf(t, ctx.game, sheets[selectedTab], previewOf(ctx));
 
@@ -124,7 +124,7 @@ function buildEntriesSheet(
   sheetIndex: number,
   mine: boolean,
 ): SheetView {
-  const sheets = gamePlayer(game, player.id)!.sheets;
+  const sheets = requirePlayer(game.players, player.id).sheets;
   const selectedTab = Math.min(sheetIndex, sheets.length - 1);
 
   return {

@@ -47,3 +47,12 @@ body:
       description: What happened instead. Screenshots, screen recordings and logs help.
     validations:
       required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: >-
+        Development builds only: Settings › Daten › Diagnose kopieren, then paste it here. It holds
+        the app version, OS, session and connection state and the last errors, without player
+        names. Release builds don't have it.
+      render: text

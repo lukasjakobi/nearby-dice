@@ -36,7 +36,8 @@ src/
   session/    Host and guest sessions: admission, game flow, reconnects, the message protocol.
   net/        Transport over Nearby Connections (plus an in-memory fake for tests). Moves strings only.
   domain/     Pure game rules: scoring, engine, presets, option values. No React, no I/O.
-  store/      Data kept on the phone: profile, statistics, last 10 games, settings, interrupted session.
+  store/      Data kept on the phone: profile, statistics, last 10 games, settings, interrupted
+              session, error log.
   i18n/       i18next setup and all app text in locales/de.json and locales/en.json.
   ui/         Design system: theme tokens, Text, Button, Chip, Section, Dialog, BottomSheet, DieFace …
   lib/        Tiny generic helpers (typed emitter, timers, ids).
