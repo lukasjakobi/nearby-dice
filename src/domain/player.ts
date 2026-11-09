@@ -47,3 +47,20 @@ export function initialOf(name: string): string {
 export function isPlayerColor(value: unknown): value is PlayerColor {
   return PLAYER_COLORS.includes(value as PlayerColor);
 }
+
+/** A lookup by id found no player: the state lacks a seat its caller relies on. */
+export class MissingPlayerError extends Error {
+  override readonly name = 'MissingPlayerError';
+
+  constructor(readonly wanted: string) {
+    super(`No player matches ${wanted}`);
+  }
+}
+
+/** The player with `id`; throws `MissingPlayerError` instead of returning `undefined`. */
+export function requirePlayer<P extends { id: PlayerId }>(players: readonly P[], id: PlayerId): P {
+  const player = players.find((candidate) => candidate.id === id);
+  if (!player) throw new MissingPlayerError(`id ${id}`);
+
+  return player;
+}

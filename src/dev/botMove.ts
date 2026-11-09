@@ -2,9 +2,9 @@ import {
   ActionType,
   autoPick,
   faceCounts,
-  gamePlayer,
   isYatzy,
   luckyNumberOf,
+  requirePlayer,
   rollsLeft,
 } from '@/domain';
 import type { GameState, Held, PlayerAction, PlayerId } from '@/domain';
@@ -22,7 +22,12 @@ export function botMove(state: GameState, botId: PlayerId): PlayerAction | null 
   if (state.finished || turn.playerId !== botId) return null;
   if (turn.rollsUsed === 0) return { type: ActionType.Roll, by: botId };
 
-  const pick = autoPick(turn.dice, gamePlayer(state, botId)!.sheets, rules, luckyNumberOf(state));
+  const pick = autoPick(
+    turn.dice,
+    requirePlayer(state.players, botId).sheets,
+    rules,
+    luckyNumberOf(state),
+  );
   const satisfied = isYatzy(turn.dice) || (pick?.points ?? 0) >= GOOD_ENOUGH;
   if (rollsLeft(state) > 0 && !satisfied) {
     const held = holdMostFrequent(turn.dice);

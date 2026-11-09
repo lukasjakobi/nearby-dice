@@ -1,5 +1,5 @@
 import type { TFunction } from '@/i18n';
-import { HistoryKind } from '@/domain';
+import { HistoryKind, requirePlayer } from '@/domain';
 import type { GameState, HistoryEntry, NamedPlayer } from '@/domain';
 
 import { avatarOf } from './avatar';
@@ -60,12 +60,7 @@ export function historyRows(
   game: GameState,
   players: readonly NamedPlayer[],
 ): HistoryRow[] {
-  return [...game.history].reverse().map((entry) =>
-    historyRow(
-      t,
-      game,
-      players.find((player) => player.id === entry.playerId)!,
-      entry,
-    ),
-  );
+  return [...game.history]
+    .reverse()
+    .map((entry) => historyRow(t, game, requirePlayer(players, entry.playerId), entry));
 }

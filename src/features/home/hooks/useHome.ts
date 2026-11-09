@@ -3,7 +3,14 @@ import { useState } from 'react';
 
 import { useInterruptedStore, useProfileStore, useStatsStore } from '@/store';
 import { FIXED, IconName, PLAYER_COLOR_HEX } from '@/ui';
-import { PlayerColor, PRESET_ORDER, PresetId, ranking, ZERO_MODE_STATS } from '@/domain';
+import {
+  PlayerColor,
+  PRESET_ORDER,
+  PresetId,
+  ranking,
+  requirePlayer,
+  ZERO_MODE_STATS,
+} from '@/domain';
 import type { ModeStats, SavedGame } from '@/domain';
 import { ago, listNames, playedOn } from '@/i18n';
 import type { TFunction } from '@/i18n';
@@ -56,7 +63,7 @@ function recentRow(t: TFunction, saved: SavedGame): RecentRow {
   const mine = placements.find((placement) => placement.playerId === saved.myId)!;
   const opponents = placements
     .filter((placement) => placement.playerId !== saved.myId)
-    .map((placement) => saved.players.find((player) => player.id === placement.playerId)!.name);
+    .map((placement) => requirePlayer(saved.players, placement.playerId).name);
 
   return {
     id: saved.id,

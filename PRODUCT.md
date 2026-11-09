@@ -94,6 +94,10 @@ on real devices has been recorded yet, and mixed Android and iOS rounds in parti
 - Game results and connection status must be the same on every phone.
 - Whenever a permission is needed, a connection drops or the game is waiting, the app explains what
   is happening and what the player can do about it.
+- **Confirmed:** the app reports nothing on its own. Errors are kept on the phone only, without
+  crash reporting or telemetry; the only time it goes online is the update check a player starts.
+  A crash shows a recovery screen instead of a blank app
+  ([Crash recovery](docs/technical-design.md#crash-recovery)).
 
 ## Documentation Map
 

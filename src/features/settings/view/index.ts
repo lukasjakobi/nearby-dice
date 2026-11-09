@@ -1,3 +1,4 @@
+export { buildDiagnostics } from './diagnostics';
 export { isNewerVersion, parseRelease } from './release';
 export type { Release } from './release';
 export { buildUpdateView, UpdateAction, UpdateStatus } from './updateView';

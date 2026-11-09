@@ -2,7 +2,7 @@
  * The facts every part of the game screen depends on, worked out once per snapshot:
  * whose turn it is, whether this phone can act, and what the dice on screen show.
  */
-import { Link, rollsLeft } from '@/domain';
+import { Link, requirePlayer, rollsLeft } from '@/domain';
 import type { Category, Dice, GameState, Rules, Turn } from '@/domain';
 import { ConnectionStatus, playerById, SessionPhase } from '@/session';
 import type { PlayerInfo, SessionSnapshot } from '@/session';
@@ -59,7 +59,7 @@ export function turnContext(snapshot: SessionSnapshot, local: LocalState): TurnC
   const game = snapshot.shared.game;
   if (!game) return null;
   const { turn } = game;
-  const turnPlayer = playerById(snapshot, turn.playerId)!;
+  const turnPlayer = requirePlayer(snapshot.shared.players, turn.playerId);
   const connected = snapshot.connection.status === ConnectionStatus.Connected;
   const playing = snapshot.shared.phase === SessionPhase.Playing;
 

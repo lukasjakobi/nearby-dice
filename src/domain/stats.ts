@@ -2,8 +2,9 @@
  * What this phone keeps about the games played on it: the last saved games, lifetime totals per
  * preset and the Training best. These functions decide how a finished game changes them.
  */
-import { gamePlayer, ranking } from './engine';
+import { ranking } from './engine';
 import type { GameState, PlayerId } from './engine';
+import { requirePlayer } from './player';
 import type { NamedPlayer } from './player';
 import { matchPreset } from './rules';
 import type { PresetId } from './rules';
@@ -52,7 +53,7 @@ export function recordGame(stats: Stats, saved: SavedGame): Stats {
   const presetId = matchPreset(game.rules);
   if (!mine || presetId === null || stats.recent.some((r) => r.id === saved.id)) return stats;
   const previous = stats.modes[presetId] ?? ZERO_MODE_STATS;
-  const yatzys = yatzyCount(gamePlayer(game, myId)!.sheets);
+  const yatzys = yatzyCount(requirePlayer(game.players, myId).sheets);
 
   return {
     ...stats,
