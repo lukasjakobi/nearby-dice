@@ -130,6 +130,14 @@ export type ReduceResult = { state: GameState; rejected?: RejectReason };
 export const NO_DICE: Dice = [0, 0, 0, 0, 0];
 export const NO_HOLD: Held = [false, false, false, false, false];
 
+/** Flips whether one die is kept for the next roll. */
+export function toggleHeld(held: Held, die: number): Held {
+  const [a, b, c, d, e] = held;
+  const flip = (value: boolean, index: number) => (index === die ? !value : value);
+
+  return [flip(a, 0), flip(b, 1), flip(c, 2), flip(d, 3), flip(e, 4)];
+}
+
 export function createGame(opts: {
   rules: Rules;
   /** Lobby order; the turn order follows it. */

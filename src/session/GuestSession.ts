@@ -2,7 +2,8 @@
  * A guest's view of a round. Sends intents to the host and replaces its copy of
  * the shared state with every broadcast. Reconnects on its own when the link drops.
  */
-import type { Category, Focus, Held, Profile } from '@/domain';
+import { toggleHeld } from '@/domain';
+import type { Category, Focus, Profile } from '@/domain';
 import { AbortedError, delay, Store, Timers } from '@/lib';
 import type { Unsubscribe } from '@/lib';
 import { TransportEvent } from '@/net';
@@ -15,7 +16,7 @@ import type { Message } from './protocol';
 import type { RoundScanner } from './RoundScanner';
 import { MAX_RECONNECT_ATTEMPTS, TIMING } from './timing';
 import { ConnectionStatus, EndReason, JoinError, Role } from './types';
-import { claimPeer, isPeerOwner } from './peerOwnership';
+import { OwnedPeers } from './peerOwnership';
 import type {
   GuestController,
   JoinStep,
@@ -43,8 +44,7 @@ export class GuestSession implements GuestController {
   private readonly timers = new Timers();
   /** Keeps the voluntary-leave disconnect alive after session disposal. */
   private readonly cleanupTimers = new Timers();
-  private readonly ownedPeers = new Set<PeerId>();
-  private readonly peerGenerations = new Map<PeerId, number>();
+  private readonly owned: OwnedPeers;
   private readonly unsubscribers: Unsubscribe[];
   private peerId: PeerId | null;
   private lastHeard = Date.now();
@@ -101,8 +101,8 @@ export class GuestSession implements GuestController {
     { peerId, welcome }: HandshakeResult,
   ) {
     this.peerId = peerId;
-    this.ownedPeers.add(peerId);
-    this.peerGenerations.set(peerId, claimPeer(options.transport, peerId));
+    this.owned = new OwnedPeers(options.transport);
+    this.owned.claim(peerId);
     this.rejoinToken = welcome.rejoinToken;
     this.store = new Store<SessionSnapshot>({
       role: Role.Guest,
@@ -144,7 +144,7 @@ export class GuestSession implements GuestController {
   toggleHold(die: number): void {
     const game = this.store.get().shared.game;
     if (!game) return;
-    const held = game.turn.held.map((h, i) => (i === die ? !h : h)) as unknown as Held;
+    const held = toggleHeld(game.turn.held, die);
     // Show the change right away; the host's next broadcast confirms or corrects it.
     this.patchShared({ game: { ...game, turn: { ...game.turn, held } } });
     this.send({ type: MessageType.Hold, held });
@@ -176,12 +176,9 @@ export class GuestSession implements GuestController {
     this.send({ type: MessageType.Leave });
     const peerId = this.peerId;
     if (peerId) {
-      const generation = this.peerGenerations.get(peerId);
+      const generation = this.owned.generationOf(peerId);
       this.cleanupTimers.after(TIMING.closeGrace, () => {
-        if (generation !== undefined && isPeerOwner(this.options.transport, peerId, generation)) {
-          void this.options.transport.disconnect(peerId);
-        }
-
+        this.owned.disconnectIfOwned(peerId, generation);
         if (this.peerId === peerId) this.peerId = null;
       });
     }
@@ -197,19 +194,11 @@ export class GuestSession implements GuestController {
     this.timers.clearAll();
     this.unsubscribers.forEach((unsubscribe) => unsubscribe());
     const deferredPeer = this.store.get().ended === EndReason.Left ? this.peerId : null;
-    for (const peerId of this.ownedPeers) {
-      const generation = this.peerGenerations.get(peerId);
-      if (
-        peerId !== deferredPeer &&
-        generation !== undefined &&
-        isPeerOwner(this.options.transport, peerId, generation)
-      ) {
-        void this.options.transport.disconnect(peerId);
-      }
+    for (const peerId of this.owned.peerIds()) {
+      if (peerId !== deferredPeer) this.owned.disconnectIfOwned(peerId);
     }
 
-    this.ownedPeers.clear();
-    this.peerGenerations.clear();
+    this.owned.clear();
   }
 
   // ── Network ──────────────────────────────────────────────────────────────
@@ -232,6 +221,7 @@ export class GuestSession implements GuestController {
 
   private onHostLost(): void {
     if (this.store.get().ended || this.reconnecting) return;
+    if (this.peerId) this.owned.forget(this.peerId);
     this.peerId = null;
     void this.reconnectLoop();
   }
@@ -253,8 +243,7 @@ export class GuestSession implements GuestController {
             signal: controller.signal,
           });
           this.peerId = result.peerId;
-          this.ownedPeers.add(result.peerId);
-          this.peerGenerations.set(result.peerId, claimPeer(this.options.transport, result.peerId));
+          this.owned.claim(result.peerId);
           this.lastHeard = Date.now();
           this.applyShared(result.welcome.shared);
           this.setConnection(ConnectionStatus.Connected, 0);
@@ -280,10 +269,10 @@ export class GuestSession implements GuestController {
   private send(message: Message): void {
     const peerId = this.peerId;
     if (!peerId) return;
-    const generation = this.peerGenerations.get(peerId);
+    const generation = this.owned.generationOf(peerId);
     void this.options.transport.send(peerId, encode(message)).catch(() => {
       // Only while the link this went out on is still the current one.
-      const current = peerId === this.peerId && this.peerGenerations.get(peerId) === generation;
+      const current = peerId === this.peerId && this.owned.generationOf(peerId) === generation;
       if (current) this.dropLink(peerId);
     });
   }

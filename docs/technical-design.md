@@ -91,8 +91,11 @@ src/
   net/                        transport.ts (interface), advertisement, roundCode, createTransport
                               (+ .web), nearby/ (NearbyTransport, chunking), broadcast/ (web
                               transport for the browser harness), fake/ (in-memory network for tests)
-  session/                    types, protocol, HostSession, GuestSession, handshake, RoundScanner,
-                              timing, selectors, activeSession + useSession (React binding)
+  session/                    types, protocol, HostSession, GuestSession, TrainingSession, gameCore
+                              (the game loop host and training share), admission (seats, bans),
+                              peerLinks (connections, rate limit, liveness), peerOwnership,
+                              handshake, RoundScanner, timing, selectors, activeSession +
+                              useSession (React binding)
   store/                      createPersistedStore + storage (validated AsyncStorage), keyValue
                               (+ .web: per-tab data), profile, settings, stats, interrupted (zustand)
   i18n/                       i18next setup, locales/de.json + en.json, format (names, times)
@@ -245,7 +248,7 @@ match the game's rules.
 | ---------------------------------------- | --------------- | ------------------------------------------------------------- |
 | `Hello`                                  | guest → host    | device id, profile, Nearby auth token, rejoin token           |
 | `Welcome` / `Reject`                     | host → guest    | seat + full state, or `full` / `removed` / `started`          |
-| `State`                                  | host → all      | the complete `SharedSession` after every change               |
+| `State`                                  | host → all      | the complete `SharedSession`, at most once per handled event  |
 | `Roll`, `Hold`, `Score`, `Vote`, `Leave` | guest → host    | intents                                                       |
 | `Focus`, `ViewSheet`                     | guest → host    | the selected field and the open sheet, so others follow along |
 | `Kick`, `Close`                          | host → guest(s) | removed; lobby closed or game ended                           |
@@ -257,6 +260,9 @@ match the game's rules.
   around is private, so it never moves anyone else's screen.
 - There are no separate lobby or start messages: the phase and `countdownEndsAt` are part of the
   shared state, so applying the same update twice changes nothing.
+- **Confirmed:** the host collects the commits made while it handles one transport event, timer or
+  command and broadcasts the result once. A guest that already holds that `rev` (from its
+  `Welcome` or a resync) is skipped, so a joining player receives the state only once.
 - `join(code)` lives in the session layer (`handshake.ts`) rather than in `Transport`, which only
   moves strings. The guest sees three steps: search → secure connection → join.
 
@@ -278,7 +284,7 @@ match the game's rules.
 Nearby limits byte payloads to 32 KB, so `NearbyTransport` splits large states into chunks of at
 most 8,000 characters.
 
-### Admission (`session/HostSession.ts`)
+### Admission (`session/admission.ts`, `session/peerLinks.ts`)
 
 **Confirmed:** the host admits each connection at most once, following these rules:
 
@@ -318,7 +324,7 @@ host and any guests who left go back to Start. Guests who were removed, or whose
 see the end view first.
 
 **Training** (`session/TrainingSession.ts`) is a single-player session started from the Training
-screen. It runs `reduce` locally, just like the host, but without a transport, lobby or rematch
+screen. It runs the host's game core (`session/gameCore.ts`) locally, but without a transport, lobby or rematch
 votes; "Nochmal spielen" calls `restart()`. Training results keep their own best score
 (`trainingBest` in the stats store) and never affect wins, the Yatzy count or saved games.
 

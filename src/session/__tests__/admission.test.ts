@@ -358,6 +358,32 @@ describe('admission limits', () => {
   });
 });
 
+describe('one broadcast per event', () => {
+  test('a new player joining sends everyone else a single state', async () => {
+    const { join, guests } = await lobbyWith(['Antonia']);
+    const states = countStates(guests[0].transport);
+
+    const jonas = await join('Jonas');
+    const joinerStates = countStates(jonas.transport);
+    await run(500);
+
+    expect(states()).toBe(1);
+    expect(joinerStates()).toBe(0); // the welcome already carried it
+  });
+
+  test('removing a player from the game sends the others a single state', async () => {
+    const { host, guests } = await lobbyWith(['Antonia', 'Jonas']);
+    host.start();
+    await run(3600);
+    const states = countStates(guests[1].transport);
+
+    host.removeFromGame(guests[0].guest.getSnapshot().myId);
+    await run(200);
+
+    expect(states()).toBe(1);
+  });
+});
+
 describe('advertised occupancy', () => {
   test('follows joins, leaves and kicks', async () => {
     const { host, hostTransport, guests, join } = await lobbyWith(['Antonia']);

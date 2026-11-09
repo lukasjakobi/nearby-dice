@@ -1,31 +1,26 @@
 /**
- * The authoritative session on the host's phone: admits guests, runs the game
- * engine, enforces every rule, and broadcasts the full shared state after each change.
+ * The authoritative session on the host's phone. It ties the shared game core to the
+ * network: admission and liveness decide who plays, the core runs every move, and
+ * each handled event or command broadcasts the full shared state at most once.
  */
-import { ActionType, createGame, Link, MAX_PLAYERS, PRESETS, randomSeed, reduce } from '@/domain';
-import type {
-  Category,
-  Focus,
-  GameAction,
-  GameState,
-  Held,
-  PlayerId,
-  PresetId,
-  Profile,
-  Rng,
-} from '@/domain';
-import { randomId, secureRandomId, Store, Timers } from '@/lib';
+import { ActionType, Link, MAX_PLAYERS } from '@/domain';
+import type { Category, Focus, GameAction, PlayerId, PresetId, Profile, Rng } from '@/domain';
+import { Timers } from '@/lib';
 import type { Unsubscribe } from '@/lib';
 import { generateRoundCode, PermissionStatus, RadioState, TransportEvent } from '@/net';
 import type { PeerId, Transport } from '@/net';
 
+import { AdmissionKind, Seats } from './admission';
+import { GameCore, MoveOutcome } from './gameCore';
+import { OwnedPeers } from './peerOwnership';
+import { PeerLinks } from './peerLinks';
+import type { PeerLink } from './peerLinks';
 import { CloseReason, MessageType, RejectReason, decode, encode } from './protocol';
 import type { Message, MessageOf } from './protocol';
 import type { RoundScanner } from './RoundScanner';
-import { MAX_MESSAGES_PER_WINDOW, MAX_PENDING_ADMISSIONS, TIMING } from './timing';
-import { ConnectionStatus, EndReason, HostError, RematchVote, Role, SessionPhase } from './types';
+import { TIMING } from './timing';
+import { EndReason, HostError, RematchVote, Role, SessionPhase } from './types';
 import type { HostController, PlayerInfo, SessionSnapshot, SharedSession } from './types';
-import { claimPeer, isPeerOwner } from './peerOwnership';
 
 export class HostOpenError extends Error {
   constructor(readonly reason: HostError) {
@@ -43,31 +38,16 @@ export type HostOptions = {
   rng?: Rng;
 };
 
-type Peer = {
-  authToken: string;
-  playerId: PlayerId | null;
-  /** HELLO was answered: each connection is admitted at most once. */
-  greeted: boolean;
-  lastSeen: number;
-  /** Start of the current rate window and the messages received in it. */
-  windowStart: number;
-  windowMessages: number;
-};
-type Seat = { rejoinToken: string; deviceId: string; peerId: PeerId | null };
-
 export class HostSession implements HostController {
   readonly role = Role.Host;
-  private readonly store: Store<SessionSnapshot>;
-  private readonly peers = new Map<PeerId, Peer>();
-  private readonly peerGenerations = new Map<PeerId, number>();
-  private readonly seats = new Map<PlayerId, Seat>();
-  private readonly bannedDevices = new Set<string>();
+  private readonly core: GameCore;
+  private readonly links = new PeerLinks();
+  private readonly seats = new Seats();
+  private readonly owned: OwnedPeers;
   private readonly timers = new Timers();
   /** Final disconnects must outlive the gameplay timers cleared by dispose(). */
   private readonly cleanupTimers = new Timers();
   private readonly unsubscribers: Unsubscribe[];
-  private readonly rng: Rng;
-  private cancelTurnTimer: (() => void) | null = null;
   private disposed = false;
   private ending = false;
 
@@ -106,88 +86,75 @@ export class HostSession implements HostController {
     private readonly options: HostOptions,
     code: string,
   ) {
-    this.rng = options.rng ?? Math.random;
-    const me: PlayerInfo = {
-      id: randomId(),
-      name: options.profile.name,
-      color: options.profile.color,
-      isHost: true,
-      link: Link.Connected,
-    };
-    this.store = new Store<SessionSnapshot>({
+    const { transport } = options;
+    this.owned = new OwnedPeers(transport);
+    this.core = new GameCore({
       role: Role.Host,
-      myId: me.id,
-      connection: { status: ConnectionStatus.Connected, attempt: 0 },
-      ended: null,
-      clockOffset: 0,
-      shared: {
-        sessionId: secureRandomId(),
+      profile: options.profile,
+      settings: {
         code,
         roundName: options.roundName,
         preset: options.preset,
         maxPlayers: MAX_PLAYERS,
         allowRejoin: options.allowRejoin ?? true,
-        phase: SessionPhase.Lobby,
-        players: [me],
-        game: null,
-        gameNumber: 0,
-        rematch: {},
-        countdownEndsAt: null,
-        hostTime: Date.now(),
-        rev: 1,
       },
+      rng: options.rng,
+      publish: () => this.broadcast(),
+      onFinish: ({ players }) => ({
+        rematch: Object.fromEntries(players.map((p) => [p.id, RematchVote.Pending])),
+      }),
     });
-    const { transport } = options;
     this.unsubscribers = [
       transport.on(TransportEvent.PeerConnected, ({ peerId, authToken }) =>
-        this.onPeerConnected(peerId, authToken),
+        this.core.batch(() => this.onPeerConnected(peerId, authToken)),
       ),
-      transport.on(TransportEvent.PeerDisconnected, ({ peerId }) => this.onPeerGone(peerId)),
-      transport.on(TransportEvent.Data, ({ peerId, data }) => this.onData(peerId, data)),
+      transport.on(TransportEvent.PeerDisconnected, ({ peerId }) =>
+        this.core.batch(() => this.onPeerGone(peerId)),
+      ),
+      transport.on(TransportEvent.Data, ({ peerId, data }) =>
+        this.core.batch(() => this.onData(peerId, data)),
+      ),
     ];
-    this.timers.every(TIMING.pingInterval, () => this.checkLiveness());
+    this.timers.every(TIMING.pingInterval, () => this.core.batch(() => this.checkLiveness()));
   }
 
   // ── Reading ──────────────────────────────────────────────────────────────
 
-  getSnapshot = (): SessionSnapshot => this.store.get();
-  subscribe = (listener: () => void): Unsubscribe => this.store.subscribe(listener);
+  getSnapshot = (): SessionSnapshot => this.core.getSnapshot();
+  subscribe = (listener: () => void): Unsubscribe => this.core.subscribe(listener);
 
   private get shared(): SharedSession {
-    return this.store.get().shared;
+    return this.core.shared;
   }
 
   private get myId(): PlayerId {
-    return this.store.get().myId;
+    return this.core.myId;
   }
 
   // ── Player commands (the host plays too) ─────────────────────────────────
 
   roll(): void {
-    this.act({ type: ActionType.Roll, by: this.myId });
+    this.core.act({ type: ActionType.Roll, by: this.myId });
   }
 
   toggleHold(die: number): void {
-    const held = this.shared.game?.turn.held;
-    if (!held) return;
-    const next = held.map((h, i) => (i === die ? !h : h)) as unknown as Held;
-    this.act({ type: ActionType.Hold, by: this.myId, held: next });
+    this.core.toggleHold(this.myId, die);
   }
 
   score(category: Category, sheet: number): void {
-    this.act({ type: ActionType.Score, by: this.myId, category, sheet });
+    this.core.act({ type: ActionType.Score, by: this.myId, category, sheet });
   }
 
   focus(focus: Focus | null): void {
-    this.act({ type: ActionType.Focus, by: this.myId, focus });
+    this.core.act({ type: ActionType.Focus, by: this.myId, focus });
   }
 
   viewSheet(sheet: number): void {
-    this.act({ type: ActionType.ViewSheet, by: this.myId, sheet });
+    this.core.act({ type: ActionType.ViewSheet, by: this.myId, sheet });
   }
 
   voteRematch(vote: RematchVote): void {
-    this.setVote(this.myId, vote);
+    this.core.batch(() => this.setVote(this.myId, vote));
   }
 
   leave(): void {
@@ -207,7 +174,7 @@ export class HostSession implements HostController {
   kick(playerId: PlayerId): void {
     if (this.shared.phase !== SessionPhase.Lobby || playerId === this.myId) return;
     this.dropSeat(playerId, { type: MessageType.Kick }, { ban: true });
-    this.commit({ players: this.shared.players.filter((p) => p.id !== playerId) });
+    this.core.commit({ players: this.shared.players.filter((p) => p.id !== playerId) });
     void this.advertise();
   }
 
@@ -220,14 +187,16 @@ export class HostSession implements HostController {
   }
 
   skipTurn(playerId: PlayerId): void {
-    this.act({ type: ActionType.Skip, playerId });
+    this.core.act({ type: ActionType.Skip, playerId });
   }
 
   removeFromGame(playerId: PlayerId): void {
     if (playerId === this.myId) return;
-    this.dropSeat(playerId, { type: MessageType.Kick }, { ban: true });
-    this.setLink(playerId, Link.Removed);
-    this.act({ type: ActionType.Remove, playerId });
+    this.core.batch(() => {
+      this.dropSeat(playerId, { type: MessageType.Kick }, { ban: true });
+      this.setLink(playerId, Link.Removed);
+      this.core.act({ type: ActionType.Remove, playerId });
+    });
   }
 
   /** Starts a new game with everyone who voted yes; the others leave the session. */
@@ -247,7 +216,7 @@ export class HostSession implements HostController {
   setPreset(preset: PresetId): void {
     const { phase, rematch, preset: current } = this.shared;
     if (preset === current) return;
-    if (phase === SessionPhase.Lobby) return this.commit({ preset });
+    if (phase === SessionPhase.Lobby) return this.core.commit({ preset });
     if (phase !== SessionPhase.Finished) return;
     // A yes was given to the old mode; everyone but the host decides again.
     const votes = Object.fromEntries(
@@ -256,99 +225,42 @@ export class HostSession implements HostController {
         id !== this.myId && vote === RematchVote.Yes ? RematchVote.Pending : vote,
       ]),
     );
-    this.commit({ preset, rematch: votes });
+    this.core.commit({ preset, rematch: votes });
   }
 
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
     this.timers.clearAll();
-    this.cancelTurnTimer?.();
+    this.core.dispose();
     this.unsubscribers.forEach((unsubscribe) => unsubscribe());
     void this.options.transport.stopAdvertising();
     if (!this.ending) {
-      const peerIds = new Set([...this.peers.keys()]);
-      for (const seat of this.seats.values()) if (seat.peerId) peerIds.add(seat.peerId);
-      for (const peerId of peerIds) {
-        const generation = this.peerGenerations.get(peerId);
-        if (generation !== undefined && isPeerOwner(this.options.transport, peerId, generation)) {
-          void this.options.transport.disconnect(peerId);
-        }
-      }
+      const peerIds = new Set([...this.links.peerIds(), ...this.seats.peerIds()]);
+      for (const peerId of peerIds) this.owned.disconnectIfOwned(peerId);
     }
 
-    this.peers.clear();
+    this.links.clear();
     this.seats.clear();
-    this.peerGenerations.clear();
+    this.owned.clear();
   }
 
   // ── Game flow ────────────────────────────────────────────────────────────
 
   private beginGame(players: PlayerInfo[], countdownMs: number): void {
-    const startsAt = Date.now() + countdownMs;
-    const game = createGame({
-      rules: PRESETS[this.shared.preset],
-      playerIds: players.map((p) => p.id),
-      hostId: this.myId,
-      seed: randomSeed(this.rng),
-      ctx: { now: startsAt, rng: this.rng },
-    });
-    this.commit({
-      phase: SessionPhase.Countdown,
-      players,
-      game,
-      gameNumber: this.shared.gameNumber + 1,
-      rematch: {},
-      countdownEndsAt: startsAt,
-    });
+    this.core.beginGame(players, countdownMs);
     void this.advertise();
-    this.timers.after(countdownMs, () => {
-      this.commit({ phase: SessionPhase.Playing, countdownEndsAt: null });
-      this.scheduleTurnTimer();
-    });
   }
 
-  /** Applies a move; `from` is the guest's connection, which a rejected intent resyncs. */
-  private act(action: GameAction, from?: PeerId): void {
-    const { game, phase } = this.shared;
-    if (!game || phase !== SessionPhase.Playing) return;
-    const result = reduce(game, action, { now: Date.now(), rng: this.rng });
-    if (result.rejected) {
-      if (from) this.send(from, { type: MessageType.State, shared: this.stamped() });
-
-      return;
-    }
-
-    if (result.state === game) return; // a no-op, e.g. the page that is already open
-    this.applyGame(result.state);
-  }
-
-  private applyGame(game: GameState): void {
-    if (!game.finished) {
-      this.commit({ game });
-      this.scheduleTurnTimer();
-
-      return;
-    }
-
-    const rematch = Object.fromEntries(this.shared.players.map((p) => [p.id, RematchVote.Pending]));
-    this.cancelTurnTimer?.();
-    this.commit({ game, phase: SessionPhase.Finished, rematch });
-  }
-
-  private scheduleTurnTimer(): void {
-    this.cancelTurnTimer?.();
-    const deadline = this.shared.game?.turn.deadline;
-    if (!deadline) return;
-    this.cancelTurnTimer = this.timers.after(Math.max(0, deadline - Date.now()), () =>
-      this.act({ type: ActionType.Timeout }),
-    );
+  /** Applies a guest's move; a rejected one resyncs only that guest. */
+  private actFor(peerId: PeerId, action: GameAction): void {
+    if (this.core.act(action) === MoveOutcome.Rejected) this.sendState(peerId);
   }
 
   private setVote(playerId: PlayerId, vote: RematchVote): void {
     const { phase, rematch } = this.shared;
     if (phase !== SessionPhase.Finished || rematch[playerId] === vote) return;
-    this.commit({ rematch: { ...rematch, [playerId]: vote } });
+    this.core.commit({ rematch: { ...rematch, [playerId]: vote } });
     this.startRematchWhenDecided();
   }
 
@@ -368,67 +280,53 @@ export class HostSession implements HostController {
   // ── Network ──────────────────────────────────────────────────────────────
 
   private onPeerConnected(peerId: PeerId, authToken: string): void {
-    const pending = [...this.peers.values()].filter((peer) => !peer.greeted).length;
-    if (pending >= MAX_PENDING_ADMISSIONS) {
+    const link = this.links.open(peerId, authToken, Date.now());
+    if (!link) {
       void this.options.transport.disconnect(peerId);
 
       return;
     }
 
-    const now = Date.now();
-    const peer: Peer = {
-      authToken,
-      playerId: null,
-      greeted: false,
-      lastSeen: now,
-      windowStart: now,
-      windowMessages: 0,
-    };
-    this.peerGenerations.set(peerId, claimPeer(this.options.transport, peerId));
-    this.peers.set(peerId, peer);
+    this.owned.claim(peerId);
     this.timers.after(TIMING.helloTimeout, () => {
-      if (this.peers.get(peerId) === peer && !peer.greeted) this.dropPeer(peerId);
+      if (this.links.get(peerId) === link && !link.greeted) this.dropPeer(peerId);
     });
   }
 
   private onData(peerId: PeerId, data: string): void {
-    const peer = this.peers.get(peerId);
-    if (!peer) return;
-    const now = Date.now();
-    if (now - peer.windowStart >= TIMING.rateWindow) {
-      peer.windowStart = now;
-      peer.windowMessages = 0;
-    }
-
-    if (++peer.windowMessages > MAX_MESSAGES_PER_WINDOW) return this.dropPeer(peerId);
+    const link = this.links.get(peerId);
+    if (!link) return;
+    if (!this.links.withinRate(link, Date.now())) return this.dropPeer(peerId);
     const message = decode(data);
-    if (message) this.onMessage(peerId, peer, message);
+    if (message) this.onMessage(peerId, link, message);
   }
 
-  private onMessage(peerId: PeerId, peer: Peer, message: Message): void {
-    peer.lastSeen = Date.now();
+  private onMessage(peerId: PeerId, link: PeerLink, message: Message): void {
+    link.lastSeen = Date.now();
     if (message.type === MessageType.Hello) {
-      this.onHello(peerId, peer, message);
+      this.onHello(peerId, link, message);
 
       return;
     }
 
-    const by = peer.playerId;
+    const by = link.playerId;
     if (!by) return;
     switch (message.type) {
       case MessageType.Roll:
-        return this.act({ type: ActionType.Roll, by }, peerId);
+        return this.actFor(peerId, { type: ActionType.Roll, by });
       case MessageType.Hold:
-        return this.act({ type: ActionType.Hold, by, held: message.held }, peerId);
+        return this.actFor(peerId, { type: ActionType.Hold, by, held: message.held });
       case MessageType.Score:
-        return this.act(
-          { type: ActionType.Score, by, category: message.category, sheet: message.sheet },
-          peerId,
-        );
+        return this.actFor(peerId, {
+          type: ActionType.Score,
+          by,
+          category: message.category,
+          sheet: message.sheet,
+        });
       case MessageType.Focus:
-        return this.act({ type: ActionType.Focus, by, focus: message.focus }, peerId);
+        return this.actFor(peerId, { type: ActionType.Focus, by, focus: message.focus });
       case MessageType.ViewSheet:
-        return this.act({ type: ActionType.ViewSheet, by, sheet: message.sheet }, peerId);
+        return this.actFor(peerId, { type: ActionType.ViewSheet, by, sheet: message.sheet });
       case MessageType.Vote:
         return this.setVote(by, message.vote);
       case MessageType.Leave:
@@ -440,70 +338,35 @@ export class HostSession implements HostController {
     }
   }
 
-  private onHello(peerId: PeerId, peer: Peer, hello: MessageOf<MessageType.Hello>): void {
-    if (peer.greeted || hello.authToken !== peer.authToken) return this.dropPeer(peerId);
-    peer.greeted = true;
-    const { phase, players, maxPlayers, allowRejoin } = this.shared;
-    if (this.bannedDevices.has(hello.deviceId)) return this.reject(peerId, RejectReason.Removed);
-
-    // Only the session's rejoin token returns a seat; a device ID alone never does.
-    const returning = [...this.seats].find(
-      ([, seat]) => seat.rejoinToken === hello.rejoinToken && seat.deviceId === hello.deviceId,
-    );
-    if (returning) {
-      const [playerId] = returning;
-      const player = players.find((p) => p.id === playerId);
-      if (!player || player.link === Link.Removed) return this.reject(peerId, RejectReason.Removed);
-      if (phase !== SessionPhase.Lobby && !allowRejoin)
-        return this.reject(peerId, RejectReason.Removed);
-
-      return this.seat(peerId, peer, playerId);
+  private onHello(peerId: PeerId, link: PeerLink, hello: MessageOf<MessageType.Hello>): void {
+    if (link.greeted || hello.authToken !== link.authToken) return this.dropPeer(peerId);
+    link.greeted = true;
+    const admission = this.seats.admit(hello, this.shared);
+    switch (admission.kind) {
+      case AdmissionKind.Reject:
+        return this.reject(peerId, admission.reason);
+      case AdmissionKind.Return:
+        return this.seat(peerId, link, admission.playerId);
+      case AdmissionKind.Join:
+        this.core.commit({ players: admission.players });
+        this.seat(peerId, link, admission.playerId);
+        void this.advertise();
     }
-
-    if (phase !== SessionPhase.Lobby) return this.reject(peerId, RejectReason.Started);
-    // A device that lost its lobby link without its token (e.g. after an app restart)
-    // joins anew, and its orphaned seat makes room.
-    const orphan = [...this.seats].find(
-      ([, seat]) => seat.deviceId === hello.deviceId && !seat.peerId,
-    )?.[0];
-    const others = players.filter((p) => p.id !== orphan);
-    if (others.length >= maxPlayers) return this.reject(peerId, RejectReason.Full);
-    if (orphan) this.seats.delete(orphan);
-
-    const player: PlayerInfo = {
-      id: randomId(),
-      name: hello.profile.name,
-      color: hello.profile.color,
-      isHost: false,
-      link: Link.Connected,
-    };
-    this.seats.set(player.id, {
-      rejoinToken: secureRandomId(),
-      deviceId: hello.deviceId,
-      peerId: null,
-    });
-    this.commit({ players: [...others, player] });
-    this.seat(peerId, peer, player.id);
-    void this.advertise();
   }
 
   /** Binds a connection to a player and sends the welcome. */
-  private seat(peerId: PeerId, peer: Peer, playerId: PlayerId): void {
-    const seat = this.seats.get(playerId)!;
-    if (seat.peerId && seat.peerId !== peerId) {
-      this.peers.delete(seat.peerId);
-      void this.options.transport.disconnect(seat.peerId);
+  private seat(peerId: PeerId, link: PeerLink, playerId: PlayerId): void {
+    const { rejoinToken, replaced } = this.seats.bind(playerId, peerId);
+    if (replaced) {
+      this.forgetPeer(replaced);
+      void this.options.transport.disconnect(replaced);
     }
 
-    seat.peerId = peerId;
-    peer.playerId = playerId;
+    link.playerId = playerId;
     this.setLink(playerId, Link.Connected);
-    this.send(peerId, {
-      type: MessageType.Welcome,
-      playerId,
-      rejoinToken: seat.rejoinToken,
-      shared: this.stamped(),
-    });
+    const shared = this.stamped();
+    link.sentRev = shared.rev;
+    this.send(peerId, { type: MessageType.Welcome, playerId, rejoinToken, shared });
   }
 
   private reject(peerId: PeerId, reason: RejectReason): void {
@@ -512,16 +375,15 @@ export class HostSession implements HostController {
   }
 
   private onLeave(playerId: PlayerId): void {
-    const seat = this.seats.get(playerId);
-    if (seat?.peerId) {
-      this.peers.delete(seat.peerId);
-      void this.options.transport.disconnect(seat.peerId);
-      seat.peerId = null;
+    const peerId = this.seats.unbind(playerId);
+    if (peerId) {
+      this.forgetPeer(peerId);
+      void this.options.transport.disconnect(peerId);
     }
 
     if (this.shared.phase === SessionPhase.Lobby) {
-      this.seats.delete(playerId);
-      this.commit({ players: this.shared.players.filter((p) => p.id !== playerId) });
+      this.seats.remove(playerId);
+      this.core.commit({ players: this.shared.players.filter((p) => p.id !== playerId) });
       void this.advertise();
     } else {
       this.setLink(playerId, Link.Left);
@@ -530,29 +392,21 @@ export class HostSession implements HostController {
   }
 
   private onPeerGone(peerId: PeerId): void {
-    const peer = this.peers.get(peerId);
-    this.peers.delete(peerId);
-    if (!peer?.playerId) return;
-    const seat = this.seats.get(peer.playerId);
-    if (seat?.peerId !== peerId) return; // already re-seated on a newer connection
-    seat.peerId = null;
-    const player = this.shared.players.find((p) => p.id === peer.playerId);
+    const playerId = this.links.get(peerId)?.playerId;
+    this.forgetPeer(peerId);
+    // Unless the seat already moved on to a newer connection.
+    if (!playerId || !this.seats.unbind(playerId, peerId)) return;
+    const player = this.shared.players.find((p) => p.id === playerId);
     if (player?.link !== Link.Connected) return;
-    this.setLink(peer.playerId, Link.Lost);
+    this.setLink(playerId, Link.Lost);
     this.startRematchWhenDecided();
   }
 
   private checkLiveness(): void {
     const now = Date.now();
-    for (const [peerId, peer] of this.peers) {
-      if (!peer.playerId) continue;
-      if (now - peer.lastSeen > TIMING.livenessTimeout) {
-        void this.options.transport.disconnect(peerId);
-        this.onPeerGone(peerId);
-      } else {
-        this.send(peerId, { type: MessageType.Ping, at: now });
-      }
-    }
+    const { alive, silent } = this.links.sweep(now);
+    for (const peerId of silent) this.dropPeer(peerId);
+    for (const peerId of alive) this.send(peerId, { type: MessageType.Ping, at: now });
   }
 
   /** Closes a connection the host gives up on and forgets it like a lost one. */
@@ -561,51 +415,48 @@ export class HostSession implements HostController {
     this.onPeerGone(peerId);
   }
 
-  /** Sends a final message, closes the connection and forgets the seat. */
-  private dropSeat(playerId: PlayerId, farewell: Message, { ban = false } = {}): void {
-    const seat = this.seats.get(playerId);
-    if (!seat) return;
-    if (ban) this.bannedDevices.add(seat.deviceId);
-    if (seat.peerId) {
-      const peerId = seat.peerId;
-      const generation = this.peerGenerations.get(peerId);
-      this.send(peerId, farewell);
-      this.peers.delete(peerId);
-      this.cleanupTimers.after(TIMING.closeGrace, () => {
-        if (generation !== undefined && isPeerOwner(this.options.transport, peerId, generation)) {
-          void this.options.transport.disconnect(peerId);
-        }
-      });
-    }
+  private forgetPeer(peerId: PeerId): void {
+    this.links.delete(peerId);
+    this.owned.forget(peerId);
+  }
 
-    this.seats.delete(playerId);
+  /** Sends a final message, closes the connection after a grace period and frees the seat. */
+  private dropSeat(playerId: PlayerId, farewell: Message, { ban = false } = {}): void {
+    const peerId = this.seats.remove(playerId, { ban });
+    if (peerId) {
+      this.send(peerId, farewell);
+      this.closeAfterGrace(peerId);
+    }
+  }
+
+  /** Lets the last message go out, then closes the link if this session still owns it. */
+  private closeAfterGrace(peerId: PeerId): void {
+    const generation = this.owned.generationOf(peerId);
+    this.forgetPeer(peerId);
+    this.cleanupTimers.after(TIMING.closeGrace, () =>
+      this.owned.disconnectIfOwned(peerId, generation),
+    );
   }
 
   private end(reason: CloseReason, ended: EndReason): void {
     if (this.disposed) return;
     this.ending = true;
-    for (const playerId of [...this.seats.keys()]) {
+    for (const playerId of this.seats.playerIds()) {
       this.dropSeat(playerId, { type: MessageType.Close, reason });
     }
 
     // Connections that have not completed admission still belong to this host.
     // They have no seat to receive a farewell, but must not survive shutdown.
-    for (const peerId of this.peers.keys()) {
-      const generation = this.peerGenerations.get(peerId);
-      this.cleanupTimers.after(TIMING.closeGrace, () => {
-        if (generation !== undefined && isPeerOwner(this.options.transport, peerId, generation)) {
-          void this.options.transport.disconnect(peerId);
-        }
-      });
-    }
+    for (const peerId of this.links.peerIds()) this.closeAfterGrace(peerId);
 
-    this.store.update((s) => ({ ...s, ended }));
+    this.core.end(ended);
     this.dispose();
   }
 
   private setLink(playerId: PlayerId, link: Link): void {
-    const players = this.shared.players.map((p) => (p.id === playerId ? { ...p, link } : p));
-    this.commit({ players });
+    const { players } = this.shared;
+    if (players.find((p) => p.id === playerId)?.link === link) return;
+    this.core.commit({ players: players.map((p) => (p.id === playerId ? { ...p, link } : p)) });
   }
 
   private advertise(): Promise<void> {
@@ -622,21 +473,27 @@ export class HostSession implements HostController {
     });
   }
 
-  // ── State ────────────────────────────────────────────────────────────────
+  // ── Sending ──────────────────────────────────────────────────────────────
 
   private stamped(): SharedSession {
     return { ...this.shared, hostTime: Date.now() };
   }
 
-  private commit(patch: Partial<SharedSession>): void {
-    this.store.update((s) => ({ ...s, shared: { ...s.shared, ...patch, rev: s.shared.rev + 1 } }));
-    this.broadcast();
+  private sendState(peerId: PeerId): void {
+    const shared = this.stamped();
+    const link = this.links.get(peerId);
+    if (link) link.sentRev = shared.rev;
+    this.send(peerId, { type: MessageType.State, shared });
   }
 
+  /** Sends the full state to every seated peer that doesn't have it yet. */
   private broadcast(): void {
-    const message = encode({ type: MessageType.State, shared: this.stamped() });
-    for (const [peerId, peer] of this.peers) {
-      if (peer.playerId) this.deliver(peerId, message);
+    const shared = this.stamped();
+    const message = encode({ type: MessageType.State, shared });
+    for (const [peerId, link] of this.links.seated()) {
+      if (link.sentRev === shared.rev) continue;
+      link.sentRev = shared.rev;
+      this.deliver(peerId, message);
     }
   }
 
@@ -646,11 +503,10 @@ export class HostSession implements HostController {
 
   /** A send that fails means the link is gone: close it and mark the player lost. */
   private deliver(peerId: PeerId, data: string): void {
-    const generation = this.peerGenerations.get(peerId);
+    const generation = this.owned.generationOf(peerId);
     void this.options.transport.send(peerId, data).catch(() => {
-      if (!this.peers.has(peerId) || this.peerGenerations.get(peerId) !== generation) return;
-      void this.options.transport.disconnect(peerId);
-      this.onPeerGone(peerId);
+      if (!this.links.has(peerId) || this.owned.generationOf(peerId) !== generation) return;
+      this.core.batch(() => this.dropPeer(peerId));
     });
   }
 }

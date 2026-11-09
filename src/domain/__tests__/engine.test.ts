@@ -13,6 +13,7 @@ import {
   luckyNumberOf,
   ranking,
   reduce,
+  toggleHeld,
 } from '../engine';
 import type { GameAction, GameState, Held } from '../engine';
 import { Category, StartingPlayer } from '../enums';
@@ -309,5 +310,14 @@ describe('full games', () => {
   test('ties share first place', () => {
     const s = newGame();
     expect(ranking(s).every((p) => p.place === 1 && p.winner)).toBe(true);
+  });
+});
+
+describe('toggleHeld', () => {
+  test('flips only the chosen die', () => {
+    const held: Held = [false, true, false, false, true];
+    expect(toggleHeld(held, 0)).toEqual([true, true, false, false, true]);
+    expect(toggleHeld(held, 4)).toEqual([false, true, false, false, false]);
+    expect(held).toEqual([false, true, false, false, true]);
   });
 });
