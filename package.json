@@ -108,6 +108,6 @@
   },
   "overrides": {
     "zod": "^4.6.7",
-    "node-forge": "^1.4.2"
+    "node-forge": "^1.4.3"
   }
 }
